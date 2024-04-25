@@ -1,11 +1,8 @@
 import {
-  deleteAllColor,
-  deleteColor,
-  getAllColorSoft,
-  restoreAllColor,
-  restoreColor,
-} from "@/api/variants/color";
-
+  deleteSoftAllCategory,
+  deleteSoftCategory,
+  getAllCategory,
+} from "@/api/categorys";
 import Loading from "@/components/Loading";
 import MyPagination from "@/components/MyPagination";
 import { Badge } from "@/components/ui/badge";
@@ -14,7 +11,6 @@ import {
   BreadcrumbItem,
   BreadcrumbLink,
   BreadcrumbList,
-  BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
 import { Button } from "@/components/ui/button";
@@ -37,16 +33,15 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { IColor } from "@/interfaces/color";
+import { ISize } from "@/interfaces/size";
 import { handleDownloadExcel } from "@/lib/utils";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   File,
   ListFilter,
-  ListTodo,
   MoreHorizontal,
   PlusCircle,
-  Trash2Icon,
+  Trash2,
 } from "lucide-react";
 import moment from "moment";
 import { useRef } from "react";
@@ -54,10 +49,9 @@ import { Link, useSearchParams } from "react-router-dom";
 import { Flip, toast } from "react-toastify";
 import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
-const Trash = () => {
-  const checkboxAll = useRef<HTMLInputElement>(null); // input checkbox (chọn tất cả)
-  const btnSubmitAction = useRef<HTMLButtonElement>(null); // input submit action chọn tất cả
-
+const List = () => {
+  const checkboxAllSize = useRef<HTMLInputElement>(null); // input checkbox (chọn tất cả)
+  const btnSubmitActionSize = useRef<HTMLButtonElement>(null); // input submit action chọn tất cả
   //
   const queryClient = useQueryClient();
   const MySwal = withReactContent(Swal); // sweet alert
@@ -66,36 +60,29 @@ const Trash = () => {
   const order = searchParams.get("order") ?? "all";
   const sortBy = searchParams.get("page") || "";
   const { data, isLoading } = useQuery({
-    queryKey: ["GET_COLORS", page, order, sortBy],
+    queryKey: ["GET_CATEGORYS", page, order, sortBy],
     queryFn: async () => {
-      const { data } = await getAllColorSoft(location.search);
+      const { data } = await getAllCategory(location.search);
       return data.data;
     },
-  }); // get api  all  colors
+  }); // get api  all  sizes
   const handleExportExcel = () => {
-    const header = [
-      "Tên màu",
-      "Trạng thái",
-      "Ngày tạo",
-      "Ngày cập nhập",
-      "Ngày xoá",
-    ];
+    const header = ["Danh mục", "Trạng thái", "Ngày tạo", "Ngày cập nhập"];
     const body =
       data &&
-      data?.docs.map((item: IColor) => [
+      data?.docs.map((item: ISize) => [
         `${item.name}`,
         `${item.status ? "Active" : "Draft"}`,
         `${item.createdAt}`,
         `${item.updatedAt}`,
-        `${item.deletedAt}`,
       ]);
-    handleDownloadExcel(header, body, "table-colors", "Colors");
+    handleDownloadExcel(header, body, "table-categorys", "Category");
   };
-  const listColor = data?.docs as IColor[]; // data get all colors
-  // muate xoá vĩnh viễn one
+  const listSizes = data?.docs as ISize[]; // data get all sizes
+  // muate delete
   const mutaionDeleteSort = useMutation({
     mutationFn: async (id: string | number) => {
-      await deleteColor(id);
+      await deleteSoftCategory(id);
     },
     onError: () => {
       Swal.fire({
@@ -105,7 +92,7 @@ const Trash = () => {
       });
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["GET_COLORS"] });
+      queryClient.invalidateQueries({ queryKey: ["GET_CATEGORYS"] });
       Swal.fire({
         title: "Deleted!",
         text: "Bạn đã xoá thành công.",
@@ -113,10 +100,9 @@ const Trash = () => {
       });
     },
   });
-  // muate xoá vĩnh viễn all
-  const mutaionDeleteAll = useMutation({
-    mutationFn: async (colorIds: string[]) => {
-      await deleteAllColor(colorIds);
+  const mutaionDeleteSortAll = useMutation({
+    mutationFn: async (categoryIds: string[]) => {
+      await deleteSoftAllCategory(categoryIds);
     },
     onError: () => {
       Swal.fire({
@@ -126,52 +112,10 @@ const Trash = () => {
       });
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["GET_COLORS"] });
+      queryClient.invalidateQueries({ queryKey: ["GET_CATEGORYS"] });
       Swal.fire({
         title: "Deleted!",
         text: "Bạn đã xoá thành công.",
-        icon: "success",
-      });
-    },
-  });
-  // khôi phục one
-  const mutaionRestoreColor = useMutation({
-    mutationFn: async (id: string | number) => {
-      await restoreColor(id);
-    },
-    onError: () => {
-      Swal.fire({
-        title: "Restore!",
-        text: "Khôi phục thất bại.",
-        icon: "error",
-      });
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["GET_COLORS"] });
-      Swal.fire({
-        title: "Restore!",
-        text: "Bạn đã khôi phục thành công.",
-        icon: "success",
-      });
-    },
-  });
-  // khôi phục all
-  const mutaionRestoreAllColor = useMutation({
-    mutationFn: async (ids: string[]) => {
-      await restoreAllColor(ids);
-    },
-    onError: () => {
-      Swal.fire({
-        title: "Restore!",
-        text: "Khôi phục thất bại.",
-        icon: "error",
-      });
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["GET_COLORS"] });
-      Swal.fire({
-        title: "Restore!",
-        text: "Bạn đã khôi phục thành công.",
         icon: "success",
       });
     },
@@ -180,7 +124,7 @@ const Trash = () => {
   const handleDelete = (id: string | number) => {
     MySwal.fire({
       title: "Bạn có chắc xoá không?",
-      text: "Hành động này sẽ xoá vĩnh viễn không thể khôi phục được!",
+      text: "Hành động này sẽ chuyển size sản phẩm vào thùng rác!",
       icon: "warning",
       showCancelButton: true,
       confirmButtonColor: "#3085d6",
@@ -194,46 +138,46 @@ const Trash = () => {
   };
   // muate delete end
   // checkbox all
-  const handleCheckboxAll = () => {
-    const elementCheckboxAll = checkboxAll.current as HTMLInputElement;
-    const isChecked = elementCheckboxAll.checked;
+  const handlecheckboxAllSize = () => {
+    const elementcheckboxAllSize = checkboxAllSize.current as HTMLInputElement;
+    const isChecked = elementcheckboxAllSize.checked;
     const checkboxItems = document.querySelectorAll(
-      ".colorIds"
+      ".categoryIds"
     ) as NodeListOf<Element>;
     checkboxItems.forEach((item) => {
       const checkboxItem = item as HTMLInputElement;
-      const elementBtnSubmitCheckbox =
-        btnSubmitAction.current as HTMLButtonElement;
+      const elementBtnSubmitCheckboxSize =
+        btnSubmitActionSize.current as HTMLButtonElement;
       checkboxItem.checked = isChecked;
-      elementBtnSubmitCheckbox.disabled = !isChecked;
+      elementBtnSubmitCheckboxSize.disabled = !isChecked;
     });
   };
   const handleCheckboxItems = () => {
-    const elementBtnSubmitCheckbox =
-      btnSubmitAction.current as HTMLButtonElement;
-    const elementCheckboxAll = checkboxAll.current as HTMLInputElement;
+    const elementBtnSubmitCheckboxSize =
+      btnSubmitActionSize.current as HTMLButtonElement;
+    const elementcheckboxAllSize = checkboxAllSize.current as HTMLInputElement;
     const formData = new FormData(
       document.getElementById("myForms") as HTMLFormElement
     );
-    const isChecked = (formData.getAll("colorIds").length > 0) as boolean;
-    elementBtnSubmitCheckbox.disabled = !isChecked;
-    elementCheckboxAll.checked = isChecked;
+    const isChecked = (formData.getAll("categoryIds").length > 0) as boolean;
+    elementBtnSubmitCheckboxSize.disabled = !isChecked;
+    elementcheckboxAllSize.checked = isChecked;
   };
   const onSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    const elementBtnSubmitCheckbox =
-      btnSubmitAction.current as HTMLButtonElement;
-    const elementCheckboxAll = checkboxAll.current as HTMLInputElement;
+    const elementBtnSubmitCheckboxSize =
+      btnSubmitActionSize.current as HTMLButtonElement;
+    const elementcheckboxAllSize = checkboxAllSize.current as HTMLInputElement;
     const formData = new FormData(
       document.getElementById("myForms") as HTMLFormElement
     );
-    const colorIds = formData.getAll("colorIds");
+    const categoryIds = formData.getAll("categoryIds");
     const actionsCheckbox = formData.get("actions-checkbox");
     switch (actionsCheckbox) {
-      case "delete-forever":
+      case "delete":
         Swal.fire({
-          title: "Xoá vĩnh viễn?",
-          text: "Hành động này sẽ không thể khôi phục sau khi bạn xoá!",
+          title: "Delete?",
+          text: "Hành động này sẽ chuyển size bạn đã chọn vào thúc rác!",
           icon: "warning",
           showCancelButton: true,
           confirmButtonColor: "#3085d6",
@@ -241,18 +185,14 @@ const Trash = () => {
           confirmButtonText: "Yes, delete it!",
         }).then((result) => {
           if (result.isConfirmed) {
-            mutaionDeleteAll.mutate(colorIds as string[]);
-            elementCheckboxAll.checked = false;
-            elementBtnSubmitCheckbox.disabled = true;
+            mutaionDeleteSortAll.mutate(categoryIds as string[]);
+            elementcheckboxAllSize.checked = false;
+            elementBtnSubmitCheckboxSize.disabled = true;
           }
         });
 
         break;
-      case "restore":
-        mutaionRestoreAllColor.mutate(colorIds as string[]);
-        elementCheckboxAll.checked = false;
-        elementBtnSubmitCheckbox.disabled = true;
-        break;
+
       default:
         toast.warn("Vui lòng chọn hành động", {
           position: "top-right",
@@ -268,6 +208,7 @@ const Trash = () => {
         break;
     }
   };
+
   if (isLoading) {
     return <Loading />;
   }
@@ -287,39 +228,30 @@ const Trash = () => {
           <BreadcrumbSeparator />
           <BreadcrumbItem>
             <BreadcrumbLink asChild>
-              <Link to={"/admin/variant/color"}>Màu sắc & Size</Link>
+              <Link to={"/admin/category"}>Danh mục</Link>
             </BreadcrumbLink>
-          </BreadcrumbItem>
-          <BreadcrumbSeparator />
-          <BreadcrumbItem>
-            <BreadcrumbLink asChild>
-              <Link to={"/admin/variant/color"}>Màu sắc</Link>
-            </BreadcrumbLink>
-          </BreadcrumbItem>
-          <BreadcrumbSeparator />
-          <BreadcrumbItem>
-            <BreadcrumbPage>Thùng rác</BreadcrumbPage>
           </BreadcrumbItem>
         </BreadcrumbList>
       </Breadcrumb>
       <div className="flex items-center">
         <div className="">
           <h2 className="text-2xl font-semibold leading-none tracking-tight">
-            Màu sắc đã xoá Soft
+            Danh mục
           </h2>
           <p className="text-sm text-muted-foreground">
-            Quản lý màu sắc sản phẩm của bạn đã xoá.
+            Quản lý danh mục sản phẩm của bạn.
           </p>
         </div>
         <div className="ml-auto flex items-center gap-2">
           <DropdownMenu>
-            <Link to={"/admin/variant/color"}>
-              <Button variant="outline" size="sm" className="h-8 gap-1">
-                <ListTodo className="h-3.5 w-3.5" />
-                <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
-                  Danh sách màu
-                </span>
-              </Button>
+            <Link
+              to={"/admin/category/trash"}
+              className="inline-flex items-center justify-center whitespace-nowrap text-sm font-medium ring-offset-background transition-sizes focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground rounded-md px-3 h-8 gap-1"
+            >
+              <Trash2 className="h-3.5 w-3.5" />
+              <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
+                Thùng rác
+              </span>
             </Link>
             <DropdownMenuTrigger asChild>
               <Button variant="outline" size="sm" className="h-8 gap-1">
@@ -376,7 +308,7 @@ const Trash = () => {
 
           <div
             onClick={handleExportExcel}
-            className="cursor-pointer inline-flex items-center justify-center whitespace-nowrap text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground rounded-md px-3 h-8 gap-1"
+            className="cursor-pointer inline-flex items-center justify-center whitespace-nowrap text-sm font-medium ring-offset-background transition-sizes focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground rounded-md px-3 h-8 gap-1"
           >
             <File className="h-3.5 w-3.5" />
             <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
@@ -385,12 +317,12 @@ const Trash = () => {
           </div>
           {/* Thêm mới màu */}
           <Link
-            to={"/admin/variant/color/add"}
-            className="bg-indigo-600 hover:bg-indigo-400 inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50  text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2"
+            to={"/admin/category/add"}
+            className="bg-indigo-600 hover:bg-indigo-400 inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-sizes focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50  text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2"
           >
             <PlusCircle className="h-3.5 w-3.5" />{" "}
             <span className="sr-only sm:not-sr-only sm:whitespace-nowrap ">
-              Thêm mới màu
+              Thêm mới danh mục
             </span>{" "}
           </Link>
         </div>
@@ -401,8 +333,8 @@ const Trash = () => {
             <input
               id="checkbox-all"
               type="checkbox"
-              ref={checkboxAll}
-              onChange={handleCheckboxAll}
+              ref={checkboxAllSize}
+              onChange={handlecheckboxAllSize}
             />
             <label
               htmlFor="checkbox-all"
@@ -417,12 +349,11 @@ const Trash = () => {
               <option value="" hidden>
                 --Hành động
               </option>
-              <option value="delete-forever">Xoá vĩnh viễn</option>
-              <option value="restore">Khôi phục</option>
+              <option value="delete">Xoá</option>
             </select>
             <Button
               disabled
-              ref={btnSubmitAction}
+              ref={btnSubmitActionSize}
               className="py-0 bg-indigo-600 hover:bg-indigo-400 "
             >
               Thực hiện
@@ -434,55 +365,61 @@ const Trash = () => {
             <TableHeader>
               <TableRow>
                 <TableHead></TableHead>
-                <TableHead>Tên màu</TableHead>
+                <TableHead>Danh mục</TableHead>
                 <TableHead>Trạng thái</TableHead>
                 <TableHead className="hidden md:table-cell">Ngày tạo</TableHead>
                 <TableHead className="hidden md:table-cell">
                   Ngày cập nhập
                 </TableHead>
-                <TableHead className="hidden md:table-cell">Ngày xoá</TableHead>
                 <TableHead>
                   <span className="sr-only">Hành động</span>
                 </TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
-              {listColor.length <= 0 ? (
+              {listSizes.length <= 0 ? (
                 <TableRow>
                   <TableCell colSpan={7} className="text-center text-base">
-                    <div className="flex justify-center items-center">
-                      <Trash2Icon size={16} /> Thùng rác trống
-                    </div>
+                    Chưa danh mục sản phẩm nào.{" "}
+                    <Link
+                      to={"/admin/category/add"}
+                      className="text-sky-700 underline font-semibold "
+                    >
+                      Thêm danh mục
+                    </Link>
                   </TableCell>
                 </TableRow>
               ) : (
-                listColor &&
-                listColor?.map((color) => (
-                  <TableRow key={color._id}>
+                listSizes &&
+                listSizes?.map((category) => (
+                  <TableRow key={category._id}>
                     <TableCell>
                       <input
                         type="checkbox"
-                        name="colorIds"
-                        className="colorIds"
-                        value={color._id}
+                        name="categoryIds"
+                        className="categoryIds"
+                        value={category._id}
                         onChange={handleCheckboxItems}
                       />
                     </TableCell>
-                    <TableCell className="font-medium">{color.name}</TableCell>
+                    <TableCell className="font-medium">
+                      {category.name}
+                    </TableCell>
                     <TableCell>
                       <Badge variant="outline">
                         {" "}
-                        {color.status ? "Active" : "Draft"}
+                        {category.status ? "Active" : "Draft"}
                       </Badge>
                     </TableCell>
                     <TableCell className="hidden md:table-cell">
-                      {moment.utc(color.createdAt).format("YYYY-MM-DD hh:mm A")}
+                      {moment
+                        .utc(category.createdAt)
+                        .format("YYYY-MM-DD hh:mm A")}
                     </TableCell>
                     <TableCell className="hidden md:table-cell">
-                      {moment.utc(color.updatedAt).format("YYYY-MM-DD hh:mm A")}
-                    </TableCell>
-                    <TableCell className="hidden md:table-cell">
-                      {moment.utc(color.deletedAt).format("YYYY-MM-DD hh:mm A")}
+                      {moment
+                        .utc(category.updatedAt)
+                        .format("YYYY-MM-DD hh:mm A")}
                     </TableCell>
                     <TableCell>
                       <DropdownMenu>
@@ -498,19 +435,17 @@ const Trash = () => {
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end">
                           <DropdownMenuLabel>Hành động</DropdownMenuLabel>
-                          <DropdownMenuItem
-                            onClick={() => {
-                              mutaionRestoreColor.mutate(color._id as string);
-                            }}
-                          >
-                            Khôi phục
+                          <DropdownMenuItem>
+                            <Link to={`/admin/category/update/${category._id}`}>
+                              Cập nhập
+                            </Link>
                           </DropdownMenuItem>
                           <DropdownMenuItem
                             onClick={() => {
-                              handleDelete(color._id || 0);
+                              handleDelete(category._id || 0);
                             }}
                           >
-                            Xoá vĩnh viễn
+                            Xoá
                           </DropdownMenuItem>
                         </DropdownMenuContent>
                       </DropdownMenu>
@@ -533,4 +468,4 @@ const Trash = () => {
   );
 };
 
-export default Trash;
+export default List;

@@ -1,10 +1,10 @@
 import {
-  deleteAllColor,
-  deleteColor,
-  getAllColorSoft,
-  restoreAllColor,
-  restoreColor,
-} from "@/api/variants/color";
+  deleteAllSize,
+  deleteSize,
+  getAllSizeSoft,
+  restoreAllSize,
+  restoreSize,
+} from "@/api/variants/size";
 
 import Loading from "@/components/Loading";
 import MyPagination from "@/components/MyPagination";
@@ -66,15 +66,15 @@ const Trash = () => {
   const order = searchParams.get("order") ?? "all";
   const sortBy = searchParams.get("page") || "";
   const { data, isLoading } = useQuery({
-    queryKey: ["GET_COLORS", page, order, sortBy],
+    queryKey: ["GET_SIZES", page, order, sortBy],
     queryFn: async () => {
-      const { data } = await getAllColorSoft(location.search);
+      const { data } = await getAllSizeSoft(location.search);
       return data.data;
     },
   }); // get api  all  colors
   const handleExportExcel = () => {
     const header = [
-      "Tên màu",
+      "Kích thước size",
       "Trạng thái",
       "Ngày tạo",
       "Ngày cập nhập",
@@ -89,13 +89,13 @@ const Trash = () => {
         `${item.updatedAt}`,
         `${item.deletedAt}`,
       ]);
-    handleDownloadExcel(header, body, "table-colors", "Colors");
+    handleDownloadExcel(header, body, "table-sizes", "Size");
   };
-  const listColor = data?.docs as IColor[]; // data get all colors
+  const listSizes = data?.docs as IColor[]; // data get all colors
   // muate xoá vĩnh viễn one
   const mutaionDeleteSort = useMutation({
     mutationFn: async (id: string | number) => {
-      await deleteColor(id);
+      await deleteSize(id);
     },
     onError: () => {
       Swal.fire({
@@ -105,7 +105,7 @@ const Trash = () => {
       });
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["GET_COLORS"] });
+      queryClient.invalidateQueries({ queryKey: ["GET_SIZES"] });
       Swal.fire({
         title: "Deleted!",
         text: "Bạn đã xoá thành công.",
@@ -115,8 +115,8 @@ const Trash = () => {
   });
   // muate xoá vĩnh viễn all
   const mutaionDeleteAll = useMutation({
-    mutationFn: async (colorIds: string[]) => {
-      await deleteAllColor(colorIds);
+    mutationFn: async (sizeIds: string[]) => {
+      await deleteAllSize(sizeIds);
     },
     onError: () => {
       Swal.fire({
@@ -126,7 +126,7 @@ const Trash = () => {
       });
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["GET_COLORS"] });
+      queryClient.invalidateQueries({ queryKey: ["GET_SIZES"] });
       Swal.fire({
         title: "Deleted!",
         text: "Bạn đã xoá thành công.",
@@ -135,9 +135,9 @@ const Trash = () => {
     },
   });
   // khôi phục one
-  const mutaionRestoreColor = useMutation({
+  const mutaionRestoreSize = useMutation({
     mutationFn: async (id: string | number) => {
-      await restoreColor(id);
+      await restoreSize(id);
     },
     onError: () => {
       Swal.fire({
@@ -147,7 +147,7 @@ const Trash = () => {
       });
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["GET_COLORS"] });
+      queryClient.invalidateQueries({ queryKey: ["GET_SIZES"] });
       Swal.fire({
         title: "Restore!",
         text: "Bạn đã khôi phục thành công.",
@@ -156,9 +156,9 @@ const Trash = () => {
     },
   });
   // khôi phục all
-  const mutaionRestoreAllColor = useMutation({
+  const mutaionRestoreAllSize = useMutation({
     mutationFn: async (ids: string[]) => {
-      await restoreAllColor(ids);
+      await restoreAllSize(ids);
     },
     onError: () => {
       Swal.fire({
@@ -168,7 +168,7 @@ const Trash = () => {
       });
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["GET_COLORS"] });
+      queryClient.invalidateQueries({ queryKey: ["GET_SIZES"] });
       Swal.fire({
         title: "Restore!",
         text: "Bạn đã khôi phục thành công.",
@@ -198,7 +198,7 @@ const Trash = () => {
     const elementCheckboxAll = checkboxAll.current as HTMLInputElement;
     const isChecked = elementCheckboxAll.checked;
     const checkboxItems = document.querySelectorAll(
-      ".colorIds"
+      ".sizeIds"
     ) as NodeListOf<Element>;
     checkboxItems.forEach((item) => {
       const checkboxItem = item as HTMLInputElement;
@@ -215,7 +215,7 @@ const Trash = () => {
     const formData = new FormData(
       document.getElementById("myForms") as HTMLFormElement
     );
-    const isChecked = (formData.getAll("colorIds").length > 0) as boolean;
+    const isChecked = (formData.getAll("sizeIds").length > 0) as boolean;
     elementBtnSubmitCheckbox.disabled = !isChecked;
     elementCheckboxAll.checked = isChecked;
   };
@@ -227,7 +227,7 @@ const Trash = () => {
     const formData = new FormData(
       document.getElementById("myForms") as HTMLFormElement
     );
-    const colorIds = formData.getAll("colorIds");
+    const sizeIds = formData.getAll("sizeIds");
     const actionsCheckbox = formData.get("actions-checkbox");
     switch (actionsCheckbox) {
       case "delete-forever":
@@ -241,7 +241,7 @@ const Trash = () => {
           confirmButtonText: "Yes, delete it!",
         }).then((result) => {
           if (result.isConfirmed) {
-            mutaionDeleteAll.mutate(colorIds as string[]);
+            mutaionDeleteAll.mutate(sizeIds as string[]);
             elementCheckboxAll.checked = false;
             elementBtnSubmitCheckbox.disabled = true;
           }
@@ -249,7 +249,7 @@ const Trash = () => {
 
         break;
       case "restore":
-        mutaionRestoreAllColor.mutate(colorIds as string[]);
+        mutaionRestoreAllSize.mutate(sizeIds as string[]);
         elementCheckboxAll.checked = false;
         elementBtnSubmitCheckbox.disabled = true;
         break;
@@ -293,7 +293,7 @@ const Trash = () => {
           <BreadcrumbSeparator />
           <BreadcrumbItem>
             <BreadcrumbLink asChild>
-              <Link to={"/admin/variant/color"}>Màu sắc</Link>
+              <Link to={"/admin/variant/size"}>Size</Link>
             </BreadcrumbLink>
           </BreadcrumbItem>
           <BreadcrumbSeparator />
@@ -305,19 +305,19 @@ const Trash = () => {
       <div className="flex items-center">
         <div className="">
           <h2 className="text-2xl font-semibold leading-none tracking-tight">
-            Màu sắc đã xoá Soft
+            Size đã xoá Soft
           </h2>
           <p className="text-sm text-muted-foreground">
-            Quản lý màu sắc sản phẩm của bạn đã xoá.
+            Quản lý size sản phẩm của bạn đã xoá.
           </p>
         </div>
         <div className="ml-auto flex items-center gap-2">
           <DropdownMenu>
-            <Link to={"/admin/variant/color"}>
+            <Link to={"/admin/variant/size"}>
               <Button variant="outline" size="sm" className="h-8 gap-1">
                 <ListTodo className="h-3.5 w-3.5" />
                 <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
-                  Danh sách màu
+                  Danh sách size
                 </span>
               </Button>
             </Link>
@@ -383,14 +383,14 @@ const Trash = () => {
               Export
             </span>
           </div>
-          {/* Thêm mới màu */}
+          {/* Thêm mới size */}
           <Link
-            to={"/admin/variant/color/add"}
+            to={"/admin/variant/size/add"}
             className="bg-indigo-600 hover:bg-indigo-400 inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50  text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2"
           >
             <PlusCircle className="h-3.5 w-3.5" />{" "}
             <span className="sr-only sm:not-sr-only sm:whitespace-nowrap ">
-              Thêm mới màu
+              Thêm mới size
             </span>{" "}
           </Link>
         </div>
@@ -434,7 +434,7 @@ const Trash = () => {
             <TableHeader>
               <TableRow>
                 <TableHead></TableHead>
-                <TableHead>Tên màu</TableHead>
+                <TableHead>Kích thước size</TableHead>
                 <TableHead>Trạng thái</TableHead>
                 <TableHead className="hidden md:table-cell">Ngày tạo</TableHead>
                 <TableHead className="hidden md:table-cell">
@@ -447,7 +447,7 @@ const Trash = () => {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {listColor.length <= 0 ? (
+              {listSizes.length <= 0 ? (
                 <TableRow>
                   <TableCell colSpan={7} className="text-center text-base">
                     <div className="flex justify-center items-center">
@@ -456,33 +456,33 @@ const Trash = () => {
                   </TableCell>
                 </TableRow>
               ) : (
-                listColor &&
-                listColor?.map((color) => (
-                  <TableRow key={color._id}>
+                listSizes &&
+                listSizes?.map((size) => (
+                  <TableRow key={size._id}>
                     <TableCell>
                       <input
                         type="checkbox"
-                        name="colorIds"
-                        className="colorIds"
-                        value={color._id}
+                        name="sizeIds"
+                        className="sizeIds"
+                        value={size._id}
                         onChange={handleCheckboxItems}
                       />
                     </TableCell>
-                    <TableCell className="font-medium">{color.name}</TableCell>
+                    <TableCell className="font-medium">{size.name}</TableCell>
                     <TableCell>
                       <Badge variant="outline">
                         {" "}
-                        {color.status ? "Active" : "Draft"}
+                        {size.status ? "Active" : "Draft"}
                       </Badge>
                     </TableCell>
                     <TableCell className="hidden md:table-cell">
-                      {moment.utc(color.createdAt).format("YYYY-MM-DD hh:mm A")}
+                      {moment.utc(size.createdAt).format("YYYY-MM-DD hh:mm A")}
                     </TableCell>
                     <TableCell className="hidden md:table-cell">
-                      {moment.utc(color.updatedAt).format("YYYY-MM-DD hh:mm A")}
+                      {moment.utc(size.updatedAt).format("YYYY-MM-DD hh:mm A")}
                     </TableCell>
                     <TableCell className="hidden md:table-cell">
-                      {moment.utc(color.deletedAt).format("YYYY-MM-DD hh:mm A")}
+                      {moment.utc(size.deletedAt).format("YYYY-MM-DD hh:mm A")}
                     </TableCell>
                     <TableCell>
                       <DropdownMenu>
@@ -500,14 +500,14 @@ const Trash = () => {
                           <DropdownMenuLabel>Hành động</DropdownMenuLabel>
                           <DropdownMenuItem
                             onClick={() => {
-                              mutaionRestoreColor.mutate(color._id as string);
+                              mutaionRestoreSize.mutate(size._id as string);
                             }}
                           >
                             Khôi phục
                           </DropdownMenuItem>
                           <DropdownMenuItem
                             onClick={() => {
-                              handleDelete(color._id || 0);
+                              handleDelete(size._id || 0);
                             }}
                           >
                             Xoá vĩnh viễn

@@ -53,8 +53,7 @@ import withReactContent from "sweetalert2-react-content";
 const List = () => {
   const checkboxAll = useRef<HTMLInputElement>(null); // input checkbox (chọn tất cả)
   const btnSubmitAction = useRef<HTMLButtonElement>(null); // input submit action chọn tất cả
-  const elementBtnSubmitCheckbox = btnSubmitAction.current as HTMLButtonElement;
-  const elementCheckboxAll = checkboxAll.current as HTMLInputElement;
+
   //
   const queryClient = useQueryClient();
   const MySwal = withReactContent(Swal); // sweet alert
@@ -142,6 +141,7 @@ const List = () => {
   // muate delete end
   // checkbox all
   const handleCheckboxAll = () => {
+    const elementCheckboxAll = checkboxAll.current as HTMLInputElement;
     const isChecked = elementCheckboxAll.checked;
     const checkboxItems = document.querySelectorAll(
       ".colorIds"
@@ -155,6 +155,9 @@ const List = () => {
     });
   };
   const handleCheckboxItems = () => {
+    const elementBtnSubmitCheckbox =
+      btnSubmitAction.current as HTMLButtonElement;
+    const elementCheckboxAll = checkboxAll.current as HTMLInputElement;
     const formData = new FormData(
       document.getElementById("myForms") as HTMLFormElement
     );
@@ -163,6 +166,9 @@ const List = () => {
     elementCheckboxAll.checked = isChecked;
   };
   const onSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    const elementBtnSubmitCheckbox =
+      btnSubmitAction.current as HTMLButtonElement;
+    const elementCheckboxAll = checkboxAll.current as HTMLInputElement;
     event.preventDefault();
     const formData = new FormData(
       document.getElementById("myForms") as HTMLFormElement
@@ -379,7 +385,7 @@ const List = () => {
             <TableBody>
               {listColor.length <= 0 ? (
                 <TableRow>
-                  <TableCell colSpan={5} className="text-center text-base">
+                  <TableCell colSpan={7} className="text-center text-base">
                     Chưa màu sản phẩm nào.{" "}
                     <Link
                       to={"/admin/variant/color/add"}
@@ -452,7 +458,7 @@ const List = () => {
             </TableBody>
             <TableFooter>
               <TableRow className="bg-white hover:bg-white">
-                <TableCell colSpan={6} className="py-0 pt-2 ">
+                <TableCell colSpan={7} className="py-0 pt-2 ">
                   <MyPagination totalPages={data.totalPages} />
                 </TableCell>
               </TableRow>

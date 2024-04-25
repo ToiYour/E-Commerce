@@ -1,5 +1,4 @@
 import express from "express";
-import Color from "../models/products/color.js";
 import ColorValid from "../middleware/color.js";
 import {
   createColor,
