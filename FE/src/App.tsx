@@ -1,10 +1,8 @@
 import { createBrowserRouter } from "react-router-dom";
 import { ListProducts } from "./admin/components/products";
-import { AddColor, ListColor } from "./admin/components/variants/colors";
-import Update from "./admin/components/variants/colors/Update";
 import LayoutAdmin from "./admin/LayoutAdmin";
 import NotFound from "./NotFound";
-import Trash from "./admin/components/variants/colors/Trash";
+import { RouterColors, RouterSizes } from "./routes";
 
 const router = createBrowserRouter([
   {
@@ -15,24 +13,10 @@ const router = createBrowserRouter([
         path: "",
         element: <ListProducts />,
       },
-      // variant/color
-      {
-        path: "variant/color",
-        element: <ListColor />,
-      },
-      {
-        path: "variant/color/add",
-        element: <AddColor />,
-      },
-      {
-        path: "variant/color/update/:id",
-        element: <Update />,
-      },
-      {
-        path: "variant/color/trash",
-        element: <Trash />,
-      },
-      // variant/color   end
+      // Quản lý màu variant/color
+      ...RouterColors,
+      // Quản lý size variant/size
+      ...RouterSizes,
       {
         path: "*",
         element: <NotFound href="/admin" />,

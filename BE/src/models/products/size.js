@@ -17,4 +17,4 @@ SizeShema.plugin(MongoosePaginate),
     overrideMethods: ["delete"],
   });
 SizeShema.plugin(MongooseDelete, { deletedBy: true });
-export default mongoose.model("Color", SizeShema);
+export default mongoose.model("Size", SizeShema);

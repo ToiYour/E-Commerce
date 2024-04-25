@@ -56,8 +56,7 @@ import withReactContent from "sweetalert2-react-content";
 const Trash = () => {
   const checkboxAll = useRef<HTMLInputElement>(null); // input checkbox (chọn tất cả)
   const btnSubmitAction = useRef<HTMLButtonElement>(null); // input submit action chọn tất cả
-  const elementBtnSubmitCheckbox = btnSubmitAction.current as HTMLButtonElement;
-  const elementCheckboxAll = checkboxAll.current as HTMLInputElement;
+
   //
   const queryClient = useQueryClient();
   const MySwal = withReactContent(Swal); // sweet alert
@@ -195,6 +194,7 @@ const Trash = () => {
   // muate delete end
   // checkbox all
   const handleCheckboxAll = () => {
+    const elementCheckboxAll = checkboxAll.current as HTMLInputElement;
     const isChecked = elementCheckboxAll.checked;
     const checkboxItems = document.querySelectorAll(
       ".colorIds"
@@ -208,6 +208,9 @@ const Trash = () => {
     });
   };
   const handleCheckboxItems = () => {
+    const elementBtnSubmitCheckbox =
+      btnSubmitAction.current as HTMLButtonElement;
+    const elementCheckboxAll = checkboxAll.current as HTMLInputElement;
     const formData = new FormData(
       document.getElementById("myForms") as HTMLFormElement
     );
@@ -217,6 +220,9 @@ const Trash = () => {
   };
   const onSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    const elementBtnSubmitCheckbox =
+      btnSubmitAction.current as HTMLButtonElement;
+    const elementCheckboxAll = checkboxAll.current as HTMLInputElement;
     const formData = new FormData(
       document.getElementById("myForms") as HTMLFormElement
     );
