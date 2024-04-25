@@ -389,7 +389,7 @@ const List = () => {
             <TableBody>
               {listSizes.length <= 0 ? (
                 <TableRow>
-                  <TableCell colSpan={5} className="text-center text-base">
+                  <TableCell colSpan={7} className="text-center text-base">
                     Chưa màu sản phẩm nào.{" "}
                     <Link
                       to={"/admin/variant/size/add"}
@@ -460,7 +460,7 @@ const List = () => {
             </TableBody>
             <TableFooter>
               <TableRow className="bg-white hover:bg-white">
-                <TableCell colSpan={6} className="py-0 pt-2 ">
+                <TableCell colSpan={7} className="py-0 pt-2 ">
                   <MyPagination totalPages={data.totalPages} />
                 </TableCell>
               </TableRow>

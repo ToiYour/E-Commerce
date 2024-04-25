@@ -46,6 +46,7 @@ import {
   ListTodo,
   MoreHorizontal,
   PlusCircle,
+  Trash2Icon,
 } from "lucide-react";
 import moment from "moment";
 import { useRef } from "react";
@@ -448,14 +449,10 @@ const Trash = () => {
             <TableBody>
               {listColor.length <= 0 ? (
                 <TableRow>
-                  <TableCell colSpan={5} className="text-center text-base">
-                    Chưa màu sản phẩm nào.{" "}
-                    <Link
-                      to={"/admin/variant/color/add"}
-                      className="text-sky-700 underline font-semibold "
-                    >
-                      Thêm màu
-                    </Link>
+                  <TableCell colSpan={7} className="text-center text-base">
+                    <div className="flex justify-center items-center">
+                      <Trash2Icon size={16} /> Thùng rác trống
+                    </div>
                   </TableCell>
                 </TableRow>
               ) : (
@@ -524,7 +521,7 @@ const Trash = () => {
             </TableBody>
             <TableFooter>
               <TableRow className="bg-white hover:bg-white">
-                <TableCell colSpan={6} className="py-0 pt-2 ">
+                <TableCell colSpan={7} className="py-0 pt-2 ">
                   <MyPagination totalPages={data.totalPages} />
                 </TableCell>
               </TableRow>

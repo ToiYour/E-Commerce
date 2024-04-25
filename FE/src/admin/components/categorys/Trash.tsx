@@ -1,10 +1,10 @@
 import {
-  deleteAllSize,
-  deleteSize,
-  getAllSizeSoft,
-  restoreAllSize,
-  restoreSize,
-} from "@/api/variants/size";
+  deleteAllCategory,
+  deleteCategory,
+  getAllCategorySoft,
+  restoreAllCategory,
+  restoreCategory,
+} from "@/api/categorys";
 
 import Loading from "@/components/Loading";
 import MyPagination from "@/components/MyPagination";
@@ -37,7 +37,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { IColor } from "@/interfaces/color";
+import { ICategory } from "@/interfaces/category";
 import { handleDownloadExcel } from "@/lib/utils";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
@@ -66,15 +66,15 @@ const Trash = () => {
   const order = searchParams.get("order") ?? "all";
   const sortBy = searchParams.get("page") || "";
   const { data, isLoading } = useQuery({
-    queryKey: ["GET_SIZES", page, order, sortBy],
+    queryKey: ["GET_CATEGORYS", page, order, sortBy],
     queryFn: async () => {
-      const { data } = await getAllSizeSoft(location.search);
+      const { data } = await getAllCategorySoft(location.search);
       return data.data;
     },
   }); // get api  all  colors
   const handleExportExcel = () => {
     const header = [
-      "Kích thước size",
+      "Danh mục",
       "Trạng thái",
       "Ngày tạo",
       "Ngày cập nhập",
@@ -82,20 +82,20 @@ const Trash = () => {
     ];
     const body =
       data &&
-      data?.docs.map((item: IColor) => [
+      data?.docs.map((item: ICategory) => [
         `${item.name}`,
         `${item.status ? "Active" : "Draft"}`,
         `${item.createdAt}`,
         `${item.updatedAt}`,
         `${item.deletedAt}`,
       ]);
-    handleDownloadExcel(header, body, "table-sizes", "Size");
+    handleDownloadExcel(header, body, "table-categorys", "Category");
   };
-  const listSizes = data?.docs as IColor[]; // data get all colors
+  const listCategorys = data?.docs as ICategory[]; // data get all colors
   // muate xoá vĩnh viễn one
   const mutaionDeleteSort = useMutation({
     mutationFn: async (id: string | number) => {
-      await deleteSize(id);
+      await deleteCategory(id);
     },
     onError: () => {
       Swal.fire({
@@ -105,7 +105,7 @@ const Trash = () => {
       });
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["GET_SIZES"] });
+      queryClient.invalidateQueries({ queryKey: ["GET_CATEGORYS"] });
       Swal.fire({
         title: "Deleted!",
         text: "Bạn đã xoá thành công.",
@@ -115,8 +115,8 @@ const Trash = () => {
   });
   // muate xoá vĩnh viễn all
   const mutaionDeleteAll = useMutation({
-    mutationFn: async (sizeIds: string[]) => {
-      await deleteAllSize(sizeIds);
+    mutationFn: async (categoryIds: string[]) => {
+      await deleteAllCategory(categoryIds);
     },
     onError: () => {
       Swal.fire({
@@ -126,7 +126,7 @@ const Trash = () => {
       });
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["GET_SIZES"] });
+      queryClient.invalidateQueries({ queryKey: ["GET_CATEGORYS"] });
       Swal.fire({
         title: "Deleted!",
         text: "Bạn đã xoá thành công.",
@@ -137,7 +137,7 @@ const Trash = () => {
   // khôi phục one
   const mutaionRestoreSize = useMutation({
     mutationFn: async (id: string | number) => {
-      await restoreSize(id);
+      await restoreCategory(id);
     },
     onError: () => {
       Swal.fire({
@@ -147,7 +147,7 @@ const Trash = () => {
       });
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["GET_SIZES"] });
+      queryClient.invalidateQueries({ queryKey: ["GET_CATEGORYS"] });
       Swal.fire({
         title: "Restore!",
         text: "Bạn đã khôi phục thành công.",
@@ -158,7 +158,7 @@ const Trash = () => {
   // khôi phục all
   const mutaionRestoreAllSize = useMutation({
     mutationFn: async (ids: string[]) => {
-      await restoreAllSize(ids);
+      await restoreAllCategory(ids);
     },
     onError: () => {
       Swal.fire({
@@ -168,7 +168,7 @@ const Trash = () => {
       });
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["GET_SIZES"] });
+      queryClient.invalidateQueries({ queryKey: ["GET_CATEGORYS"] });
       Swal.fire({
         title: "Restore!",
         text: "Bạn đã khôi phục thành công.",
@@ -198,7 +198,7 @@ const Trash = () => {
     const elementCheckboxAll = checkboxAll.current as HTMLInputElement;
     const isChecked = elementCheckboxAll.checked;
     const checkboxItems = document.querySelectorAll(
-      ".sizeIds"
+      ".categoryIds"
     ) as NodeListOf<Element>;
     checkboxItems.forEach((item) => {
       const checkboxItem = item as HTMLInputElement;
@@ -215,7 +215,7 @@ const Trash = () => {
     const formData = new FormData(
       document.getElementById("myForms") as HTMLFormElement
     );
-    const isChecked = (formData.getAll("sizeIds").length > 0) as boolean;
+    const isChecked = (formData.getAll("categoryIds").length > 0) as boolean;
     elementBtnSubmitCheckbox.disabled = !isChecked;
     elementCheckboxAll.checked = isChecked;
   };
@@ -227,7 +227,7 @@ const Trash = () => {
     const formData = new FormData(
       document.getElementById("myForms") as HTMLFormElement
     );
-    const sizeIds = formData.getAll("sizeIds");
+    const categoryIds = formData.getAll("categoryIds");
     const actionsCheckbox = formData.get("actions-checkbox");
     switch (actionsCheckbox) {
       case "delete-forever":
@@ -241,7 +241,7 @@ const Trash = () => {
           confirmButtonText: "Yes, delete it!",
         }).then((result) => {
           if (result.isConfirmed) {
-            mutaionDeleteAll.mutate(sizeIds as string[]);
+            mutaionDeleteAll.mutate(categoryIds as string[]);
             elementCheckboxAll.checked = false;
             elementBtnSubmitCheckbox.disabled = true;
           }
@@ -249,7 +249,7 @@ const Trash = () => {
 
         break;
       case "restore":
-        mutaionRestoreAllSize.mutate(sizeIds as string[]);
+        mutaionRestoreAllSize.mutate(categoryIds as string[]);
         elementCheckboxAll.checked = false;
         elementBtnSubmitCheckbox.disabled = true;
         break;
@@ -287,13 +287,7 @@ const Trash = () => {
           <BreadcrumbSeparator />
           <BreadcrumbItem>
             <BreadcrumbLink asChild>
-              <Link to={"/admin/variant/color"}>Màu sắc & Size</Link>
-            </BreadcrumbLink>
-          </BreadcrumbItem>
-          <BreadcrumbSeparator />
-          <BreadcrumbItem>
-            <BreadcrumbLink asChild>
-              <Link to={"/admin/variant/size"}>Size</Link>
+              <Link to={"/admin/category"}>Danh mục</Link>
             </BreadcrumbLink>
           </BreadcrumbItem>
           <BreadcrumbSeparator />
@@ -305,19 +299,19 @@ const Trash = () => {
       <div className="flex items-center">
         <div className="">
           <h2 className="text-2xl font-semibold leading-none tracking-tight">
-            Size đã xoá Soft
+            Danh mục đã xoá Soft
           </h2>
           <p className="text-sm text-muted-foreground">
-            Quản lý size sản phẩm của bạn đã xoá.
+            Quản lý danh mục sản phẩm của bạn đã xoá.
           </p>
         </div>
         <div className="ml-auto flex items-center gap-2">
           <DropdownMenu>
-            <Link to={"/admin/variant/size"}>
+            <Link to={"/admin/category"}>
               <Button variant="outline" size="sm" className="h-8 gap-1">
                 <ListTodo className="h-3.5 w-3.5" />
                 <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
-                  Danh sách size
+                  Danh sách danh mục
                 </span>
               </Button>
             </Link>
@@ -385,12 +379,12 @@ const Trash = () => {
           </div>
           {/* Thêm mới size */}
           <Link
-            to={"/admin/variant/size/add"}
+            to={"/admin/category"}
             className="bg-indigo-600 hover:bg-indigo-400 inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50  text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2"
           >
             <PlusCircle className="h-3.5 w-3.5" />{" "}
             <span className="sr-only sm:not-sr-only sm:whitespace-nowrap ">
-              Thêm mới size
+              Thêm mới danh mục
             </span>{" "}
           </Link>
         </div>
@@ -434,7 +428,7 @@ const Trash = () => {
             <TableHeader>
               <TableRow>
                 <TableHead></TableHead>
-                <TableHead>Kích thước size</TableHead>
+                <TableHead>Danh mục</TableHead>
                 <TableHead>Trạng thái</TableHead>
                 <TableHead className="hidden md:table-cell">Ngày tạo</TableHead>
                 <TableHead className="hidden md:table-cell">
@@ -447,7 +441,7 @@ const Trash = () => {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {listSizes.length <= 0 ? (
+              {listCategorys.length <= 0 ? (
                 <TableRow>
                   <TableCell colSpan={7} className="text-center text-base">
                     <div className="flex justify-center items-center">
@@ -456,33 +450,33 @@ const Trash = () => {
                   </TableCell>
                 </TableRow>
               ) : (
-                listSizes &&
-                listSizes?.map((size) => (
-                  <TableRow key={size._id}>
+                listCategorys &&
+                listCategorys?.map((color) => (
+                  <TableRow key={color._id}>
                     <TableCell>
                       <input
                         type="checkbox"
-                        name="sizeIds"
-                        className="sizeIds"
-                        value={size._id}
+                        name="categoryIds"
+                        className="categoryIds"
+                        value={color._id}
                         onChange={handleCheckboxItems}
                       />
                     </TableCell>
-                    <TableCell className="font-medium">{size.name}</TableCell>
+                    <TableCell className="font-medium">{color.name}</TableCell>
                     <TableCell>
                       <Badge variant="outline">
                         {" "}
-                        {size.status ? "Active" : "Draft"}
+                        {color.status ? "Active" : "Draft"}
                       </Badge>
                     </TableCell>
                     <TableCell className="hidden md:table-cell">
-                      {moment.utc(size.createdAt).format("YYYY-MM-DD hh:mm A")}
+                      {moment.utc(color.createdAt).format("YYYY-MM-DD hh:mm A")}
                     </TableCell>
                     <TableCell className="hidden md:table-cell">
-                      {moment.utc(size.updatedAt).format("YYYY-MM-DD hh:mm A")}
+                      {moment.utc(color.updatedAt).format("YYYY-MM-DD hh:mm A")}
                     </TableCell>
                     <TableCell className="hidden md:table-cell">
-                      {moment.utc(size.deletedAt).format("YYYY-MM-DD hh:mm A")}
+                      {moment.utc(color.deletedAt).format("YYYY-MM-DD hh:mm A")}
                     </TableCell>
                     <TableCell>
                       <DropdownMenu>
@@ -500,14 +494,14 @@ const Trash = () => {
                           <DropdownMenuLabel>Hành động</DropdownMenuLabel>
                           <DropdownMenuItem
                             onClick={() => {
-                              mutaionRestoreSize.mutate(size._id as string);
+                              mutaionRestoreSize.mutate(color._id as string);
                             }}
                           >
                             Khôi phục
                           </DropdownMenuItem>
                           <DropdownMenuItem
                             onClick={() => {
-                              handleDelete(size._id || 0);
+                              handleDelete(color._id || 0);
                             }}
                           >
                             Xoá vĩnh viễn

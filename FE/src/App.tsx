@@ -2,7 +2,7 @@ import { createBrowserRouter } from "react-router-dom";
 import { ListProducts } from "./admin/components/products";
 import LayoutAdmin from "./admin/LayoutAdmin";
 import NotFound from "./NotFound";
-import { RouterColors, RouterSizes } from "./routes";
+import { RouterCategory, RouterColors, RouterSizes } from "./routes";
 
 const router = createBrowserRouter([
   {
@@ -17,6 +17,8 @@ const router = createBrowserRouter([
       ...RouterColors,
       // Quản lý size variant/size
       ...RouterSizes,
+      //Quản lý danh mục
+      ...RouterCategory,
       {
         path: "*",
         element: <NotFound href="/admin" />,
