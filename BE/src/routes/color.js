@@ -9,11 +9,13 @@ import {
   getAllNotSoftColors,
   getAllSoftColors,
   getByIdColor,
+  getComboboxColors,
   restoreAllColors,
   restoreByIdColor,
   updateColor,
 } from "../controllers/color.js";
 const router = express.Router();
+router.get("/combobox", getComboboxColors);
 router.post("/", ColorValid, createColor); // Api tạo mới color
 router.put("/:id", ColorValid, updateColor); // Api cập nhập color
 router.put("/restore/all", restoreAllColors); //Api Khôi phục all colors

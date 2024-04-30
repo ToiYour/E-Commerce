@@ -166,3 +166,17 @@ export const deleteForeverAllColors = async (req, res) => {
     return res.status(500).send({ messages: "Lỗi server" });
   }
 };
+export const getComboboxColors = async (req, res) => {
+  try {
+    const data = await Color.find({
+      status: true,
+      $or: [{ deleted: false }, { deleted: { $exists: false } }],
+    });
+    if (!data) {
+      return res.status(500).send({ messages: "Get data thất bại" });
+    }
+    return res.send({ message: "Get data thành công", data });
+  } catch (error) {
+    return res.status(500).send({ messages: "Lỗi server" });
+  }
+};

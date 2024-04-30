@@ -9,11 +9,13 @@ import {
   getAllNotSoftSizes,
   getAllSoftSizes,
   getByIdSize,
+  getComboboxSizes,
   restoreAllSizes,
   restoreByIdSize,
   updateSize,
 } from "../controllers/size.js";
 const router = express.Router();
+router.get("/combobox", getComboboxSizes);
 router.post("/", SizeValid, createSize); // Api tạo mới Size
 router.put("/:id", SizeValid, updateSize); // Api cập nhập Size
 router.put("/restore/all", restoreAllSizes); //Api Khôi phục all Sizes

@@ -9,11 +9,13 @@ import {
   getAllNotSoftCategorys,
   getAllSoftCategorys,
   getByIdCategory,
+  getComboboxCategory,
   restoreAllCategorys,
   restoreByIdCategory,
   updateCategory,
 } from "../controllers/category.js";
 const router = express.Router();
+router.get("/combobox", getComboboxCategory);
 router.post("/", CategoryValid, createCategory); // Api tạo mới Category
 router.put("/:id", CategoryValid, updateCategory); // Api cập nhập Category
 router.put("/restore/all", restoreAllCategorys); //Api Khôi phục all Categorys

@@ -50,3 +50,8 @@ export const deleteAllSize = (SizeIds: string[]) => {
   const uri = "/size/delete-forever";
   return instance.post(uri, SizeIds);
 };
+// Colors Combobox
+export const getComboboxSizes = () => {
+  const uri = "/size/combobox";
+  return instance.get(uri);
+};
