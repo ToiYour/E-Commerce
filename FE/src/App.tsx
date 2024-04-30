@@ -2,7 +2,12 @@ import { createBrowserRouter } from "react-router-dom";
 import { ListProducts } from "./admin/components/products";
 import LayoutAdmin from "./admin/LayoutAdmin";
 import NotFound from "./NotFound";
-import { RouterCategory, RouterColors, RouterSizes } from "./routes";
+import {
+  RouterCategory,
+  RouterColors,
+  RouterProducts,
+  RouterSizes,
+} from "./routes";
 
 const router = createBrowserRouter([
   {
@@ -13,6 +18,8 @@ const router = createBrowserRouter([
         path: "",
         element: <ListProducts />,
       },
+      //Quản lý sản phẩm
+      ...RouterProducts,
       // Quản lý màu variant/color
       ...RouterColors,
       // Quản lý size variant/size

@@ -11,7 +11,10 @@ const CategoryJoi = joi.object({
 });
 const CategoryValid = (req, res, next) => {
   const { name, status } = req.body;
-  const { error } = CategoryJoi.validate({ name, status });
+  const { error } = CategoryJoi.validate(
+    { name, status },
+    { abortEarly: false }
+  );
   if (error) {
     const listErrors = error.details.map((err) => err.message);
     return res.status(400).send({ messages: listErrors });

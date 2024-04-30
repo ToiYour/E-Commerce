@@ -11,7 +11,7 @@ const ColorJoi = joi.object({
 });
 const ColorValid = (req, res, next) => {
   const { name, status } = req.body;
-  const { error } = ColorJoi.validate({ name, status });
+  const { error } = ColorJoi.validate({ name, status }, { abortEarly: false });
   if (error) {
     const listErrors = error.details.map((err) => err.message);
     return res.status(400).send({ messages: listErrors });

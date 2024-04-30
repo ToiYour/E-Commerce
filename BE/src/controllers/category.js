@@ -171,3 +171,14 @@ export const deleteForeverAllCategorys = async (req, res) => {
     return res.status(500).send({ messages: "Lỗi server" });
   }
 };
+export const getComboboxCategory = async (req, res) => {
+  try {
+    const data = await Category.find({ status: true });
+    if (!data) {
+      return res.status(500).send({ messages: "Get data thất bại" });
+    }
+    return res.send({ message: "Get data thành công", data });
+  } catch (error) {
+    return res.status(500).send({ messages: "Lỗi server" });
+  }
+};

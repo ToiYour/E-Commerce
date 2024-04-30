@@ -50,3 +50,8 @@ export const deleteAllCategory = (CategoryIds: string[]) => {
   const uri = "/category/delete-forever";
   return instance.post(uri, CategoryIds);
 };
+// Colors Combobox
+export const getComboboxCategory = () => {
+  const uri = "/category/combobox";
+  return instance.get(uri);
+};
