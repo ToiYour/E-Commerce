@@ -5,6 +5,7 @@ import NotFound from "./NotFound";
 import {
   RouterCategory,
   RouterColors,
+  RouterCustomer,
   RouterProducts,
   RouterSizes,
 } from "./routes";
@@ -26,6 +27,8 @@ const router = createBrowserRouter([
       ...RouterSizes,
       //Quản lý danh mục
       ...RouterCategory,
+      // Quản lý khách hàng
+      ...RouterCustomer,
       {
         path: "*",
         element: <NotFound href="/admin" />,
