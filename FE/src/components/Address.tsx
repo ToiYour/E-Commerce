@@ -1,11 +1,24 @@
 import { getCommune, getDistrict, getProvince } from "@/api/address";
 import { ICommune, IDistrict, IProvince } from "@/interfaces/address";
+import { ICustomer } from "@/interfaces/customer";
 import { RotateCw } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
-import { FieldValues, UseFormRegister } from "react-hook-form";
-const Address = ({ register }: { register: UseFormRegister<FieldValues> }) => {
-  const provinceRef = useRef(null);
-  const districtRef = useRef(null);
+import { useEffect, useState } from "react";
+import { FieldErrors, FieldValues, UseFormRegister } from "react-hook-form";
+const Address = ({
+  register,
+  errors,
+  checkNul = false,
+  address,
+}: {
+  checkNul?: boolean;
+  register: UseFormRegister<FieldValues>;
+  errors?: FieldErrors<ICustomer>;
+  address?: {
+    provinceName?: string;
+    districtsName?: string;
+    CoummuneName?: string;
+  };
+}) => {
   const [provinces, setProvince] = useState<IProvince[]>([]);
   const [districts, setDistrict] = useState<IDistrict[]>([]);
   const [communes, setCommune] = useState<ICommune[]>([]);
@@ -15,6 +28,18 @@ const Address = ({ register }: { register: UseFormRegister<FieldValues> }) => {
       setProvince(data);
     })();
   }, []);
+  useEffect(() => {
+    const selectProvince = document.querySelector(
+      ".address-province"
+    ) as HTMLSelectElement;
+    for (let index = 0; index < selectProvince.options.length; index++) {
+      if (selectProvince.options[index].value == address?.provinceName) {
+        selectProvince.options[index].selected = true;
+        break;
+      }
+    }
+  }, [provinces]);
+
   const makeProvince: React.ChangeEventHandler<HTMLSelectElement> = async (
     e
   ) => {
@@ -31,28 +56,6 @@ const Address = ({ register }: { register: UseFormRegister<FieldValues> }) => {
     const { data } = await getCommune(idDistrict);
     setCommune(data);
   };
-  //   return (
-  //     <>
-  //       <select {...register("address.province")} className="col-span-2">
-  //         <option value="" hidden>
-  //           --Chọn tỉnh thành--
-  //         </option>
-  //         <option value="Thành phố Hà Nội">Thành phố Hà Nội</option>
-  //       </select>
-  //       <select {...register("address.district")} className="col-span-2">
-  //         <option value="" hidden>
-  //           --Chọn quận huyện--
-  //         </option>
-  //         <option value="Quận Ba Đình">Quận Ba Đình</option>
-  //       </select>
-  //       <select {...register("address.commune")} className="col-span-2">
-  //         <option value="" hidden>
-  //           --Chọn phường xã--
-  //         </option>
-  //         <option value="Phường Kim Mã">Phường Kim Mã</option>
-  //       </select>
-  //     </>
-  //   );
   return (
     <>
       <div className="col-span-6 sm:col-span-2">
@@ -61,20 +64,20 @@ const Address = ({ register }: { register: UseFormRegister<FieldValues> }) => {
         </label>
         <div className="relative">
           <select
-            {...register("address.province")}
-            // ref={provinceRef}
-            // onChange={makeProvince}
-            className="mt-1.5 w-full rounded border p-1 border-gray-300 text-gray-700 sm:text-sm"
+            {...register("address.province", {
+              ...(checkNul && { required: "Vui lòng nhập tỉnh thành" }),
+            })}
+            onChange={makeProvince}
+            className="address-province mt-1.5 w-full rounded border p-1 border-gray-300 text-gray-700 sm:text-sm"
           >
             <option value="" hidden>
               --Chọn tỉnh thành--
             </option>
-            <option value="Thành phố Hà Nội">Thành phố Hà Nội</option>
-            {/* {provinces?.map((p) => (
+            {provinces?.map((p) => (
               <option key={p.idProvince} value={p.name} data-id={p.idProvince}>
                 {p.name}
               </option>
-            ))} */}
+            ))}
           </select>
           <div
             className={`${
@@ -84,6 +87,9 @@ const Address = ({ register }: { register: UseFormRegister<FieldValues> }) => {
             <RotateCw className="animate-spin " size={16} color={"#ccc"} />
           </div>
         </div>
+        {errors?.address?.province && (
+          <p className="text-red-500">{errors?.address?.province?.message}</p>
+        )}
       </div>
       <div className="col-span-6 sm:col-span-2">
         <label htmlFor="" className="block text-sm font-medium text-gray-700">
@@ -92,19 +98,17 @@ const Address = ({ register }: { register: UseFormRegister<FieldValues> }) => {
         <div className="relative">
           <select
             {...register("address.district")}
-            // ref={districtRef}
-            // onChange={makeDistrict}
-            className="mt-1.5 w-full rounded border p-1 border-gray-300 text-gray-700 sm:text-sm"
+            onChange={makeDistrict}
+            className="address-district mt-1.5 w-full rounded border p-1 border-gray-300 text-gray-700 sm:text-sm"
           >
             <option value="" hidden>
               --Chọn quận huyện--
             </option>
-            <option value="Quận Ba Đình">Quận Ba Đình</option>
-            {/* {districts?.map((d) => (
+            {districts?.map((d) => (
               <option key={d.idDistrict} value={d.name} data-id={d.idDistrict}>
                 {d.name}
               </option>
-            ))} */}
+            ))}
           </select>
           <div
             className={`${
@@ -122,17 +126,16 @@ const Address = ({ register }: { register: UseFormRegister<FieldValues> }) => {
         <div className="relative">
           <select
             {...register("address.commune")}
-            className="mt-1.5 w-full rounded border p-1 border-gray-300 text-gray-700 sm:text-sm"
+            className="address-commune mt-1.5 w-full rounded border p-1 border-gray-300 text-gray-700 sm:text-sm"
           >
             <option value="" hidden>
               --Chọn phường xã--
             </option>
-            <option value="Phường Kim Mã">Phường Kim Mã</option>
-            {/* {communes?.map((c) => (
+            {communes?.map((c) => (
               <option key={c.idCommune} value={c.name} data-id={c.idCommune}>
                 {c.name}
               </option>
-            ))} */}
+            ))}
           </select>
           <div
             className={`${

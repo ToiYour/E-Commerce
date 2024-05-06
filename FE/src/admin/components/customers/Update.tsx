@@ -1,4 +1,4 @@
-import { createCustomer } from "@/api/customer";
+import { updateCustomer } from "@/api/customer";
 import Address from "@/components/Address";
 import ButtonLoading from "@/components/ButtonLoading";
 import {
@@ -16,20 +16,24 @@ import { AxiosError } from "axios";
 import { ImageUp } from "lucide-react";
 import { useRef, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLoaderData, useParams } from "react-router-dom";
 import { Flip, toast } from "react-toastify";
-const Add = () => {
-  const navigate = useNavigate();
+const Update = () => {
+  const { id } = useParams();
+  const prevCustomer = useLoaderData() as ICustomer;
   const avartarRef = useRef<HTMLImageElement>(null);
   const [isLoadSubmit, setIsLoadSubmit] = useState(false);
   const {
     register,
     handleSubmit,
+
     formState: { errors },
   } = useForm<ICustomer>({
-    defaultValues: { role: "Khách hàng", account_status: true },
+    defaultValues: prevCustomer,
   });
   const onSubmit: SubmitHandler<ICustomer> = async (newData: ICustomer) => {
+    console.log(newData);
+
     setIsLoadSubmit(true);
     await mutationCustomer.mutate(newData);
   };
@@ -38,17 +42,15 @@ const Add = () => {
       if (newData.avatar?.[0]) {
         const linkImage = await upLoadFileOne(newData.avatar?.[0] as File);
         newData.avatar = linkImage;
-        await createCustomer(newData);
+        await updateCustomer(id as string, newData);
       } else {
-        newData.avatar =
-          "https://res.cloudinary.com/dlzhmxsqp/image/upload/v1714487885/e_commerce/rusrdthu5p2odgh3sfii.png";
-        await createCustomer(newData);
+        await updateCustomer(id as string, newData);
       }
     },
     onError: (error) => {
       setIsLoadSubmit(false);
       const axiosError = error as AxiosError;
-      toast.error("Có lỗi khi thêm mới khách hàng!", {
+      toast.error("Có lỗi khi cập nhập khách hàng!", {
         position: "top-right",
         autoClose: 2000,
         hideProgressBar: false,
@@ -74,7 +76,7 @@ const Add = () => {
     },
     onSuccess: () => {
       setIsLoadSubmit(false);
-      toast.success("Thêm mới khách hàng thành công!", {
+      toast.success("Cập nhập khách hàng thành công!", {
         position: "top-right",
         autoClose: 2000,
         hideProgressBar: false,
@@ -85,7 +87,6 @@ const Add = () => {
         theme: "light",
         transition: Flip,
       });
-      navigate("/admin/customers");
     },
   });
   const handleImageUp: React.ChangeEventHandler<HTMLInputElement> = (e) => {
@@ -117,7 +118,7 @@ const Add = () => {
           </BreadcrumbItem>
           <BreadcrumbSeparator />
           <BreadcrumbItem>
-            <BreadcrumbPage>Thêm mới</BreadcrumbPage>
+            <BreadcrumbPage>Cập nhập</BreadcrumbPage>
           </BreadcrumbItem>
         </BreadcrumbList>
       </Breadcrumb>
@@ -129,7 +130,7 @@ const Add = () => {
           <div className="rounded-md border border-gray-100 bg-white p-4 shadow-md space-y-5">
             <img
               ref={avartarRef}
-              src="/images/no-avartar.jpg "
+              src={prevCustomer.avatar as string}
               alt=""
               className="size-20 mx-auto rounded-full object-cover"
             />
@@ -263,7 +264,7 @@ const Add = () => {
                 {...register("user_name", {
                   required: "Tên đăng nhập không được bỏ trống",
                 })}
-                type="user_name"
+                type="text"
                 id="user_name"
                 className="mt-1 w-full p-1  rounded border border-gray-200 bg-white text-sm text-gray-700 shadow-sm"
               />
@@ -271,13 +272,13 @@ const Add = () => {
                 <p className="text-red-500">{errors.user_name.message}</p>
               )}
             </div>
-            <div className="col-span-6 sm:col-span-3">
+            {/* <div className="col-span-6 sm:col-span-3">
               <label
                 htmlFor="Password"
                 className="block text-sm font-medium text-gray-700"
               >
                 {" "}
-                Mật khẩu{" "}
+                Mật khẩu đã mã hoá{" "}
               </label>
               <input
                 {...register("password", {
@@ -294,7 +295,7 @@ const Add = () => {
               {errors.password && (
                 <p className="text-red-500">{errors.password.message}</p>
               )}
-            </div>
+            </div> */}
 
             <div className="col-span-6 sm:col-span-3">
               <label
@@ -326,20 +327,59 @@ const Add = () => {
               </label>
 
               <select
-                {...register("account_status", {
-                  required: "Vui lòng chọn trạng thái",
-                })}
+                {...register("account_status")}
                 className="mt-1 w-full p-1  rounded border border-gray-200 bg-white text-sm text-gray-700 shadow-sm"
               >
                 <option value="false">Kích Hoạt</option>
                 <option value="true">Khoá</option>
               </select>
-              {errors.account_status && (
-                <p className="text-red-500">{errors.account_status.message}</p>
-              )}
             </div>
             {/*  */}
-            <Address register={register} errors={errors} />
+            {/* <div className="col-span-6 sm:col-span-3">
+              <label
+                htmlFor=""
+                className="block text-sm font-medium text-gray-700"
+              >
+                Tỉnh thành
+              </label>
+              <input
+                {...register("address.province")}
+                type="text"
+                className="mt-1 w-full p-1 rounded border border-gray-200 bg-white text-sm text-gray-700 shadow-sm"
+              />
+            </div>
+            <div className="col-span-6 sm:col-span-3">
+              <label
+                htmlFor=""
+                className="block text-sm font-medium text-gray-700"
+              >
+                Quận huyện
+              </label>
+              <input
+                {...register("address.district")}
+                type="text"
+                className="mt-1 w-full p-1 rounded border border-gray-200 bg-white text-sm text-gray-700 shadow-sm"
+              />
+            </div>
+            <div className="col-span-6 sm:col-span-3">
+              <label
+                htmlFor=""
+                className="block text-sm font-medium text-gray-700"
+              >
+                Phường Xã
+              </label>
+              <input
+                {...register("address.commune")}
+                type="text"
+                className="mt-1 w-full p-1 rounded border border-gray-200 bg-white text-sm text-gray-700 shadow-sm"
+              />
+            </div> */}
+            <Address
+              register={register}
+              errors={errors}
+              address={{ provinceName: prevCustomer.address?.province }}
+            />
+            {/*  */}
             <div className="col-span-6">
               <label
                 htmlFor="PasswordConfirmation"
@@ -357,7 +397,7 @@ const Add = () => {
                 disabled={isLoadSubmit}
                 className="inline-block shrink-0 rounded-md border border-blue-600 bg-blue-600 px-12 py-3 text-sm font-medium text-white transition hover:bg-transparent hover:text-blue-600 focus:outline-none focus:ring active:text-blue-500"
               >
-                {isLoadSubmit ? <ButtonLoading /> : "Tạo mới khách hàng"}
+                {isLoadSubmit ? <ButtonLoading /> : "Cập nhập"}
               </button>
             </div>
           </div>
@@ -367,4 +407,4 @@ const Add = () => {
   );
 };
 
-export default Add;
+export default Update;

@@ -9,8 +9,28 @@ import {
   RouterProducts,
   RouterSizes,
 } from "./routes";
+import LayoutHome from "./pages/LayoutHome";
+import HomePage from "./pages/HomePage";
 
 const router = createBrowserRouter([
+  {
+    path: "",
+    element: <LayoutHome />,
+    children: [
+      {
+        path: "",
+        element: <HomePage />,
+      },
+      {
+        path: "shop",
+        element: <h1>Shop</h1>,
+      },
+      {
+        path: "*",
+        element: <h1>Tơis</h1>,
+      },
+    ],
+  },
   {
     path: "/admin",
     element: <LayoutAdmin />,

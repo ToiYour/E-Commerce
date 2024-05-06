@@ -7,6 +7,7 @@ import routerSize from "./src/routes/size.js";
 import routerCategory from "./src/routes/category.js";
 import routerVariant from "./src/routes/variant.js";
 import routerProduct from "./src/routes/product.js";
+import routerCustomer from "./src/routes/customer.js";
 
 // Kết nối MongoDB
 mongoose
@@ -26,6 +27,7 @@ app.use("/api/size", routerSize);
 app.use("/api/category", routerCategory);
 app.use("/api/variant", routerVariant);
 app.use("/api/product", routerProduct);
+app.use("/api/customer", routerCustomer);
 app.listen(4000, () => {
   console.log(`Listening on port 4000`);
 });

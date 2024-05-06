@@ -41,13 +41,31 @@ export const upLoadFiles = async (files: { dataURL: string; file: File }[]) => {
     formData.append("folder", FOLDER_NAME);
     const urls: string[] = [];
     for (const file of files) {
-      formData.append("file", file.file);
+      formData.append("file", file.file as File);
       const { data } = await axios.post(api, formData, {
         headers: { "Content-Type": "multipart/form-data" },
       });
       urls.push(data.url);
     }
     return urls;
+  }
+};
+export const upLoadFileOne = async (files: File) => {
+  if (typeof files !== "string") {
+    const CLOUND_NAME = "dlzhmxsqp";
+    const PRESET_NAME = "yhlsqnix";
+    const FOLDER_NAME = "e_commerce";
+
+    const api = `https://api.cloudinary.com/v1_1/${CLOUND_NAME}/image/upload`;
+    const formData = new FormData();
+    formData.append("upload_preset", PRESET_NAME);
+    formData.append("folder", FOLDER_NAME);
+
+    formData.append("file", files as File);
+    const { data } = await axios.post(api, formData, {
+      headers: { "Content-Type": "multipart/form-data" },
+    });
+    return data.url;
   }
 };
 export const upLoadVariants = async (data: IVariant[]) => {

@@ -1,18 +1,19 @@
 import instance from "./instance";
-const api = "https://toinh-api-tinh-thanh.onrender.com";
-const apiEndpointProvince = api + "/province";
-const apiEndpointDistrict = api + "/district/?idProvince=";
-const apiEndpointCommune = api + "/commune/?idDistrict=";
+// const api1 = "https://toinh-api-tinh-thanh.onrender.com";
+const api2 = "https://api-tinh-thanh-git-main-toiyours-projects.vercel.app";
+const endpointProvince = "/province";
+const endpointDistrict = "/district/?idProvince=";
+const endpointCommune = "/commune/?idDistrict=";
 export function getProvince() {
-  const province = instance.get(apiEndpointProvince);
+  const province = instance.get(api2 + endpointProvince);
   return province;
 }
 export function getDistrict(idProvince: string | number) {
-  const district = instance.get(apiEndpointDistrict + idProvince);
+  const district = instance.get(api2 + endpointDistrict + idProvince);
   return district;
 }
 
 export function getCommune(idDistrict: string | number) {
-  const commune = instance.get(apiEndpointCommune + idDistrict);
+  const commune = instance.get(api2 + endpointCommune + idDistrict);
   return commune;
 }
