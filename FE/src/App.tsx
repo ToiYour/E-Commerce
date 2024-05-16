@@ -2,6 +2,10 @@ import { createBrowserRouter } from "react-router-dom";
 import { ListProducts } from "./admin/components/products";
 import LayoutAdmin from "./admin/LayoutAdmin";
 import NotFound from "./NotFound";
+import HomePage from "./pages/HomePage";
+import LayoutHome from "./pages/LayoutHome";
+import ProductDetail from "./pages/ProductDetail";
+import ShopPage from "./pages/ShopPage";
 import {
   RouterCategory,
   RouterColors,
@@ -9,8 +13,6 @@ import {
   RouterProducts,
   RouterSizes,
 } from "./routes";
-import LayoutHome from "./pages/LayoutHome";
-import HomePage from "./pages/HomePage";
 
 const router = createBrowserRouter([
   {
@@ -23,11 +25,15 @@ const router = createBrowserRouter([
       },
       {
         path: "shop",
-        element: <h1>Shop</h1>,
+        element: <ShopPage />,
+      },
+      {
+        path: "shop/:slug",
+        element: <ProductDetail />,
       },
       {
         path: "*",
-        element: <h1>Tơis</h1>,
+        element: <NotFound href="/" />,
       },
     ],
   },

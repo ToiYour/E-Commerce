@@ -8,8 +8,16 @@ export const getAllProduct = (search: string = "") => {
   const uri = "/product" + search;
   return instance.get(uri);
 };
+export const getSimilarProducts = (category: string, slug: string) => {
+  const uri = `product/similar?category=${category}&slug=${slug}`;
+  return instance.get(uri);
+};
 export const getDetailProduct = (id: string) => {
   const uri = "/product/detail/" + id;
+  return instance.get(uri);
+};
+export const getProductBySlug = (slug: string) => {
+  const uri = "/product/slug/" + slug;
   return instance.get(uri);
 };
 // Xoá mềm
@@ -53,4 +61,12 @@ export const getByIdUpdateProduct = (id: string | number) => {
 export const updateProduct = (id: string | number, data: IProduct) => {
   const uri = "/product/" + id;
   return instance.put(uri, data);
+};
+export const getMaxPriceProduct = () => {
+  const uri = "/product/max-price";
+  return instance.get(uri);
+};
+export const getBrandProducts = () => {
+  const uri = "/product/brand";
+  return instance.get(uri);
 };

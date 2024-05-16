@@ -5,10 +5,10 @@ import {
   restoreAllCategory,
   restoreCategory,
 } from "@/api/categorys";
+import BadgeStatus from "@/components/BadgeStatus";
 
 import Loading from "@/components/Loading";
 import MyPagination from "@/components/MyPagination";
-import { Badge } from "@/components/ui/badge";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -38,7 +38,13 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { ICategory } from "@/interfaces/category";
-import { handleDownloadExcel } from "@/lib/utils";
+import {
+  handleDownloadExcel,
+  SwalWarningConfirm,
+  ToastError,
+  ToastSuccess,
+  ToastWarning,
+} from "@/lib/utils";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   File,
@@ -51,16 +57,12 @@ import {
 import moment from "moment";
 import { useRef } from "react";
 import { Link, useSearchParams } from "react-router-dom";
-import { Flip, toast } from "react-toastify";
-import Swal from "sweetalert2";
-import withReactContent from "sweetalert2-react-content";
 const Trash = () => {
   const checkboxAll = useRef<HTMLInputElement>(null); // input checkbox (chọn tất cả)
   const btnSubmitAction = useRef<HTMLButtonElement>(null); // input submit action chọn tất cả
 
   //
   const queryClient = useQueryClient();
-  const MySwal = withReactContent(Swal); // sweet alert
   const [searchParams, setSearchParams] = useSearchParams();
   const page = searchParams.get("page") || 1;
   const order = searchParams.get("order") ?? "all";
@@ -98,19 +100,11 @@ const Trash = () => {
       await deleteCategory(id);
     },
     onError: () => {
-      Swal.fire({
-        title: "Deleted!",
-        text: "Xoá thất bại.",
-        icon: "error",
-      });
+      ToastError("Xoá thất bại!");
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["GET_CATEGORYS"] });
-      Swal.fire({
-        title: "Deleted!",
-        text: "Bạn đã xoá thành công.",
-        icon: "success",
-      });
+      ToastSuccess("Bạn đã xoá thành công.");
     },
   });
   // muate xoá vĩnh viễn all
@@ -119,19 +113,11 @@ const Trash = () => {
       await deleteAllCategory(categoryIds);
     },
     onError: () => {
-      Swal.fire({
-        title: "Deleted!",
-        text: "Xoá thất bại.",
-        icon: "error",
-      });
+      ToastError("Xoá thất bại!");
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["GET_CATEGORYS"] });
-      Swal.fire({
-        title: "Deleted!",
-        text: "Bạn đã xoá thành công.",
-        icon: "success",
-      });
+      ToastSuccess("Bạn đã xoá thành công.");
     },
   });
   // khôi phục one
@@ -140,19 +126,11 @@ const Trash = () => {
       await restoreCategory(id);
     },
     onError: () => {
-      Swal.fire({
-        title: "Restore!",
-        text: "Khôi phục thất bại.",
-        icon: "error",
-      });
+      ToastError("Khôi phục thất bại.");
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["GET_CATEGORYS"] });
-      Swal.fire({
-        title: "Restore!",
-        text: "Bạn đã khôi phục thành công.",
-        icon: "success",
-      });
+      ToastSuccess("Bạn đã khôi phục thành công.");
     },
   });
   // khôi phục all
@@ -161,32 +139,19 @@ const Trash = () => {
       await restoreAllCategory(ids);
     },
     onError: () => {
-      Swal.fire({
-        title: "Restore!",
-        text: "Khôi phục thất bại.",
-        icon: "error",
-      });
+      ToastError("Khôi phục thất bại.");
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["GET_CATEGORYS"] });
-      Swal.fire({
-        title: "Restore!",
-        text: "Bạn đã khôi phục thành công.",
-        icon: "success",
-      });
+      ToastSuccess("Bạn đã khôi phục thành công.");
     },
   });
 
   const handleDelete = (id: string | number) => {
-    MySwal.fire({
-      title: "Bạn có chắc xoá không?",
-      text: "Hành động này sẽ xoá vĩnh viễn không thể khôi phục được!",
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonColor: "#3085d6",
-      cancelButtonColor: "#d33",
-      confirmButtonText: "Đồng ý, xoá nó!",
-    }).then((result) => {
+    SwalWarningConfirm(
+      "Xoá",
+      "Hành động này sẽ xoá vĩnh viễn không thể khôi phục được!"
+    ).then((result) => {
       if (result.isConfirmed) {
         mutaionDeleteSort.mutate(id || 0);
       }
@@ -231,15 +196,10 @@ const Trash = () => {
     const actionsCheckbox = formData.get("actions-checkbox");
     switch (actionsCheckbox) {
       case "delete-forever":
-        Swal.fire({
-          title: "Xoá vĩnh viễn?",
-          text: "Hành động này sẽ không thể khôi phục sau khi bạn xoá!",
-          icon: "warning",
-          showCancelButton: true,
-          confirmButtonColor: "#3085d6",
-          cancelButtonColor: "#d33",
-          confirmButtonText: "Yes, delete it!",
-        }).then((result) => {
+        SwalWarningConfirm(
+          "Xoá",
+          "Hành động này sẽ xoá vĩnh viễn không thể khôi phục được!"
+        ).then((result) => {
           if (result.isConfirmed) {
             mutaionDeleteAll.mutate(categoryIds as string[]);
             elementCheckboxAll.checked = false;
@@ -254,17 +214,7 @@ const Trash = () => {
         elementBtnSubmitCheckbox.disabled = true;
         break;
       default:
-        toast.warn("Vui lòng chọn hành động", {
-          position: "top-right",
-          autoClose: 2000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "light",
-          transition: Flip,
-        });
+        ToastWarning("Vui lòng chọn hành động!");
         break;
     }
   };
@@ -299,7 +249,7 @@ const Trash = () => {
       <div className="flex items-center">
         <div className="">
           <h2 className="text-2xl font-semibold leading-none tracking-tight">
-            Danh mục đã xoá Soft
+            Thùng rác
           </h2>
           <p className="text-sm text-muted-foreground">
             Quản lý danh mục sản phẩm của bạn đã xoá.
@@ -429,12 +379,10 @@ const Trash = () => {
               <TableRow>
                 <TableHead></TableHead>
                 <TableHead>Danh mục</TableHead>
+                <TableHead className="hidden lg:table-cell">Ảnh</TableHead>
                 <TableHead>Trạng thái</TableHead>
-                <TableHead className="hidden md:table-cell">Ngày tạo</TableHead>
-                <TableHead className="hidden md:table-cell">
-                  Ngày cập nhập
-                </TableHead>
-                <TableHead className="hidden md:table-cell">Ngày xoá</TableHead>
+
+                <TableHead className="hidden lg:table-cell">Ngày xoá</TableHead>
                 <TableHead>
                   <span className="sr-only">Hành động</span>
                 </TableHead>
@@ -451,32 +399,34 @@ const Trash = () => {
                 </TableRow>
               ) : (
                 listCategorys &&
-                listCategorys?.map((color) => (
-                  <TableRow key={color._id}>
+                listCategorys?.map((category) => (
+                  <TableRow key={category._id}>
                     <TableCell>
                       <input
                         type="checkbox"
                         name="categoryIds"
                         className="categoryIds"
-                        value={color._id}
+                        value={category._id}
                         onChange={handleCheckboxItems}
                       />
                     </TableCell>
-                    <TableCell className="font-medium">{color.name}</TableCell>
+                    <TableCell className="font-medium">
+                      {category.name}
+                    </TableCell>
+                    <TableCell className="hidden lg:table-cell">
+                      <img
+                        src={category.img as string}
+                        alt=""
+                        className="size-14 object-cover"
+                      />
+                    </TableCell>
                     <TableCell>
-                      <Badge variant="outline">
-                        {" "}
-                        {color.status ? "Active" : "Draft"}
-                      </Badge>
+                      <BadgeStatus status={category.status as boolean} />
                     </TableCell>
-                    <TableCell className="hidden md:table-cell">
-                      {moment.utc(color.createdAt).format("YYYY-MM-DD hh:mm A")}
-                    </TableCell>
-                    <TableCell className="hidden md:table-cell">
-                      {moment.utc(color.updatedAt).format("YYYY-MM-DD hh:mm A")}
-                    </TableCell>
-                    <TableCell className="hidden md:table-cell">
-                      {moment.utc(color.deletedAt).format("YYYY-MM-DD hh:mm A")}
+                    <TableCell className="hidden lg:table-cell">
+                      {moment
+                        .utc(category.deletedAt)
+                        .format("YYYY-MM-DD hh:mm A")}
                     </TableCell>
                     <TableCell>
                       <DropdownMenu>
@@ -494,14 +444,14 @@ const Trash = () => {
                           <DropdownMenuLabel>Hành động</DropdownMenuLabel>
                           <DropdownMenuItem
                             onClick={() => {
-                              mutaionRestoreSize.mutate(color._id as string);
+                              mutaionRestoreSize.mutate(category._id as string);
                             }}
                           >
                             Khôi phục
                           </DropdownMenuItem>
                           <DropdownMenuItem
                             onClick={() => {
-                              handleDelete(color._id || 0);
+                              handleDelete(category._id || 0);
                             }}
                           >
                             Xoá vĩnh viễn

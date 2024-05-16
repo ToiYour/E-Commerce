@@ -3,9 +3,9 @@ import {
   deleteSoftCategory,
   getAllCategory,
 } from "@/api/categorys";
+import BadgeStatus from "@/components/BadgeStatus";
 import Loading from "@/components/Loading";
 import MyPagination from "@/components/MyPagination";
-import { Badge } from "@/components/ui/badge";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -33,8 +33,15 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { ICategory } from "@/interfaces/category";
 import { ISize } from "@/interfaces/size";
-import { handleDownloadExcel } from "@/lib/utils";
+import {
+  handleDownloadExcel,
+  SwalWarningConfirm,
+  ToastError,
+  ToastSuccess,
+  ToastWarning,
+} from "@/lib/utils";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   File,
@@ -46,15 +53,11 @@ import {
 import moment from "moment";
 import { useRef } from "react";
 import { Link, useSearchParams } from "react-router-dom";
-import { Flip, toast } from "react-toastify";
-import Swal from "sweetalert2";
-import withReactContent from "sweetalert2-react-content";
 const List = () => {
   const checkboxAllSize = useRef<HTMLInputElement>(null); // input checkbox (chọn tất cả)
   const btnSubmitActionSize = useRef<HTMLButtonElement>(null); // input submit action chọn tất cả
   //
   const queryClient = useQueryClient();
-  const MySwal = withReactContent(Swal); // sweet alert
   const [searchParams, setSearchParams] = useSearchParams();
   const page = searchParams.get("page") || 1;
   const order = searchParams.get("order") ?? "all";
@@ -78,26 +81,18 @@ const List = () => {
       ]);
     handleDownloadExcel(header, body, "table-categorys", "Category");
   };
-  const listSizes = data?.docs as ISize[]; // data get all sizes
+  const listCategory = data?.docs as ICategory[]; // data get all sizes
   // muate delete
   const mutaionDeleteSort = useMutation({
     mutationFn: async (id: string | number) => {
       await deleteSoftCategory(id);
     },
     onError: () => {
-      Swal.fire({
-        title: "Deleted!",
-        text: "Xoá thất bại.",
-        icon: "error",
-      });
+      ToastError("Xoá thất bại!");
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["GET_CATEGORYS"] });
-      Swal.fire({
-        title: "Deleted!",
-        text: "Bạn đã xoá thành công.",
-        icon: "success",
-      });
+      ToastSuccess("Bạn đã xoá thành công.");
     },
   });
   const mutaionDeleteSortAll = useMutation({
@@ -105,36 +100,22 @@ const List = () => {
       await deleteSoftAllCategory(categoryIds);
     },
     onError: () => {
-      Swal.fire({
-        title: "Deleted!",
-        text: "Xoá thất bại.",
-        icon: "error",
-      });
+      ToastError("Xoá thất bại!");
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["GET_CATEGORYS"] });
-      Swal.fire({
-        title: "Deleted!",
-        text: "Bạn đã xoá thành công.",
-        icon: "success",
-      });
+      ToastSuccess("Bạn đã xoá thành công.");
     },
   });
 
   const handleDelete = (id: string | number) => {
-    MySwal.fire({
-      title: "Bạn có chắc xoá không?",
-      text: "Hành động này sẽ chuyển size sản phẩm vào thùng rác!",
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonColor: "#3085d6",
-      cancelButtonColor: "#d33",
-      confirmButtonText: "Đồng ý, xoá nó!",
-    }).then((result) => {
-      if (result.isConfirmed) {
-        mutaionDeleteSort.mutate(id || 0);
+    SwalWarningConfirm("Xoá", "Bạn có chắc chắn xoá danh mục này không!").then(
+      (result) => {
+        if (result.isConfirmed) {
+          mutaionDeleteSort.mutate(id || 0);
+        }
       }
-    });
+    );
   };
   // muate delete end
   // checkbox all
@@ -175,36 +156,19 @@ const List = () => {
     const actionsCheckbox = formData.get("actions-checkbox");
     switch (actionsCheckbox) {
       case "delete":
-        Swal.fire({
-          title: "Delete?",
-          text: "Hành động này sẽ chuyển size bạn đã chọn vào thúc rác!",
-          icon: "warning",
-          showCancelButton: true,
-          confirmButtonColor: "#3085d6",
-          cancelButtonColor: "#d33",
-          confirmButtonText: "Yes, delete it!",
-        }).then((result) => {
+        SwalWarningConfirm(
+          "Xoá",
+          "Bạn có chắc chắn xoá các danh mục này không!"
+        ).then((result) => {
           if (result.isConfirmed) {
             mutaionDeleteSortAll.mutate(categoryIds as string[]);
             elementcheckboxAllSize.checked = false;
             elementBtnSubmitCheckboxSize.disabled = true;
           }
         });
-
         break;
-
       default:
-        toast.warn("Vui lòng chọn hành động", {
-          position: "top-right",
-          autoClose: 2000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "light",
-          transition: Flip,
-        });
+        ToastWarning("Vui lòng chọn hành động");
         break;
     }
   };
@@ -366,18 +330,18 @@ const List = () => {
               <TableRow>
                 <TableHead></TableHead>
                 <TableHead>Danh mục</TableHead>
+                <TableHead className="hidden lg:table-cell">Ảnh</TableHead>
                 <TableHead>Trạng thái</TableHead>
-                <TableHead className="hidden md:table-cell">Ngày tạo</TableHead>
-                <TableHead className="hidden md:table-cell">
-                  Ngày cập nhập
-                </TableHead>
+
+                <TableHead className="hidden lg:table-cell">Ngày tạo</TableHead>
+
                 <TableHead>
                   <span className="sr-only">Hành động</span>
                 </TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
-              {listSizes.length <= 0 ? (
+              {listCategory.length <= 0 ? (
                 <TableRow>
                   <TableCell colSpan={7} className="text-center text-base">
                     Chưa danh mục sản phẩm nào.{" "}
@@ -390,8 +354,8 @@ const List = () => {
                   </TableCell>
                 </TableRow>
               ) : (
-                listSizes &&
-                listSizes?.map((category) => (
+                listCategory &&
+                listCategory?.map((category) => (
                   <TableRow key={category._id}>
                     <TableCell>
                       <input
@@ -405,22 +369,22 @@ const List = () => {
                     <TableCell className="font-medium">
                       {category.name}
                     </TableCell>
-                    <TableCell>
-                      <Badge variant="outline">
-                        {" "}
-                        {category.status ? "Active" : "Draft"}
-                      </Badge>
+                    <TableCell className="hidden lg:table-cell">
+                      <img
+                        src={category.img as string}
+                        alt=""
+                        className="size-14 object-cover"
+                      />
                     </TableCell>
-                    <TableCell className="hidden md:table-cell">
+                    <TableCell>
+                      <BadgeStatus status={category.status as boolean} />
+                    </TableCell>
+                    <TableCell className="hidden lg:table-cell">
                       {moment
                         .utc(category.createdAt)
                         .format("YYYY-MM-DD hh:mm A")}
                     </TableCell>
-                    <TableCell className="hidden md:table-cell">
-                      {moment
-                        .utc(category.updatedAt)
-                        .format("YYYY-MM-DD hh:mm A")}
-                    </TableCell>
+
                     <TableCell>
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>

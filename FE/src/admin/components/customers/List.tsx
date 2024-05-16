@@ -385,8 +385,8 @@ const List = () => {
                 <TableHead></TableHead>
                 <TableHead>Tên khách hàng</TableHead>
                 <TableHead>Email</TableHead>
-                <TableHead className="hidden md:table-cell">Ngày tạo</TableHead>
-                <TableHead className="hidden md:table-cell">Khoá</TableHead>
+                <TableHead className="hidden lg:table-cell">Ngày tạo</TableHead>
+                <TableHead className="hidden lg:table-cell">Khoá</TableHead>
                 <TableHead className="hidden md:table-cell">Vai trò</TableHead>
                 <TableHead>
                   <span className="sr-only">Hành động</span>
@@ -425,13 +425,15 @@ const List = () => {
                         customer.name?.first_name as string
                       )}
                     </TableCell>
-                    <TableCell>{customer.email}</TableCell>
-                    <TableCell className="hidden md:table-cell">
+                    <TableCell className="text-pretty">
+                      {customer.email}
+                    </TableCell>
+                    <TableCell className="hidden lg:table-cell">
                       {moment
                         .utc(customer.createdAt)
                         .format("YYYY-MM-DD hh:mm A")}
                     </TableCell>
-                    <TableCell className="hidden md:table-cell">
+                    <TableCell className="hidden lg:table-cell">
                       <Switch
                         checked={customer.account_status}
                         onCheckedChange={(checked) => {

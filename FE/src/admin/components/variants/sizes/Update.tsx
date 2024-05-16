@@ -8,17 +8,17 @@ import {
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
 import { ISize } from "@/interfaces/size";
+import { ToastError, ToastSuccess } from "@/lib/utils";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 import { Link, useParams } from "react-router-dom";
-import { Flip, toast } from "react-toastify";
 const Update = () => {
   const { id } = useParams();
   useQuery({
     queryKey: ["GET_SIZES", id],
     queryFn: async () => {
       const { data } = await getByIdSize(id as string);
-      reset(data.data);
+      reset({ ...data.data, status: data.data.status.toString() });
       return data.data;
     },
   });
@@ -40,30 +40,10 @@ const Update = () => {
 
     onError: (err) => {
       console.log(err);
-      toast.error("Có lỗi xảy ra khi cập nhập size ", {
-        position: "top-right",
-        autoClose: 2000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "light",
-        transition: Flip,
-      });
+      ToastError("Có lỗi xảy ra khi cập nhập size");
     },
     onSuccess: async () => {
-      toast.success("Cập nhập size thành công", {
-        position: "top-right",
-        autoClose: 2000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "light",
-        transition: Flip,
-      });
+      ToastSuccess("Cập nhập size thành công");
     },
   });
   const onSubmit = async (newData: ISize) => {
@@ -144,8 +124,7 @@ const Update = () => {
                     <input
                       {...register("status")}
                       type="radio"
-                      defaultValue="true"
-                      defaultChecked
+                      value="true"
                       id="DeliveryStandard"
                       className="size-5 border-gray-300 text-blue-500"
                     />
@@ -162,7 +141,7 @@ const Update = () => {
                     <input
                       {...register("status")}
                       type="radio"
-                      defaultValue="false"
+                      value="false"
                       id="DeliveryPriority"
                       className="size-5 border-gray-300 text-blue-500"
                     />

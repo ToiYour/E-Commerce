@@ -1,8 +1,9 @@
 import { getCommune, getDistrict, getProvince } from "@/api/address";
 import { ICommune, IDistrict, IProvince } from "@/interfaces/address";
 import { ICustomer } from "@/interfaces/customer";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { RotateCw } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 import { FieldErrors, FieldValues, UseFormRegister } from "react-hook-form";
 const Address = ({
   register,
@@ -14,48 +15,57 @@ const Address = ({
   register: UseFormRegister<FieldValues>;
   errors?: FieldErrors<ICustomer>;
   address?: {
-    provinceName?: string;
-    districtsName?: string;
-    CoummuneName?: string;
+    province?: string;
+    district?: string;
+    commune?: string;
   };
 }) => {
-  const [provinces, setProvince] = useState<IProvince[]>([]);
-  const [districts, setDistrict] = useState<IDistrict[]>([]);
-  const [communes, setCommune] = useState<ICommune[]>([]);
-  useEffect(() => {
-    (async () => {
+  const queryClient = useQueryClient();
+  const [districtId, setDistrictId] = useState("");
+  const [communeId, setCommuneId] = useState("");
+  const { data: provinces } = useQuery({
+    queryKey: ["GET_PROVINCES"],
+    queryFn: async () => {
       const { data } = await getProvince();
-      setProvince(data);
-    })();
-  }, []);
-  useEffect(() => {
-    const selectProvince = document.querySelector(
-      ".address-province"
-    ) as HTMLSelectElement;
-    for (let index = 0; index < selectProvince.options.length; index++) {
-      if (selectProvince.options[index].value == address?.provinceName) {
-        selectProvince.options[index].selected = true;
-        break;
+      return data as IProvince[];
+    },
+  });
+  const { data: districts } = useQuery({
+    queryKey: ["GET_DISTRICTTS", districtId],
+    queryFn: async () => {
+      const id =
+        districtId || JSON.parse(address?.province as string).idProvince;
+      const { data } = await getDistrict(id);
+      return data as IDistrict[];
+    },
+  });
+  const { data: communes } = useQuery({
+    queryKey: ["GET_COMMUNES", communeId],
+    queryFn: async () => {
+      const { data } = await getCommune(
+        communeId || JSON.parse(address?.district as string).idDistrict
+      );
+      if (address && communeId == "") {
+        queryClient.invalidateQueries({ queryKey: ["GET_BY_ID_CUSTOMER"] });
       }
-    }
-  }, [provinces]);
+      return data as ICommune[];
+    },
+  });
 
-  const makeProvince: React.ChangeEventHandler<HTMLSelectElement> = async (
-    e
-  ) => {
-    const idProvince = e.target.options[e.target.selectedIndex]?.dataset
-      .id as string;
-    const { data } = await getDistrict(idProvince);
-    setDistrict(data);
-  };
-  const makeDistrict: React.ChangeEventHandler<HTMLSelectElement> = async (
-    e
-  ) => {
-    const idDistrict = e.target.options[e.target.selectedIndex]?.dataset
-      .id as string;
-    const { data } = await getCommune(idDistrict);
-    setCommune(data);
-  };
+  const makeProvince: React.ChangeEventHandler<HTMLSelectElement> = useCallback(
+    async (e) => {
+      console.log(JSON.parse(e.target.value).idProvince);
+
+      setDistrictId(JSON.parse(e.target.value).idProvince);
+    },
+    []
+  );
+  const makeDistrict: React.ChangeEventHandler<HTMLSelectElement> = useCallback(
+    async (e) => {
+      setCommuneId(JSON.parse(e.target.value).idDistrict);
+    },
+    []
+  );
   return (
     <>
       <div className="col-span-6 sm:col-span-2">
@@ -74,14 +84,18 @@ const Address = ({
               --Chọn tỉnh thành--
             </option>
             {provinces?.map((p) => (
-              <option key={p.idProvince} value={p.name} data-id={p.idProvince}>
+              <option
+                key={p.idProvince}
+                value={JSON.stringify(p)}
+                data-id={p.idProvince}
+              >
                 {p.name}
               </option>
             ))}
           </select>
           <div
             className={`${
-              provinces.length > 0 ? "hidden" : ""
+              provinces && provinces?.length > 0 ? "hidden" : ""
             } absolute top-1/3 right-1 bg-white px-2`}
           >
             <RotateCw className="animate-spin " size={16} color={"#ccc"} />
@@ -105,14 +119,18 @@ const Address = ({
               --Chọn quận huyện--
             </option>
             {districts?.map((d) => (
-              <option key={d.idDistrict} value={d.name} data-id={d.idDistrict}>
+              <option
+                key={d.idDistrict}
+                value={JSON.stringify(d)}
+                data-id={d.idDistrict}
+              >
                 {d.name}
               </option>
             ))}
           </select>
           <div
             className={`${
-              districts.length > 0 ? "hidden" : ""
+              districts && districts?.length > 0 ? "hidden" : ""
             } absolute top-1/3 right-1 bg-white px-2`}
           >
             <RotateCw className="animate-spin " size={16} color={"#ccc"} />
@@ -132,14 +150,18 @@ const Address = ({
               --Chọn phường xã--
             </option>
             {communes?.map((c) => (
-              <option key={c.idCommune} value={c.name} data-id={c.idCommune}>
+              <option
+                key={c.idCommune}
+                value={JSON.stringify(c)}
+                data-id={c.idCommune}
+              >
                 {c.name}
               </option>
             ))}
           </select>
           <div
             className={`${
-              communes.length > 0 ? "hidden" : ""
+              communes && communes?.length > 0 ? "hidden" : ""
             } absolute top-1/3 right-1 bg-white px-2`}
           >
             <RotateCw className="animate-spin " size={16} color={"#ccc"} />

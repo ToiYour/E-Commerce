@@ -12,6 +12,12 @@ const ProductShema = new mongoose.Schema(
     variants: [{ type: mongoose.Schema.Types.ObjectId, ref: "Variant" }],
     views: { type: Number, default: 0 },
     status: { type: Boolean, default: true },
+    brand: String,
+    slug: {
+      type: String,
+      slug: "name",
+      unique: true,
+    },
   },
   { timestamps: true }
 );

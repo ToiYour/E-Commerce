@@ -29,14 +29,19 @@ import { IColor } from "@/interfaces/color";
 import { IFormProduct, IProduct } from "@/interfaces/product";
 import { ISize } from "@/interfaces/size";
 import { IVariant } from "@/interfaces/variant";
-import { upLoadFiles, upLoadVariants } from "@/lib/utils";
+import {
+  ToastError,
+  ToastSuccess,
+  ToastWarning,
+  upLoadFiles,
+  upLoadVariants,
+} from "@/lib/utils";
 import { useMutation } from "@tanstack/react-query";
 import { CircleX, ImageUp, PlusCircle, X } from "lucide-react";
 import { useState } from "react";
 import { SubmitHandler, useFieldArray, useForm } from "react-hook-form";
 import ImageUploading, { ImageListType } from "react-images-uploading";
 import { Link, useLoaderData, useNavigate } from "react-router-dom";
-import { Flip, toast } from "react-toastify";
 const Add = () => {
   const [colors, sizes, categorys] = useLoaderData() as [
     IColor[],
@@ -60,8 +65,8 @@ const Add = () => {
     defaultValues: {
       variants: [
         {
-          sizeId: "6629ae6434d377755e010a99",
-          colorId: "6634f25ebaaabbaf775cc484",
+          sizeId: "",
+          colorId: "",
           extra_price: 0,
           stock: 0,
         },
@@ -80,42 +85,20 @@ const Add = () => {
       );
       const variants = await upLoadVariants(newData.variants as IVariant[]);
       const payload = {
-        name: newData.name,
-        category: newData.category,
-        desc: newData.desc,
-        price: newData.price,
+        ...newData,
         images,
         variants,
       };
       await createProduct(payload as IProduct);
     },
     onError: (err) => {
+      setIsLoadSubmit(false);
       console.log(err);
-      toast.error("Có lỗi khi thêm mới sản phẩm!", {
-        position: "top-right",
-        autoClose: 2000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "light",
-        transition: Flip,
-      });
+      ToastError("Có lỗi khi thêm mới sản phẩm!");
     },
     onSuccess: () => {
       setIsLoadSubmit(false);
-      toast.success("Thêm mới sản phẩm thành công!", {
-        position: "top-right",
-        autoClose: 2000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "light",
-        transition: Flip,
-      });
+      ToastSuccess("Thêm mới sản phẩm thành công!");
       navigate("/admin/products");
     },
   });
@@ -126,30 +109,8 @@ const Add = () => {
       newData.variants &&
       newData.variants.every((val) => val.sizeId == "" || val.colorId == "");
     if (errorVariants || arrImages.length == 0) {
-      errorVariants &&
-        toast.warn("Bạn chưa nhập biến thể cho sản phẩm!", {
-          position: "top-right",
-          autoClose: 2000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "light",
-          transition: Flip,
-        });
-      arrImages.length == 0 &&
-        toast.warn("Bạn chưa nhập ảnh cho sản phẩm!", {
-          position: "top-right",
-          autoClose: 2000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "light",
-          transition: Flip,
-        });
+      errorVariants && ToastWarning("Bạn chưa nhập biến thể cho sản phẩm!");
+      arrImages.length == 0 && ToastWarning("Bạn chưa nhập ảnh cho sản phẩm!");
     } else {
       setIsLoadSubmit(true);
       await mutationProduct.mutate(newData);
@@ -185,7 +146,7 @@ const Add = () => {
             onSubmit={handleSubmit(onSubmit)}
             className="mb-0 mt-2 space-y-4  sm:p-6 lg:p-8"
           >
-            <div className="grid gap-4 md:grid-cols-[1fr_250px] lg:grid-cols-3 lg:gap-8">
+            <div className="grid gap-4  xl:grid-cols-3 lg:gap-8">
               <div className="grid auto-rows-max items-start gap-4 lg:col-span-2 lg:gap-8">
                 <Card x-chunk="dashboard-07-chunk-0">
                   <CardHeader>
@@ -247,10 +208,28 @@ const Add = () => {
                         />
                         <p className="text-red-500">{errors.price?.message}</p>
                       </div>
+                      <div className="grid gap-3">
+                        <label
+                          htmlFor="name"
+                          className="block text-sm font-medium text-gray-700"
+                        >
+                          {" "}
+                          Thương hiệu sản phẩm{" "}
+                        </label>
+                        <input
+                          {...register("brand", {
+                            required: "Vui lòng nhập thương hiệu sản phẩm",
+                          })}
+                          type="text"
+                          id="name"
+                          className="mt-1 p-2 w-full rounded-md border-2 border-gray-200  sm:text-sm"
+                        />
+                        <p className="text-red-500">{errors.brand?.message}</p>
+                      </div>
                     </div>
                   </CardContent>
                 </Card>
-                <Card x-chunk="dashboard-07-chunk-1">
+                <Card className="" x-chunk=" dashboard-07-chunk-1">
                   <CardHeader>
                     <CardTitle>Biến thể</CardTitle>
                   </CardHeader>
@@ -267,7 +246,7 @@ const Add = () => {
                       </TableHeader>
                       <TableBody>
                         {fields.map((field, index) => (
-                          <TableRow className="">
+                          <TableRow className="" key={field.id}>
                             <TableCell>
                               <label
                                 htmlFor={`variants.${index}.size`}
@@ -337,7 +316,7 @@ const Add = () => {
                                 min={0}
                                 type="number"
                                 id={`variants.${index}.extra_price`}
-                                className="mt-1 p-1 border-2 w-full rounded-md border-gray-300 sm:text-sm"
+                                className="mt-1 p-1 border-2 max-w-24 text-center rounded-md border-gray-300 sm:text-sm"
                               />
                             </TableCell>
                             <TableCell>
@@ -358,7 +337,7 @@ const Add = () => {
                                 min={0}
                                 type="number"
                                 id={`variants.${index}.stock`}
-                                className="mt-1 p-1 border-2 w-full rounded-md border-gray-300 sm:text-sm"
+                                className="mt-1 p-1 border-2 max-w-24 text-center rounded-md border-gray-300 sm:text-sm"
                               />
                             </TableCell>
                             <TableCell>
@@ -394,6 +373,12 @@ const Add = () => {
                     </Button>
                   </CardFooter>
                 </Card>
+                {errors.variants?.[0] && (
+                  <p className="text-red-500">
+                    {errors.variants?.[0]?.colorId?.message},{" "}
+                    {errors.variants?.[0]?.sizeId?.message}
+                  </p>
+                )}
               </div>
               <div className="grid auto-rows-max items-start gap-4 lg:gap-8">
                 <Card x-chunk="dashboard-07-chunk-3">
@@ -484,7 +469,7 @@ const Add = () => {
                                 className="flex flex-col items-center gap-2 cursor-pointer"
                               >
                                 <ImageUp color="#8c8787" size={20} />
-                                <span className="text-gray-600 font-medium text-xs whitespace-nowrap">
+                                <span className=" text-gray-600 font-medium text-xs whitespace-nowrap">
                                   Chọn ảnh
                                 </span>
                               </div>
@@ -499,6 +484,57 @@ const Add = () => {
                       </ImageUploading>
                       <p className="text-red-500">{errors.images?.message}</p>
                     </div>
+                  </CardContent>
+                </Card>
+                <Card x-chunk="dashboard-07-chunk-3">
+                  <CardHeader>
+                    <CardTitle>Trạng thái</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <label
+                      htmlFor=""
+                      className="block text-sm font-medium text-gray-700"
+                    >
+                      Trạng thái sản phẩm
+                    </label>
+                    <fieldset className="space-y-4 flex gap-x-2">
+                      <legend className="sr-only">Delivery</legend>
+                      <div>
+                        <label
+                          htmlFor="DeliveryStandard"
+                          className="flex cursor-pointer justify-between gap-4 rounded-lg border border-gray-100 bg-white  px-4 py-2 text-sm font-medium shadow-sm hover:border-gray-200 has-[:checked]:border-blue-500 has-[:checked]:ring-1 has-[:checked]:ring-blue-500"
+                        >
+                          <div>
+                            <p className="text-gray-700">Active</p>
+                          </div>
+                          <input
+                            {...register("status")}
+                            type="radio"
+                            value="true"
+                            defaultChecked
+                            id="DeliveryStandard"
+                            className="size-5 border-gray-300 text-blue-500"
+                          />
+                        </label>
+                      </div>
+                      <div>
+                        <label
+                          htmlFor="DeliveryPriority"
+                          className="flex cursor-pointer justify-between gap-4 rounded-lg border border-gray-100 bg-white px-4 py-2 text-sm font-medium shadow-sm hover:border-gray-200 has-[:checked]:border-blue-500 has-[:checked]:ring-1 has-[:checked]:ring-blue-500"
+                        >
+                          <div>
+                            <p className="text-gray-700">Draft</p>
+                          </div>
+                          <input
+                            {...register("status")}
+                            type="radio"
+                            value="false"
+                            id="DeliveryPriority"
+                            className="size-5 border-gray-300 text-blue-500"
+                          />
+                        </label>
+                      </div>
+                    </fieldset>
                   </CardContent>
                 </Card>
               </div>

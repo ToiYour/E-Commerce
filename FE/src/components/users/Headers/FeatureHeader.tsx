@@ -15,7 +15,7 @@ const FeatureHeader = () => {
         </div>
         <div className="max-md:hidden cart-icon flex items-center relative cursor-pointer">
           <ShoppingCart className="ph-bold ph-handbag" />
-          <span className="quantity cart-quantity absolute -right-1.5 -top-1.5 text-xs text-white bg-black w-4 h-4 flex items-center justify-center rounded-full">
+          <span className="quantity cart-quantity absolute -right-1.5 -top-1.5 text-xs text-white bg-[#ee4d2d] w-4 h-4 flex items-center justify-center rounded-full">
             0
           </span>
         </div>

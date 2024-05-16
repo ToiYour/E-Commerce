@@ -1,11 +1,8 @@
-// import Swiper JS
-// import { useEffect } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
-// import required modules
 import { Autoplay, Pagination } from "swiper/modules";
-// import Swiper styles
 import "swiper/css";
 import "swiper/css/pagination";
+import { Link } from "react-router-dom";
 const Slides = () => {
   return (
     <div className="slider-block style-one bg-linear xl:h-[860px] lg:h-[800px] md:h-[580px] sm:h-[500px] h-[350px] max-[420px]:h-[320px] w-full">
@@ -26,16 +23,13 @@ const Slides = () => {
               <div className="slider-item h-full w-full relative">
                 <div className="container w-full h-full flex items-center relative">
                   <div className="text-content basis-1/2">
-                    <div className="text-sub-display">Sale! Up To 50% Off!</div>
+                    <div className="text-sub-display">ToinhFashion!</div>
                     <div className="text-display md:mt-5 mt-2">
-                      Summer Sale Collections
+                      Nâng tầm phong cách của bạn
                     </div>
-                    <a
-                      href="shop-breadcrumb-img.html"
-                      className="button-main md:mt-8 mt-3"
-                    >
-                      Shop Now
-                    </a>
+                    <Link to={"/shop"} className="button-main md:mt-8 mt-3">
+                      Mua Ngay
+                    </Link>
                   </div>
                   <div className="sub-img absolute sm:w-1/2 w-3/5 2xl:-right-[60px] -right-[16px] bottom-0">
                     <img
@@ -54,16 +48,13 @@ const Slides = () => {
               <div className="slider-item h-full w-full relative">
                 <div className="container w-full h-full flex items-center relative">
                   <div className="text-content basis-1/2">
-                    <div className="text-sub-display">Sale! Up To 50% Off!</div>
+                    <div className="text-sub-display">ToinhFashion!</div>
                     <div className="text-display md:mt-5 mt-2">
-                      Fashion for Every Occasion
+                      Thể hiện phong cách riêng của bạn
                     </div>
-                    <a
-                      href="shop-breadcrumb-img.html"
-                      className="button-main md:mt-8 mt-3"
-                    >
-                      Shop Now
-                    </a>
+                    <Link to={"/shop"} className="button-main md:mt-8 mt-3">
+                      Mua Ngay
+                    </Link>
                   </div>
                   <div className="sub-img absolute w-1/2 2xl:-right-[60px] -right-[0] sm:-bottom-[60px] bottom-0">
                     <img

@@ -78,6 +78,10 @@ const Detail = () => {
                       {detailProduct.category?.[0]?.name as string}
                     </li>
                     <li>
+                      <span className="font-medium">Thương hiệu</span>:{" "}
+                      {detailProduct.brand as string}
+                    </li>
+                    <li>
                       <span className="font-medium">Giá cơ bản</span>:{" "}
                       {formatMoney(detailProduct.price || 0)}
                     </li>

@@ -44,7 +44,14 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { IProduct } from "@/interfaces/product";
-import { formatMoney, handleDownloadExcel } from "@/lib/utils";
+import {
+  formatMoney,
+  handleDownloadExcel,
+  SwalWarningConfirm,
+  ToastError,
+  ToastSuccess,
+  ToastWarning,
+} from "@/lib/utils";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   File,
@@ -57,16 +64,12 @@ import {
 import moment from "moment";
 import { useRef } from "react";
 import { Link, useSearchParams } from "react-router-dom";
-import { Flip, toast } from "react-toastify";
-import Swal from "sweetalert2";
-import withReactContent from "sweetalert2-react-content";
 const Trash = () => {
   const checkboxAll = useRef<HTMLInputElement>(null); // input checkbox (chọn tất cả)
   const btnSubmitAction = useRef<HTMLButtonElement>(null); // input submit action chọn tất cả
 
   //
   const queryClient = useQueryClient();
-  const MySwal = withReactContent(Swal); // sweet alert
   const [searchParams, setSearchParams] = useSearchParams();
   const page = searchParams.get("page") || 1;
   const order = searchParams.get("order") ?? "all";
@@ -106,19 +109,11 @@ const Trash = () => {
       await deleteProduct(id);
     },
     onError: () => {
-      Swal.fire({
-        title: "Deleted!",
-        text: "Xoá thất bại.",
-        icon: "error",
-      });
+      ToastError("Xoá thất bại.");
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["GET_PRODUCTS_SOFT"] });
-      Swal.fire({
-        title: "Deleted!",
-        text: "Bạn đã xoá thành công.",
-        icon: "success",
-      });
+      ToastSuccess("Bạn đã xoá thành công.");
     },
   });
   // muate xoá vĩnh viễn all
@@ -127,19 +122,11 @@ const Trash = () => {
       await deleteAllProduct(productIds);
     },
     onError: () => {
-      Swal.fire({
-        title: "Deleted!",
-        text: "Xoá thất bại.",
-        icon: "error",
-      });
+      ToastError("Xoá thất bại.");
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["GET_PRODUCTS_SOFT"] });
-      Swal.fire({
-        title: "Deleted!",
-        text: "Bạn đã xoá thành công.",
-        icon: "success",
-      });
+      ToastSuccess("Bạn đã xoá thành công.");
     },
   });
   // khôi phục one
@@ -148,19 +135,11 @@ const Trash = () => {
       await restoreProduct(id);
     },
     onError: () => {
-      Swal.fire({
-        title: "Restore!",
-        text: "Khôi phục thất bại.",
-        icon: "error",
-      });
+      ToastError("Khôi phục thất bại.");
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["GET_PRODUCTS_SOFT"] });
-      Swal.fire({
-        title: "Restore!",
-        text: "Bạn đã khôi phục thành công.",
-        icon: "success",
-      });
+      ToastSuccess("Bạn đã khôi phục thành công.");
     },
   });
   // khôi phục all
@@ -169,32 +148,16 @@ const Trash = () => {
       await restoreAllProduct(ids);
     },
     onError: () => {
-      Swal.fire({
-        title: "Restore!",
-        text: "Khôi phục thất bại.",
-        icon: "error",
-      });
+      ToastError("Khôi phục thất bại.");
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["GET_PRODUCTS_SOFT"] });
-      Swal.fire({
-        title: "Restore!",
-        text: "Bạn đã khôi phục thành công.",
-        icon: "success",
-      });
+      ToastSuccess("Bạn đã khôi phục thành công.");
     },
   });
 
   const handleDelete = (id: string | number) => {
-    MySwal.fire({
-      title: "Bạn có chắc xoá không?",
-      text: "Hành động này sẽ xoá vĩnh viễn không thể khôi phục được!",
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonColor: "#3085d6",
-      cancelButtonColor: "#d33",
-      confirmButtonText: "Đồng ý, xoá nó!",
-    }).then((result) => {
+    SwalWarningConfirm("Xoá", "Bạn có chắc chắn xoá không!").then((result) => {
       if (result.isConfirmed) {
         mutaionDeleteSort.mutate(id || 0);
       }
@@ -239,15 +202,10 @@ const Trash = () => {
     const actionsCheckbox = formData.get("actions-checkbox");
     switch (actionsCheckbox) {
       case "delete-forever":
-        Swal.fire({
-          title: "Xoá vĩnh viễn?",
-          text: "Hành động này sẽ không thể khôi phục sau khi bạn xoá!",
-          icon: "warning",
-          showCancelButton: true,
-          confirmButtonColor: "#3085d6",
-          cancelButtonColor: "#d33",
-          confirmButtonText: "Yes, delete it!",
-        }).then((result) => {
+        SwalWarningConfirm(
+          "Xoá",
+          "Bạn có chắc chắn xoá các mục đã chọn không!"
+        ).then((result) => {
           if (result.isConfirmed) {
             mutaionDeleteAll.mutate(productIds as string[]);
             elementCheckboxAll.checked = false;
@@ -262,17 +220,7 @@ const Trash = () => {
         elementBtnSubmitCheckbox.disabled = true;
         break;
       default:
-        toast.warn("Vui lòng chọn hành động", {
-          position: "top-right",
-          autoClose: 2000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "light",
-          transition: Flip,
-        });
+        ToastWarning("Vui lòng chọn hành động");
         break;
     }
   };
@@ -307,7 +255,7 @@ const Trash = () => {
       <div className="flex items-center">
         <div className="">
           <h2 className="text-2xl font-semibold leading-none tracking-tight">
-            Sản phẩm đã xoá Soft
+            Thùng rác
           </h2>
           <p className="text-sm text-muted-foreground">
             Quản lý sản phẩm của bạn đã xoá.
@@ -436,7 +384,7 @@ const Trash = () => {
             <TableHeader>
               <TableRow>
                 <TableHead></TableHead>
-                <TableHead className="whitespace-nowrap max-w-20">
+                <TableHead className="whitespace-nowrap max-w-20 hidden lg:table-cell">
                   Ảnh sản phẩm
                 </TableHead>
                 <TableHead>
@@ -445,7 +393,7 @@ const Trash = () => {
                     <ArrangeTable column="name" />
                   </div>
                 </TableHead>
-                <TableHead className="hidden md:table-cell ">
+                <TableHead className="hidden lg:table-cell ">
                   <div className="flex justify-center items-end whitespace-nowrap">
                     Giá cơ bản
                     <ArrangeTable column="price" />
@@ -457,7 +405,7 @@ const Trash = () => {
                     <ArrangeTable column="status" />
                   </div>
                 </TableHead>
-                <TableHead className="hidden md:table-cell">
+                <TableHead className="hidden lg:table-cell">
                   {" "}
                   <div className="flex justify-center items-end whitespace-nowrap">
                     Ngày tạo
@@ -491,7 +439,7 @@ const Trash = () => {
                         onChange={handleCheckboxItems}
                       />
                     </TableCell>
-                    <TableCell>
+                    <TableCell className=" hidden lg:table-cell">
                       <Carousel className="max-w-20">
                         <CarouselContent>
                           {product.images?.map((image) => (
@@ -512,13 +460,13 @@ const Trash = () => {
                       {product.name}
                     </TableCell>
 
-                    <TableCell className="hidden md:table-cell">
+                    <TableCell className="hidden lg:table-cell">
                       {formatMoney(product.price || 0)}
                     </TableCell>
                     <TableCell className="hidden md:table-cell">
                       <BadgeStatus status={product.status as boolean} />
                     </TableCell>
-                    <TableCell className="hidden md:table-cell">
+                    <TableCell className="hidden lg:table-cell">
                       {moment
                         .utc(product.createdAt)
                         .format("YYYY-MM-DD hh:mm A")}

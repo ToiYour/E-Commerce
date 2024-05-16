@@ -1,360 +1,52 @@
+import { getAllCategory } from "@/api/categorys";
+import LoadingFixed from "@/components/LoadingFixed";
+import { ICategory } from "@/interfaces/category";
+import { useQuery } from "@tanstack/react-query";
+import { Link, NavLink } from "react-router-dom";
+
 const MenuMain = () => {
+  const { data: categorys, isLoading } = useQuery<ICategory[]>({
+    queryKey: ["GET_CATEGORYS_HOME"],
+    queryFn: async () => {
+      const { data } = await getAllCategory("");
+      return data.data.docs as ICategory[];
+    },
+  });
+  if (isLoading) {
+    return <LoadingFixed />;
+  }
   return (
     <div className="menu-main h-full max-lg:hidden">
       <ul className="flex items-center gap-8 h-full">
         <li className="h-full relative">
-          <a
-            href="#!"
-            className="text-button-uppercase duration-300 h-full flex items-center justify-center gap-1 active"
+          <NavLink
+            to={"/"}
+            end
+            className="text-button-uppercase duration-300 h-full flex items-center justify-center gap-1 "
           >
             Trang chủ
-          </a>
+          </NavLink>
         </li>
-        <li className="h-full">
-          <a
-            href="#!"
+        <li className="h-full relative">
+          <NavLink
+            to={"/shop"}
             className="text-button-uppercase duration-300 h-full flex items-center justify-center"
           >
             Sản phẩm
-          </a>
-          <div className="mega-menu absolute top-[74px] left-0 bg-white w-screen">
-            <div className="container">
-              <div className="flex justify-between py-8">
-                <div className="nav-link basis-2/3 grid grid-cols-4 gap-y-8">
-                  <div className="nav-item">
-                    <div className="text-button-uppercase pb-2">For Men</div>
-                    <ul>
-                      <li>
-                        <a
-                          href="shop-breadcrumb1.html"
-                          className="link text-secondary duration-300 cursor-pointer"
-                        >
-                          Starting From 50% Off
-                        </a>
-                      </li>
-                      <li>
-                        <a
-                          href="shop-breadcrumb1.html"
-                          className="link text-secondary duration-300 cursor-pointer"
-                        >
-                          Outerwear | Coats
-                        </a>
-                      </li>
-                      <li>
-                        <a
-                          href="shop-breadcrumb1.html"
-                          className="link text-secondary duration-300 cursor-pointer"
-                        >
-                          Sweaters | Cardigans
-                        </a>
-                      </li>
-                      <li>
-                        <a
-                          href="shop-breadcrumb1.html"
-                          className="link text-secondary duration-300 cursor-pointer"
-                        >
-                          Shirt | Sweatshirts
-                        </a>
-                      </li>
-                      <li>
-                        <a
-                          href="shop-breadcrumb1.html"
-                          className="link text-secondary duration-300 cursor-pointer view-all-btn"
-                        >
-                          View All
-                        </a>
-                      </li>
-                    </ul>
-                  </div>
-                  <div className="nav-item">
-                    <div className="text-button-uppercase pb-2">
-                      Massimo Dutti
-                    </div>
-                    <ul>
-                      <li>
-                        <a
-                          href="shop-breadcrumb1.html"
-                          className="link text-secondary duration-300 cursor-pointer"
-                        >
-                          Shirt | Clothes
-                        </a>
-                      </li>
-                      <li>
-                        <a
-                          href="shop-breadcrumb1.html"
-                          className="link text-secondary duration-300 cursor-pointer"
-                        >
-                          Top | Overshirts
-                        </a>
-                      </li>
-                      <li>
-                        <a
-                          href="shop-breadcrumb1.html"
-                          className="link text-secondary duration-300 cursor-pointer"
-                        >
-                          T-shirts | Clothes
-                        </a>
-                      </li>
-                      <li>
-                        <a
-                          href="shop-breadcrumb1.html"
-                          className="link text-secondary duration-300 cursor-pointer"
-                        >
-                          Swimwear | Underwear
-                        </a>
-                      </li>
-                      <li>
-                        <a
-                          href="shop-breadcrumb1.html"
-                          className="link text-secondary duration-300 view-all-btn"
-                        >
-                          View All
-                        </a>
-                      </li>
-                    </ul>
-                  </div>
-                  <div className="nav-item">
-                    <div className="text-button-uppercase pb-2">Skincare</div>
-                    <ul>
-                      <li>
-                        <a
-                          href="shop-breadcrumb1.html"
-                          className="link text-secondary duration-300 cursor-pointer"
-                        >
-                          Faces Skin
-                        </a>
-                      </li>
-                      <li>
-                        <a
-                          href="shop-breadcrumb1.html"
-                          className="link text-secondary duration-300 cursor-pointer"
-                        >
-                          Eyes Makeup
-                        </a>
-                      </li>
-                      <li>
-                        <a
-                          href="shop-breadcrumb1.html"
-                          className="link text-secondary duration-300 cursor-pointer"
-                        >
-                          Lip Polish
-                        </a>
-                      </li>
-                      <li>
-                        <a
-                          href="shop-breadcrumb1.html"
-                          className="link text-secondary duration-300 cursor-pointer"
-                        >
-                          Hair Care
-                        </a>
-                      </li>
-                      <li>
-                        <a
-                          href="shop-breadcrumb1.html"
-                          className="link text-secondary duration-300 view-all-btn"
-                        >
-                          View All
-                        </a>
-                      </li>
-                    </ul>
-                  </div>
-                  <div className="nav-item">
-                    <div className="text-button-uppercase pb-2">Health</div>
-                    <ul>
-                      <li>
-                        <a
-                          href="shop-breadcrumb1.html"
-                          className="link text-secondary duration-300 cursor-pointer"
-                        >
-                          Cented Candle
-                        </a>
-                      </li>
-                      <li>
-                        <a
-                          href="shop-breadcrumb1.html"
-                          className="link text-secondary duration-300 cursor-pointer"
-                        >
-                          Health Drinks
-                        </a>
-                      </li>
-                      <li>
-                        <a
-                          href="shop-breadcrumb1.html"
-                          className="link text-secondary duration-300 cursor-pointer"
-                        >
-                          Yoga Clothes
-                        </a>
-                      </li>
-                      <li>
-                        <a
-                          href="shop-breadcrumb1.html"
-                          className="link text-secondary duration-300 cursor-pointer"
-                        >
-                          Yoga Equipment
-                        </a>
-                      </li>
-                      <li>
-                        <a
-                          href="shop-breadcrumb1.html"
-                          className="link text-secondary duration-300 view-all-btn"
-                        >
-                          View All
-                        </a>
-                      </li>
-                    </ul>
-                  </div>
-                  <div className="nav-item">
-                    <div className="text-button-uppercase pb-2">For Women</div>
-                    <ul>
-                      <li>
-                        <a
-                          href="shop-breadcrumb1.html"
-                          className="link text-secondary duration-300 cursor-pointer"
-                        >
-                          Starting From 60% Off
-                        </a>
-                      </li>
-                      <li>
-                        <a
-                          href="shop-breadcrumb1.html"
-                          className="link text-secondary duration-300
-                                                                cursor-pointer"
-                        >
-                          Dresses | Jumpsuits
-                        </a>
-                      </li>
-                      <li>
-                        <a
-                          href="shop-breadcrumb1.html"
-                          className="link text-secondary duration-300
-                                                                cursor-pointer"
-                        >
-                          T-shirts | Sweatshirts
-                        </a>
-                      </li>
-                      <li>
-                        <a
-                          href="shop-breadcrumb1.html"
-                          className="link text-secondary duration-300
-                                                                cursor-pointer"
-                        >
-                          Accessories | Jewelry
-                        </a>
-                      </li>
-                      <li>
-                        <a
-                          href="shop-breadcrumb1.html"
-                          className="link text-secondary duration-300
-                                                                view-all-btn"
-                        >
-                          View All
-                        </a>
-                      </li>
-                    </ul>
-                  </div>
-                  <div className="nav-item">
-                    <div className="text-button-uppercase pb-2">For Kid</div>
-                    <ul>
-                      <li>
-                        <a
-                          href="shop-breadcrumb1.html"
-                          className="link text-secondary duration-300
-                                                                cursor-pointer"
-                        >
-                          Kids Bed
-                        </a>
-                      </li>
-                      <li>
-                        <a
-                          href="shop-breadcrumb1.html"
-                          className="link text-secondary duration-300
-                                                                cursor-pointer"
-                        >
-                          Boy's Toy
-                        </a>
-                      </li>
-                      <li>
-                        <a
-                          href="shop-breadcrumb1.html"
-                          className="link text-secondary duration-300
-                                                                cursor-pointer"
-                        >
-                          Baby Blanket
-                        </a>
-                      </li>
-                      <li>
-                        <a
-                          href="shop-breadcrumb1.html"
-                          className="link text-secondary duration-300
-                                                                cursor-pointer"
-                        >
-                          Newborn Clothing
-                        </a>
-                      </li>
-                      <li>
-                        <a
-                          href="shop-breadcrumb1.html"
-                          className="link text-secondary duration-300
-                                                                view-all-btn"
-                        >
-                          View All
-                        </a>
-                      </li>
-                    </ul>
-                  </div>
-                  <div className="nav-item">
-                    <div className="text-button-uppercase pb-2">For Home</div>
-                    <ul>
-                      <li>
-                        <a
-                          href="shop-breadcrumb1.html"
-                          className="link text-secondary duration-300
-                                                                cursor-pointer"
-                        >
-                          Furniture | Decor
-                        </a>
-                      </li>
-                      <li>
-                        <a
-                          href="shop-breadcrumb1.html"
-                          className="link text-secondary duration-300
-                                                                cursor-pointer"
-                        >
-                          Table | Living Room
-                        </a>
-                      </li>
-                      <li>
-                        <a
-                          href="shop-breadcrumb1.html"
-                          className="link text-secondary duration-300
-                                                                cursor-pointer"
-                        >
-                          Chair | Work Room
-                        </a>
-                      </li>
-                      <li>
-                        <a
-                          href="shop-breadcrumb1.html"
-                          className="link text-secondary duration-300
-                                                                cursor-pointer"
-                        >
-                          Lighting | Bed Room
-                        </a>
-                      </li>
-                      <li>
-                        <a
-                          href="shop-breadcrumb1.html"
-                          className="link text-secondary duration-300
-                                                                view-all-btn"
-                        >
-                          View All
-                        </a>
-                      </li>
-                    </ul>
-                  </div>
-                </div>
-              </div>
-            </div>
+          </NavLink>
+          <div className="sub-menu py-3 px-5 -left-10 absolute bg-white rounded-b-xl">
+            <ul className="w-full">
+              {categorys?.map((category) => (
+                <li key={category._id}>
+                  <Link
+                    to={"/shop?category=" + category.slug}
+                    className="link text-secondary duration-300"
+                  >
+                    {category.name}
+                  </Link>
+                </li>
+              ))}
+            </ul>
           </div>
         </li>
         <li className="h-full relative">

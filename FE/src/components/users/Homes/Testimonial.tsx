@@ -44,9 +44,9 @@ const Testimonial = () => {
                 },
               }}
             >
-              <SwiperSlide className="swiper-slide">
+              <SwiperSlide className="swiper-slide ">
                 <div className="testimonial-item style-one h-full">
-                  <div className="testimonial-main bg-white p-8 rounded-2xl h-full">
+                  <div className="testimonial-main bg-gray-50 p-8 rounded-2xl h-full">
                     <div className="flex items-center gap-1">
                       <Star fill="#ecb018" strokeWidth={0} />
                       <Star fill="#ecb018" strokeWidth={0} />
@@ -72,7 +72,7 @@ const Testimonial = () => {
               </SwiperSlide>
               <SwiperSlide className="swiper-slide">
                 <div className="testimonial-item style-one h-full">
-                  <div className="testimonial-main bg-white p-8 rounded-2xl h-full">
+                  <div className="testimonial-main bg-gray-50 p-8 rounded-2xl h-full">
                     <div className="flex items-center gap-1">
                       <Star fill="#ecb018" strokeWidth={0} />
                       <Star fill="#ecb018" strokeWidth={0} />
@@ -97,7 +97,7 @@ const Testimonial = () => {
               </SwiperSlide>
               <SwiperSlide className="swiper-slide">
                 <div className="testimonial-item style-one h-full">
-                  <div className="testimonial-main bg-white p-8 rounded-2xl h-full">
+                  <div className="testimonial-main bg-gray-50 p-8 rounded-2xl h-full">
                     <div className="flex items-center gap-1">
                       <Star fill="#ecb018" strokeWidth={0} />
                       <Star fill="#ecb018" strokeWidth={0} />
@@ -121,7 +121,7 @@ const Testimonial = () => {
               </SwiperSlide>
               <SwiperSlide className="swiper-slide">
                 <div className="testimonial-item style-one h-full">
-                  <div className="testimonial-main bg-white p-8 rounded-2xl h-full">
+                  <div className="testimonial-main bg-gray-50 p-8 rounded-2xl h-full">
                     <div className="flex items-center gap-1">
                       <Star fill="#ecb018" strokeWidth={0} />
                       <Star fill="#ecb018" strokeWidth={0} />
@@ -147,7 +147,7 @@ const Testimonial = () => {
               </SwiperSlide>
               <SwiperSlide className="swiper-slide">
                 <div className="testimonial-item style-one h-full">
-                  <div className="testimonial-main bg-white p-8 rounded-2xl h-full">
+                  <div className="testimonial-main bg-gray-50 p-8 rounded-2xl h-full">
                     <div className="flex items-center gap-1">
                       <Star fill="#ecb018" strokeWidth={0} />
                       <Star fill="#ecb018" strokeWidth={0} />

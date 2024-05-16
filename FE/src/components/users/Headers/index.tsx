@@ -1,6 +1,6 @@
 import { AlignLeft } from "lucide-react";
 import { useEffect, useRef } from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import FeatureHeader from "./FeatureHeader";
 import MenuMain from "./MenuMain";
 import MenuMobile from "./MenuMobile";
@@ -29,11 +29,14 @@ const Header = () => {
       headerMain.classList.remove("fixed");
     }
   };
+  const { pathname } = useLocation();
   return (
     <div id="header" className="relative w-full">
       <div
         ref={headerMenu}
-        className="header-menu style-one absolute top-0 left-0 right-0 w-full md:h-[74px] h-[56px] bg-transparent"
+        className={`header-menu style-one absolute top-0 left-0 right-0 w-full md:h-[74px] h-[56px] ${
+          ["/", "/shop"].includes(pathname) ? "bg-transparent" : "bg-white"
+        } `}
       >
         <div className="container mx-auto h-full">
           <div className="header-main flex justify-between h-full">

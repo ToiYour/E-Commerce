@@ -1,7 +1,7 @@
 import { PhoneCall, ArchiveRestore, BadgeCheck } from "lucide-react";
 const Benefit = () => {
   return (
-    <div className="benefit-block md:pt-20 pt-10">
+    <div className="benefit-block bg-white md:pt-20 pt-10">
       <div className="container">
         <div className="list-benefit grid items-start md:grid-cols-2 lg:grid-cols-4  gap-[30px]">
           <div className="benefit-item flex flex-col items-center justify-center">

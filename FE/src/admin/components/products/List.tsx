@@ -40,7 +40,13 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { IProduct } from "@/interfaces/product";
-import { formatMoney, handleDownloadExcel } from "@/lib/utils";
+import {
+  formatMoney,
+  handleDownloadExcel,
+  SwalWarningConfirm,
+  ToastError,
+  ToastSuccess,
+} from "@/lib/utils";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   File,
@@ -52,15 +58,11 @@ import {
 import moment from "moment";
 import { useRef } from "react";
 import { Link, useSearchParams } from "react-router-dom";
-import { Flip, toast } from "react-toastify";
-import Swal from "sweetalert2";
-import withReactContent from "sweetalert2-react-content";
 const List = () => {
   const checkboxAllSize = useRef<HTMLInputElement>(null); // input checkbox (chọn tất cả)
   const btnSubmitActionSize = useRef<HTMLButtonElement>(null); // input submit action chọn tất cả
   //
   const queryClient = useQueryClient();
-  const MySwal = withReactContent(Swal); // sweet alert
   const [searchParams, setSearchParams] = useSearchParams();
   const page = searchParams.get("page") || 1;
   const order = searchParams.get("order") ?? "all";
@@ -100,19 +102,11 @@ const List = () => {
       await deleteSoftProduct(id);
     },
     onError: () => {
-      Swal.fire({
-        title: "Deleted!",
-        text: "Xoá thất bại.",
-        icon: "error",
-      });
+      ToastError("Xoá thất bại.");
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["GET_PRODUCTS"] });
-      Swal.fire({
-        title: "Deleted!",
-        text: "Bạn đã xoá thành công.",
-        icon: "success",
-      });
+      ToastSuccess("Bạn đã xoá thành công.");
     },
   });
   const mutaionDeleteSortAll = useMutation({
@@ -120,32 +114,16 @@ const List = () => {
       await deleteSoftAllProduct(productIds);
     },
     onError: () => {
-      Swal.fire({
-        title: "Deleted!",
-        text: "Xoá thất bại.",
-        icon: "error",
-      });
+      ToastError("Xoá thất bại.");
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["GET_PRODUCTS"] });
-      Swal.fire({
-        title: "Deleted!",
-        text: "Bạn đã xoá thành công.",
-        icon: "success",
-      });
+      ToastSuccess("Bạn đã xoá thành công.");
     },
   });
 
   const handleDelete = (id: string | number) => {
-    MySwal.fire({
-      title: "Bạn có chắc xoá không?",
-      text: "Hành động này sẽ chuyển size sản phẩm vào thùng rác!",
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonColor: "#3085d6",
-      cancelButtonColor: "#d33",
-      confirmButtonText: "Đồng ý, xoá nó!",
-    }).then((result) => {
+    SwalWarningConfirm("Xoá", "Bạn có chắc chắn xoá không?").then((result) => {
       if (result.isConfirmed) {
         mutaionDeleteSort.mutate(id || 0);
       }
@@ -190,15 +168,10 @@ const List = () => {
     const actionsCheckbox = formData.get("actions-checkbox");
     switch (actionsCheckbox) {
       case "delete":
-        Swal.fire({
-          title: "Delete?",
-          text: "Hành động này sẽ chuyển size bạn đã chọn vào thúc rác!",
-          icon: "warning",
-          showCancelButton: true,
-          confirmButtonColor: "#3085d6",
-          cancelButtonColor: "#d33",
-          confirmButtonText: "Yes, delete it!",
-        }).then((result) => {
+        SwalWarningConfirm(
+          "Xoá",
+          "Bạn có chắc chắn xoá các mục đã chọn không?"
+        ).then((result) => {
           if (result.isConfirmed) {
             mutaionDeleteSortAll.mutate(productIds as string[]);
             elementcheckboxAllSize.checked = false;
@@ -209,17 +182,7 @@ const List = () => {
         break;
 
       default:
-        toast.warn("Vui lòng chọn hành động", {
-          position: "top-right",
-          autoClose: 2000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "light",
-          transition: Flip,
-        });
+        ToastError("Vui lòng chọn hành động");
         break;
     }
   };
@@ -380,7 +343,7 @@ const List = () => {
             <TableHeader>
               <TableRow>
                 <TableHead></TableHead>
-                <TableHead className="whitespace-nowrap max-w-20">
+                <TableHead className="whitespace-nowrap max-w-20 hidden lg:table-cell">
                   Ảnh sản phẩm
                 </TableHead>
                 <TableHead>
@@ -389,8 +352,8 @@ const List = () => {
                     <ArrangeTable column="name" />
                   </div>
                 </TableHead>
-                <TableHead className="hidden md:table-cell ">
-                  <div className="flex justify-center items-end whitespace-nowrap">
+                <TableHead className="hidden lg:table-cell ">
+                  <div className="flex justify-center items-end whitespace-nowrap ">
                     Giá cơ bản
                     <ArrangeTable column="price" />
                   </div>
@@ -401,7 +364,7 @@ const List = () => {
                     <ArrangeTable column="status" />
                   </div>
                 </TableHead>
-                <TableHead className="hidden md:table-cell">
+                <TableHead className="hidden lg:table-cell">
                   {" "}
                   <div className="flex justify-center items-end whitespace-nowrap">
                     Ngày tạo
@@ -439,7 +402,7 @@ const List = () => {
                         onChange={handleCheckboxItems}
                       />
                     </TableCell>
-                    <TableCell>
+                    <TableCell className="hidden lg:table-cell">
                       <Carousel className="max-w-20">
                         <CarouselContent>
                           {product.images?.map((image) => (
@@ -460,13 +423,13 @@ const List = () => {
                       {product.name}
                     </TableCell>
 
-                    <TableCell className="hidden md:table-cell">
+                    <TableCell className="hidden lg:table-cell">
                       {formatMoney(product.price || 0)}
                     </TableCell>
                     <TableCell className="hidden md:table-cell">
                       <BadgeStatus status={product.status as boolean} />
                     </TableCell>
-                    <TableCell className="hidden md:table-cell">
+                    <TableCell className="hidden lg:table-cell">
                       {moment
                         .utc(product.createdAt)
                         .format("YYYY-MM-DD hh:mm A")}

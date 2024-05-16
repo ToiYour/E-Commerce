@@ -10,14 +10,18 @@ import {
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
 import { ICustomer } from "@/interfaces/customer";
-import { upLoadFileOne } from "@/lib/utils";
+import {
+  ToastError,
+  ToastSuccess,
+  ToastWarning,
+  upLoadFileOne,
+} from "@/lib/utils";
 import { useMutation } from "@tanstack/react-query";
 import { AxiosError } from "axios";
 import { ImageUp } from "lucide-react";
 import { useRef, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
-import { Flip, toast } from "react-toastify";
 const Add = () => {
   const navigate = useNavigate();
   const avartarRef = useRef<HTMLImageElement>(null);
@@ -27,7 +31,7 @@ const Add = () => {
     handleSubmit,
     formState: { errors },
   } = useForm<ICustomer>({
-    defaultValues: { role: "Khách hàng", account_status: true },
+    defaultValues: { role: "Khách hàng", account_status: false },
   });
   const onSubmit: SubmitHandler<ICustomer> = async (newData: ICustomer) => {
     setIsLoadSubmit(true);
@@ -48,43 +52,13 @@ const Add = () => {
     onError: (error) => {
       setIsLoadSubmit(false);
       const axiosError = error as AxiosError;
-      toast.error("Có lỗi khi thêm mới khách hàng!", {
-        position: "top-right",
-        autoClose: 2000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "light",
-        transition: Flip,
-      });
+      ToastError("Có lỗi khi thêm mới khách hàng!");
       axiosError?.response?.data &&
-        toast.warning(axiosError?.response?.data as string, {
-          position: "top-right",
-          autoClose: 3000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "light",
-          transition: Flip,
-        });
+        ToastWarning(axiosError?.response?.data as string);
     },
     onSuccess: () => {
       setIsLoadSubmit(false);
-      toast.success("Thêm mới khách hàng thành công!", {
-        position: "top-right",
-        autoClose: 2000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "light",
-        transition: Flip,
-      });
+      ToastSuccess("Thêm mới khách hàng thành công!");
       navigate("/admin/customers");
     },
   });
@@ -123,7 +97,7 @@ const Add = () => {
       </Breadcrumb>
       <form
         onSubmit={handleSubmit(onSubmit)}
-        className="grid grid-cols-1 md:grid-cols-5 gap-y-5 md:gap-x-5 "
+        className="grid grid-cols-1 lg:grid-cols-5 gap-y-5 lg:gap-x-5 "
       >
         <div className="">
           <div className="rounded-md border border-gray-100 bg-white p-4 shadow-md space-y-5">

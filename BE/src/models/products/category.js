@@ -6,6 +6,7 @@ mongoose.plugin(slug);
 const CategoryShema = new mongoose.Schema(
   {
     name: String,
+    img: String,
     slug: {
       type: String,
       slug: "name",

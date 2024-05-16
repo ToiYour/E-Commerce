@@ -4,6 +4,7 @@ import Slides from "@/components/users/Homes/Slides";
 import Testimonial from "@/components/users/Homes/Testimonial";
 
 const HomePage = () => {
+  document.title = "Toinh";
   return (
     <>
       <Slides />

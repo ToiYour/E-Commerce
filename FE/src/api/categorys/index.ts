@@ -55,3 +55,7 @@ export const getComboboxCategory = () => {
   const uri = "/category/combobox";
   return instance.get(uri);
 };
+export const getBySlugCategory = (slug: string) => {
+  const uri = "/category/by_slug/" + slug;
+  return instance.get(uri);
+};

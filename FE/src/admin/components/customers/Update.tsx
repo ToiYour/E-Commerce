@@ -1,4 +1,4 @@
-import { updateCustomer } from "@/api/customer";
+import { getByIdCustomer, updateCustomer } from "@/api/customer";
 import Address from "@/components/Address";
 import ButtonLoading from "@/components/ButtonLoading";
 import {
@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/breadcrumb";
 import { ICustomer } from "@/interfaces/customer";
 import { upLoadFileOne } from "@/lib/utils";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { AxiosError } from "axios";
 import { ImageUp } from "lucide-react";
 import { useRef, useState } from "react";
@@ -20,17 +20,24 @@ import { Link, useLoaderData, useParams } from "react-router-dom";
 import { Flip, toast } from "react-toastify";
 const Update = () => {
   const { id } = useParams();
+  useQuery({
+    queryKey: ["GET_BY_ID_CUSTOMER"],
+    queryFn: async () => {
+      const { data } = await getByIdCustomer(id as string);
+      reset(data.data);
+      return data.data;
+    },
+  });
+
   const prevCustomer = useLoaderData() as ICustomer;
   const avartarRef = useRef<HTMLImageElement>(null);
   const [isLoadSubmit, setIsLoadSubmit] = useState(false);
   const {
     register,
     handleSubmit,
-
+    reset,
     formState: { errors },
-  } = useForm<ICustomer>({
-    defaultValues: prevCustomer,
-  });
+  } = useForm<ICustomer>({});
   const onSubmit: SubmitHandler<ICustomer> = async (newData: ICustomer) => {
     console.log(newData);
 
@@ -130,7 +137,7 @@ const Update = () => {
           <div className="rounded-md border border-gray-100 bg-white p-4 shadow-md space-y-5">
             <img
               ref={avartarRef}
-              src={prevCustomer.avatar as string}
+              src={prevCustomer?.avatar as string}
               alt=""
               className="size-20 mx-auto rounded-full object-cover"
             />
@@ -335,49 +342,11 @@ const Update = () => {
               </select>
             </div>
             {/*  */}
-            {/* <div className="col-span-6 sm:col-span-3">
-              <label
-                htmlFor=""
-                className="block text-sm font-medium text-gray-700"
-              >
-                Tỉnh thành
-              </label>
-              <input
-                {...register("address.province")}
-                type="text"
-                className="mt-1 w-full p-1 rounded border border-gray-200 bg-white text-sm text-gray-700 shadow-sm"
-              />
-            </div>
-            <div className="col-span-6 sm:col-span-3">
-              <label
-                htmlFor=""
-                className="block text-sm font-medium text-gray-700"
-              >
-                Quận huyện
-              </label>
-              <input
-                {...register("address.district")}
-                type="text"
-                className="mt-1 w-full p-1 rounded border border-gray-200 bg-white text-sm text-gray-700 shadow-sm"
-              />
-            </div>
-            <div className="col-span-6 sm:col-span-3">
-              <label
-                htmlFor=""
-                className="block text-sm font-medium text-gray-700"
-              >
-                Phường Xã
-              </label>
-              <input
-                {...register("address.commune")}
-                type="text"
-                className="mt-1 w-full p-1 rounded border border-gray-200 bg-white text-sm text-gray-700 shadow-sm"
-              />
-            </div> */}
+
             <Address
               register={register}
               errors={errors}
-              address={{ provinceName: prevCustomer.address?.province }}
+              address={{ ...prevCustomer.address }}
             />
             {/*  */}
             <div className="col-span-6">

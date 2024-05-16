@@ -6,24 +6,43 @@ import { Autoplay, Navigation } from "swiper/modules";
 // import Swiper styles
 import "swiper/css";
 import "swiper/css/navigation";
+import { useEffect, useState } from "react";
+import { ICategory } from "@/interfaces/category";
+import { useQueryClient } from "@tanstack/react-query";
+import { getAllCategory } from "@/api/categorys";
+import { Link } from "react-router-dom";
 
 const Collections = () => {
+  const [categorys, setCategorys] = useState<ICategory[]>([]);
+  const queryClient = useQueryClient();
+  useEffect(() => {
+    (async () => {
+      const data = await queryClient.ensureQueryData({
+        queryKey: ["GET_CATEGORYS_HOME"],
+        queryFn: async () => {
+          const { data } = await getAllCategory("");
+          return data.data.docs as ICategory[];
+        },
+      });
+      setCategorys(data);
+    })();
+  }, [queryClient]);
   return (
-    <div className="collection-block md:pt-20 pt-10">
+    <div className="collection-block bg-gray-50 mt-10 pt-10 py-20">
       <div className="container">
         <div className="heading3 text-center">Danh mục</div>
       </div>
       <div className="list-collection relative section-swiper-navigation md:mt-10 mt-6 sm:px-5 px-4">
         <div className="swiper-button-prev lg:left-10 left-6" />
-        <div className="swiper swiper-collection h-full relative">
+        <div className="swiper swiper-collection  relative">
           <Swiper
-            className="swiper-wrapper"
+            className="swiper-wrapper "
             modules={[Navigation, Autoplay]}
             navigation={{
               prevEl: ".swiper-button-prev",
               nextEl: ".swiper-button-next",
             }}
-            loop={true}
+            // loop={true}
             autoplay={{
               delay: 3500,
               disableOnInteraction: false,
@@ -45,102 +64,25 @@ const Collections = () => {
               },
             }}
           >
-            <SwiperSlide className="swiper-slide">
-              <a
-                href="shop-breadcrumb1.html"
-                className="collection-item block relative rounded-2xl overflow-hidden cursor-pointer"
-              >
-                <div className="bg-img">
-                  <img
-                    src="https://i.pinimg.com/564x/76/78/89/767889539805db3efd95e7dde432a11b.jpg"
-                    alt="swimwear"
-                  />
-                </div>
-                <div className="collection-name heading5 text-center sm:bottom-8 bottom-4 lg:w-[200px] md:w-[160px] w-[100px] md:py-3 py-1.5 bg-white rounded-xl duration-500">
-                  swimwear
-                </div>
-              </a>
-            </SwiperSlide>
-            <SwiperSlide className="swiper-slide">
-              <a
-                href="shop-breadcrumb1.html"
-                className="collection-item block relative rounded-2xl overflow-hidden cursor-pointer"
-              >
-                <div className="bg-img">
-                  <img
-                    src="https://i.pinimg.com/564x/76/78/89/767889539805db3efd95e7dde432a11b.jpg"
-                    alt="top"
-                  />
-                </div>
-                <div className="collection-name heading5 text-center sm:bottom-8 bottom-4 lg:w-[200px] md:w-[160px] w-[100px] md:py-3 py-1.5 bg-white rounded-xl duration-500">
-                  top
-                </div>
-              </a>
-            </SwiperSlide>
-            <SwiperSlide className="swiper-slide">
-              <a
-                href="shop-breadcrumb1.html"
-                className="collection-item block relative rounded-2xl overflow-hidden cursor-pointer"
-              >
-                <div className="bg-img">
-                  <img
-                    src="https://i.pinimg.com/564x/76/78/89/767889539805db3efd95e7dde432a11b.jpg"
-                    alt="sets"
-                  />
-                </div>
-                <div className="collection-name heading5 text-center sm:bottom-8 bottom-4 lg:w-[200px] md:w-[160px] w-[100px] md:py-3 py-1.5 bg-white rounded-xl duration-500">
-                  sets
-                </div>
-              </a>
-            </SwiperSlide>
-            <SwiperSlide className="swiper-slide">
-              <a
-                href="shop-breadcrumb1.html"
-                className="collection-item block relative rounded-2xl overflow-hidden cursor-pointer"
-              >
-                <div className="bg-img">
-                  <img
-                    src="https://i.pinimg.com/564x/76/78/89/767889539805db3efd95e7dde432a11b.jpg"
-                    alt="outerwear"
-                  />
-                </div>
-                <div className="collection-name heading5 text-center sm:bottom-8 bottom-4 lg:w-[200px] md:w-[160px] w-[100px] md:py-3 py-1.5 bg-white rounded-xl duration-500">
-                  outerwear
-                </div>
-              </a>
-            </SwiperSlide>
-            <SwiperSlide className="swiper-slide">
-              <a
-                href="shop-breadcrumb1.html"
-                className="collection-item block relative rounded-2xl overflow-hidden cursor-pointer"
-              >
-                <div className="bg-img">
-                  <img
-                    src="https://i.pinimg.com/564x/76/78/89/767889539805db3efd95e7dde432a11b.jpg"
-                    alt="underwear"
-                  />
-                </div>
-                <div className="collection-name heading5 text-center sm:bottom-8 bottom-4 lg:w-[200px] md:w-[160px] w-[100px] md:py-3 py-1.5 bg-white rounded-xl duration-500">
-                  underwear
-                </div>
-              </a>
-            </SwiperSlide>
-            <SwiperSlide className="swiper-slide">
-              <a
-                href="shop-breadcrumb1.html"
-                className="collection-item block relative rounded-2xl overflow-hidden cursor-pointer"
-              >
-                <div className="bg-img">
-                  <img
-                    src="https://i.pinimg.com/564x/76/78/89/767889539805db3efd95e7dde432a11b.jpg"
-                    alt="t-shirt"
-                  />
-                </div>
-                <div className="collection-name heading5 text-center sm:bottom-8 bottom-4 lg:w-[200px] md:w-[160px] w-[100px] md:py-3 py-1.5 bg-white rounded-xl duration-500">
-                  t-shirt
-                </div>
-              </a>
-            </SwiperSlide>
+            {categorys?.map((category) => (
+              <SwiperSlide key={category._id} className="swiper-slide">
+                <Link
+                  to={`/shop?category=${category.slug}`}
+                  className="collection-item block relative rounded-2xl overflow-hidden cursor-pointer h-full"
+                >
+                  <div className="bg-img ">
+                    <img
+                      src={category.img as string}
+                      alt="swimwear"
+                      className=" object-cover"
+                    />
+                  </div>
+                  <div className="collection-name heading5 text-center sm:bottom-8 bottom-4 lg:w-[200px] md:w-[160px] w-[100px] md:py-3 py-1.5 bg-white rounded-xl duration-500">
+                    {category.name}
+                  </div>
+                </Link>
+              </SwiperSlide>
+            ))}
           </Swiper>
         </div>
         <div className="swiper-button-next lg:right-10 right-6" />

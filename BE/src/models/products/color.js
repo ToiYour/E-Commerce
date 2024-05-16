@@ -4,6 +4,7 @@ import MongoosePaginate from "mongoose-paginate-v2";
 const ColorShema = new mongoose.Schema(
   {
     name: String,
+    hex: String,
     status: {
       type: Boolean,
       default: true,
