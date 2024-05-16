@@ -26,9 +26,14 @@ const ProductJoi = joi.object({
     "any.required": "Biến thể phẩm là bắt buộc",
     "array.empty": "Biến thể phẩm không được bỏ trống",
   }),
+  brand: joi.string().required().messages({
+    "any.required": "Thương hiệu là bắt buộc ",
+    "string.empty": "Thương hiệu không được bỏ trống",
+  }),
 });
 const ProductValid = (req, res, next) => {
-  const { error } = ProductJoi.validate(req.body, { abortEarly: false });
+  const { status, ...newData } = req.body;
+  const { error } = ProductJoi.validate(newData, { abortEarly: false });
   if (error) {
     const listErrors = error.details.map((err) => err.message);
     return res.status(400).send({ messages: listErrors });

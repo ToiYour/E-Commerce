@@ -7,8 +7,12 @@ import {
   deleteSoftByIdProduct,
   getAllProducts,
   getAllSoftProduct,
+  getBrandProducts,
   getByIdUpdateProduct,
   getDetailProduct,
+  getDetailProductBySlug,
+  getMaxPriceProduct,
+  getSimilarProducts,
   restoreAllProduct,
   restoreByIdProduct,
   updateProduct,
@@ -16,11 +20,15 @@ import {
 import ProductValid from "../middleware/product.js";
 const router = express.Router();
 router.post("/", ProductValid, createProduct);
+router.get("/max-price", getMaxPriceProduct);
+router.get("/brand", getBrandProducts);
 router.get("/", getAllProducts);
+router.get("/similar", getSimilarProducts);
 router.get("/take-update/:id", getByIdUpdateProduct);
 router.put("/restore/all", restoreAllProduct); //Api Khôi phục all
 router.put("/:id/restore", restoreByIdProduct); //Api Khôi phục by id
 router.get("/detail/:id", getDetailProduct);
+router.get("/slug/:slug", getDetailProductBySlug);
 router.delete("/:id/soft", deleteSoftByIdProduct);
 router.post("/soft", deleteSoftAllProduct); //Api Xoá mềm all
 router.get("/soft", getAllSoftProduct); // Api đã xoá mềm

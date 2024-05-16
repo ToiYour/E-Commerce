@@ -1,7 +1,5 @@
 import { ICategory } from "./category";
-import { IColor } from "./color";
-import { ISize } from "./size";
-import { IVariant } from "./variant";
+import { IVariant, IVariantsDetail } from "./variant";
 
 export interface IFormProduct {
   category?: string;
@@ -10,22 +8,20 @@ export interface IFormProduct {
   name?: string;
   price?: number;
   variants?: IVariant[];
+  status?: boolean;
+  brand?: string;
 }
 export interface IProduct {
   status?: boolean;
+  slug?: string;
   _id?: string;
+  brand?: string;
   name?: string;
   category?: ICategory[];
   desc?: string;
   price?: number;
   images?: string[];
-  variants: {
-    _id?: string;
-    extra_price?: number;
-    stock?: number;
-    colorId?: IColor;
-    sizeId?: ISize;
-  }[];
+  variants: IVariantsDetail[];
   views?: number;
   deleted?: boolean;
   totalStock?: number;

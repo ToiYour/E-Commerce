@@ -12,10 +12,10 @@ export const createColor = async (req, res) => {
 };
 export const updateColor = async (req, res) => {
   try {
-    const { name, status } = req.body;
+    const { name, hex, status } = req.body;
     const data = await Color.findByIdAndUpdate(
       req.params.id,
-      { name, status },
+      { name, hex, status },
       {
         new: true,
       }

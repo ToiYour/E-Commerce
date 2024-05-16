@@ -59,9 +59,9 @@ const Sidebar = () => {
               Danh mục{" "}
             </NavLink>
             <div className="sidebar-variant">
-              <NavLink
+              <li
                 onClick={handlerVariant}
-                to={"/admin/variant/color"}
+                // to={"/admin/variant/"}
                 className="flex justify-between items-center gap-3 rounded-lg text-muted-foreground  px-3 py-2  transition-all hover:text-primary "
               >
                 <div className="flex items-center gap-3">
@@ -69,7 +69,7 @@ const Sidebar = () => {
                   Màu & Size
                 </div>{" "}
                 <ChevronDown size={16} />
-              </NavLink>
+              </li>
               <ul ref={childrenVariant} className="hidden mt-1 pl-10">
                 <NavLink
                   to={"/admin/variant/color"}

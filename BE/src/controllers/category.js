@@ -14,10 +14,10 @@ export const createCategory = async (req, res) => {
 };
 export const updateCategory = async (req, res) => {
   try {
-    const { name, status } = req.body;
+    const { name, status, img } = req.body;
     const data = await Category.findByIdAndUpdate(
       req.params.id,
-      { name, status },
+      { name, img, status },
       {
         new: true,
       }
@@ -174,6 +174,17 @@ export const deleteForeverAllCategorys = async (req, res) => {
 export const getComboboxCategory = async (req, res) => {
   try {
     const data = await Category.find({ status: true });
+    if (!data) {
+      return res.status(500).send({ messages: "Get data thất bại" });
+    }
+    return res.send({ message: "Get data thành công", data });
+  } catch (error) {
+    return res.status(500).send({ messages: "Lỗi server" });
+  }
+};
+export const getCategoryBySlug = async (req, res) => {
+  try {
+    const data = await Category.findOne({ slug: req.params.slug });
     if (!data) {
       return res.status(500).send({ messages: "Get data thất bại" });
     }

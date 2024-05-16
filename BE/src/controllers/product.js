@@ -1,6 +1,7 @@
 import mongoose from "mongoose";
 import Product from "../models/products/product.js";
 import Variant from "../models/products/variant.js";
+import Category from "../models/products/category.js";
 // import slugify from "slugify";
 export const createProduct = async (req, res) => {
   try {
@@ -15,11 +16,23 @@ export const createProduct = async (req, res) => {
 };
 export const getAllProducts = async (req, res) => {
   try {
+    const { price: findMaxPriceProduct } = await Product.findOne(
+      {},
+      { price: true }
+    ).sort({
+      price: "desc",
+    });
+    let categoryId;
+    if (req.query.category) {
+      categoryId = await Category.findOne({ slug: req.query.category }, "_id");
+    }
     const page = req.query.page || 1;
     const order = req.query.order || "";
     const sortBy = req.query.sortBy || "";
     const arrange = req.query.arrange || "createdAt";
     const orderBy = req.query.orderBy || "asc";
+    const minPrice = req.query.minPrice || 0;
+    const maxPrice = req.query.maxPrice || findMaxPriceProduct;
     const options = {
       page,
       limit: 4,
@@ -31,28 +44,51 @@ export const getAllProducts = async (req, res) => {
           path: "variants",
           populate: ["colorId", "sizeId"],
         },
-        "category",
+        { path: "category" },
       ],
     };
+
     let data;
     if (sortBy && order != "all") {
-      data = await Product.paginate(
-        {
-          $or: [{ deleted: false }, { deleted: { $exists: false } }],
-          [sortBy]: order,
-        },
-        options
-      );
+      const query = {
+        $or: [{ deleted: false }, { deleted: { $exists: false } }],
+        price: { $gte: minPrice, $lte: maxPrice },
+        [sortBy]: order,
+      };
+      if (req.query.category) {
+        query.category = categoryId._id;
+      }
+      data = await Product.paginate(query, options);
     } else {
-      const paginatedDeletedColors = await Product.paginate(
-        {
-          $or: [{ deleted: false }, { deleted: { $exists: false } }],
-        },
-        options
-      );
+      let query = {
+        $or: [{ deleted: false }, { deleted: { $exists: false } }],
+        price: { $gte: minPrice, $lte: maxPrice },
+      };
+      if (req.query.category) {
+        query.category = categoryId._id;
+      }
+      const paginatedDeletedColors = await Product.paginate(query, options);
       data = paginatedDeletedColors;
     }
 
+    if (!data) {
+      return res.status(500).send({ messages: "Get data thất bại" });
+    }
+    return res.send({ message: "Get data thành công", data });
+  } catch (error) {
+    return res.status(500).send({ messages: "Lỗi server", error });
+  }
+};
+export const getSimilarProducts = async (req, res) => {
+  try {
+    let categoryId;
+    if (req.query.category) {
+      categoryId = await Category.findOne({ slug: req.query.category }, "_id");
+    }
+    const data = await Product.find({
+      category: categoryId._id,
+      slug: { $ne: req.query.slug },
+    });
     if (!data) {
       return res.status(500).send({ messages: "Get data thất bại" });
     }
@@ -125,18 +161,18 @@ export const getDetailProduct = async (req, res) => {
           from: "variants",
           localField: "variants",
           foreignField: "_id",
-          as: "unpackedVariants", // Tránh xung đột với "variants" ban đầu
+          as: "unpackedVariants",
         },
       },
       {
-        $unwind: "$unpackedVariants", // Giải cấu trúc mảng "unpackedVariants"
+        $unwind: "$unpackedVariants",
       },
       {
         $lookup: {
           from: "colors",
           localField: "unpackedVariants.colorId",
           foreignField: "_id",
-          as: "colorId", // Biệt danh rõ ràng hơn cho thông tin màu sắc
+          as: "colorId",
         },
       },
       {
@@ -144,28 +180,27 @@ export const getDetailProduct = async (req, res) => {
           from: "sizes",
           localField: "unpackedVariants.sizeId",
           foreignField: "_id",
-          as: "sizeId", // Biệt danh rõ ràng hơn cho thông tin màu sắc
+          as: "sizeId",
         },
       },
       {
         $group: {
-          _id: "$_id", // Duy trì cấu trúc tài liệu ban đầu (tùy chọn)
+          _id: "$_id",
           name: { $first: "$name" },
-          category: { $first: "$categoryId" }, // Giả sử bạn muốn danh mục đầu tiên
+          brand: { $first: "$brand" },
+          category: { $first: "$categoryId" },
           images: { $first: "$images" },
           price: { $first: "$price" },
           views: { $first: "$views" },
           desc: { $first: "$desc" },
           variants: {
             $push: {
-              // Kết hợp các biến thể đã giải nén với thông tin màu sắc
-
               _id: "$unpackedVariants._id",
 
               extra_price: "$unpackedVariants.extra_price",
               stock: "$unpackedVariants.stock",
               deleted: "$unpackedVariants.deleted",
-              // Các trường biến thể khác (thêm nếu cần)
+
               colorId: { $first: "$colorId" },
               sizeId: { $first: "$sizeId" },
             },
@@ -178,6 +213,79 @@ export const getDetailProduct = async (req, res) => {
       return res.status(500).send({ messages: "Get data thất bại" });
     }
     return res.send({ message: "Get data thành công", data });
+  } catch (error) {
+    return res.status(500).send({ messages: "Lỗi server", error });
+  }
+};
+export const getDetailProductBySlug = async (req, res) => {
+  try {
+    const slug = req.params.slug;
+    const data = await Product.aggregate([
+      { $match: { slug } },
+      {
+        $lookup: {
+          from: "categories",
+          localField: "category",
+          foreignField: "_id",
+          as: "categoryId",
+        },
+      },
+      {
+        $lookup: {
+          from: "variants",
+          localField: "variants",
+          foreignField: "_id",
+          as: "unpackedVariants",
+        },
+      },
+      {
+        $unwind: "$unpackedVariants",
+      },
+      {
+        $lookup: {
+          from: "colors",
+          localField: "unpackedVariants.colorId",
+          foreignField: "_id",
+          as: "colorId",
+        },
+      },
+      {
+        $lookup: {
+          from: "sizes",
+          localField: "unpackedVariants.sizeId",
+          foreignField: "_id",
+          as: "sizeId",
+        },
+      },
+      {
+        $group: {
+          _id: "$_id",
+          name: { $first: "$name" },
+          category: { $first: "$categoryId" },
+          images: { $first: "$images" },
+          price: { $first: "$price" },
+          views: { $first: "$views" },
+          desc: { $first: "$desc" },
+          slug: { $first: "$slug" },
+          variants: {
+            $push: {
+              _id: "$unpackedVariants._id",
+
+              extra_price: "$unpackedVariants.extra_price",
+              stock: "$unpackedVariants.stock",
+              deleted: "$unpackedVariants.deleted",
+              colorId: { $first: "$colorId" },
+              sizeId: { $first: "$sizeId" },
+            },
+          },
+          totalStock: { $sum: "$unpackedVariants.stock" },
+        },
+      },
+    ]);
+    if (!data) {
+      return res.status(500).send({ messages: "Get data thất bại" });
+    }
+    return res.send({ message: "Get data thành công", data: data[0] });
   } catch (error) {
     return res.status(500).send({ messages: "Lỗi server", error });
   }
@@ -280,6 +388,37 @@ export const updateProduct = async (req, res) => {
       return res.status(500).send({ messages: "Cập nhập  thất bại" });
     }
     return res.send({ message: "Cập nhập  thành công", data });
+  } catch (error) {
+    return res.status(500).send({ messages: "Lỗi server" });
+  }
+};
+export const getMaxPriceProduct = async (req, res) => {
+  try {
+    const data = await Product.findOne({}, { price: true }).sort({
+      price: "desc",
+    });
+    if (!data) {
+      return res
+        .status(500)
+        .send({ messages: "Lấy giá sản phẩm cao nhất  thất bại" });
+    }
+    return res.send({ message: "Lấy giá sản phẩm cao nhất  thành công", data });
+  } catch (error) {
+    return res.status(500).send({ messages: "Lỗi server" });
+  }
+};
+export const getBrandProducts = async (req, res) => {
+  try {
+    const data = await Product.distinct("brand");
+    if (!data) {
+      return res
+        .status(500)
+        .send({ messages: "Lấy danh sách thương hiệu sản phẩm   thất bại" });
+    }
+    return res.send({
+      message: "Lấy danh sách thương hiệu sản phẩm  thành công",
+      data,
+    });
   } catch (error) {
     return res.status(500).send({ messages: "Lỗi server" });
   }

@@ -9,6 +9,7 @@ import {
   getAllNotSoftCategorys,
   getAllSoftCategorys,
   getByIdCategory,
+  getCategoryBySlug,
   getComboboxCategory,
   restoreAllCategorys,
   restoreByIdCategory,
@@ -27,4 +28,5 @@ router.delete("/:id/soft", deleteSoftByIdCategory); //Api xoá mềm theo id Cat
 router.delete("/:id", deleteForeverByIdCategory); //Api xoá vĩnh viễn theo id Category
 router.post("/soft", deleteSoftAllCategorys); //Api Xoá mềm all
 router.post("/delete-forever", deleteForeverAllCategorys); // Xoá vĩnh viễn all
+router.get("/by_slug/:slug", getCategoryBySlug);
 export default router;

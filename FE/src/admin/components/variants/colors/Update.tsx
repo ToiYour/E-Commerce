@@ -8,17 +8,17 @@ import {
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
 import { IColor } from "@/interfaces/color";
+import { ToastError, ToastSuccess } from "@/lib/utils";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 import { Link, useParams } from "react-router-dom";
-import { Flip, toast } from "react-toastify";
 const Update = () => {
   const { id } = useParams();
   useQuery({
     queryKey: ["GET_COLORS", id],
     queryFn: async () => {
       const { data } = await getByIdColor(id as string);
-      reset(data.data);
+      reset({ ...data.data, status: data.data.status.toString() });
       return data.data;
     },
   });
@@ -40,30 +40,10 @@ const Update = () => {
 
     onError: (err) => {
       console.log(err);
-      toast.error("Có lỗi xảy ra khi cập nhập màu ", {
-        position: "top-right",
-        autoClose: 2000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "light",
-        transition: Flip,
-      });
+      ToastError("Có lỗi xảy ra khi cập nhập màu ");
     },
     onSuccess: async () => {
-      toast.success("Cập nhập màu thành công", {
-        position: "top-right",
-        autoClose: 2000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "light",
-        transition: Flip,
-      });
+      ToastSuccess("Cập nhập màu thành công");
     },
   });
   const onSubmit = async (newData: IColor) => {
@@ -124,6 +104,24 @@ const Update = () => {
             </div>
             <div>
               <label
+                htmlFor="hex"
+                className="block text-sm font-medium text-gray-700"
+              >
+                {" "}
+                Mã màu{" "}
+              </label>
+              <input
+                {...register("hex", { required: "Vui lòng nhập mã màu" })}
+                type="text"
+                id="hex"
+                className="mt-1 p-2 w-full rounded-md border-2 border-gray-200 shadow-sm sm:text-sm"
+              />
+              {errors.hex && (
+                <p className="text-red-500">{errors.hex.message}</p>
+              )}
+            </div>
+            <div>
+              <label
                 htmlFor=""
                 className="block text-sm font-medium text-gray-700"
               >
@@ -142,8 +140,7 @@ const Update = () => {
                     <input
                       {...register("status")}
                       type="radio"
-                      defaultValue="true"
-                      defaultChecked
+                      value="true"
                       id="DeliveryStandard"
                       className="size-5 border-gray-300 text-blue-500"
                     />
@@ -160,7 +157,7 @@ const Update = () => {
                     <input
                       {...register("status")}
                       type="radio"
-                      defaultValue="false"
+                      value="false"
                       id="DeliveryPriority"
                       className="size-5 border-gray-300 text-blue-500"
                     />

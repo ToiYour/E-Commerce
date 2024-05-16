@@ -1,4 +1,5 @@
 import { createSize } from "@/api/variants/size";
+import ButtonLoading from "@/components/ButtonLoading";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -8,11 +9,13 @@ import {
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
 import { IColor } from "@/interfaces/color";
+import { ToastError, ToastSuccess } from "@/lib/utils";
 import { useMutation } from "@tanstack/react-query";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
-import { Flip, toast } from "react-toastify";
 const Add = () => {
+  const [isSubmitLoading, setIsSubmitLoading] = useState(false);
   const navigate = useNavigate();
   const {
     register,
@@ -28,35 +31,16 @@ const Add = () => {
 
     onError: (err) => {
       console.log(err);
-
-      toast.error("Có lỗi xảy ra khi thêm size mới ", {
-        position: "top-right",
-        autoClose: 2000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "light",
-        transition: Flip,
-      });
+      ToastError("Có lỗi xảy ra khi thêm size mới ");
     },
     onSuccess: async () => {
-      toast.success("Thêm mới size thành công", {
-        position: "top-right",
-        autoClose: 2000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "light",
-        transition: Flip,
-      });
+      setIsSubmitLoading(false);
+      ToastSuccess("Thêm mới size thành công");
       navigate("/admin/variant/size");
     },
   });
   const onSubmit = async (newData: IColor) => {
+    setIsSubmitLoading(true);
     mutate(newData);
   };
 
@@ -134,7 +118,7 @@ const Add = () => {
                     <input
                       {...register("status")}
                       type="radio"
-                      defaultValue="true"
+                      value="true"
                       defaultChecked
                       id="DeliveryStandard"
                       className="size-5 border-gray-300 text-blue-500"
@@ -152,7 +136,7 @@ const Add = () => {
                     <input
                       {...register("status")}
                       type="radio"
-                      defaultValue="false"
+                      value="false"
                       id="DeliveryPriority"
                       className="size-5 border-gray-300 text-blue-500"
                     />
@@ -161,10 +145,11 @@ const Add = () => {
               </fieldset>
             </div>
             <button
+              disabled={isSubmitLoading}
               type="submit"
               className="block w-full rounded-lg bg-indigo-600 px-5 py-3 text-sm font-medium text-white"
             >
-              Thêm mới
+              {isSubmitLoading ? <ButtonLoading /> : "Thêm mới"}
             </button>
           </form>
         </div>
