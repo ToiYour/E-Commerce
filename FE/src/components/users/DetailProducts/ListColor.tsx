@@ -46,7 +46,7 @@ const ListColor = ({ varians, setColorId }: IPropsListColor) => {
           htmlFor={color._id}
           className={` color-item  ${
             isVariantColors.includes(color._id) || "disabled"
-          }  relative max-w-32 max-h-[43px] overflow-hidden flex items-center border border-solid border-line cursor-pointer py-3 px-4 gap-2 rounded   `}
+          }  relative max-w-32 max-h-[43px] overflow-hidden flex items-center border border-solid border-line cursor-pointer py-3 px-4 gap-2 rounded  bg-white `}
         >
           <input
             onChange={(event) => handleActive(event)}

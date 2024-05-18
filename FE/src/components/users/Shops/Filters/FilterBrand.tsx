@@ -2,8 +2,10 @@ import { getBrandProducts } from "@/api/products";
 import LoadingFixed from "@/components/LoadingFixed";
 import { ToastError } from "@/lib/utils";
 import { useQuery } from "@tanstack/react-query";
+import { useSearchParams } from "react-router-dom";
 
 const FilterBrand = () => {
+  const [searchParams, setSearchParams] = useSearchParams();
   const {
     data: listBrand,
     isLoading,
@@ -21,6 +23,27 @@ const FilterBrand = () => {
   if (isError) {
     ToastError("Sảy ra lỗi khi lấy danh sách thương hiệu!");
   }
+  const handleChangeFilterBrand = () => {
+    const listBrandChecked = document.querySelectorAll(
+      ".filter-brand .brand-item input:checked"
+    ) as NodeListOf<HTMLInputElement>;
+    const listBrandId: string[] = [];
+    listBrandChecked.forEach((item) => {
+      listBrandId.push(item.value);
+    });
+    let queryParams: { [key: string]: string } = { page: "1" };
+    for (const [key, value] of searchParams.entries()) {
+      queryParams = { ...queryParams, [key]: value };
+    }
+    console.log(listBrandId);
+
+    if (listBrandId?.length != 0) {
+      setSearchParams({ ...queryParams, brand: listBrandId.join(",") });
+    } else {
+      delete queryParams.brand;
+      setSearchParams({ ...queryParams });
+    }
+  };
   return (
     <div className="filter-brand pb-8 mt-8">
       <div className="heading6">Thương hiệu</div>
@@ -32,8 +55,14 @@ const FilterBrand = () => {
           >
             <div className="left flex items-center cursor-pointer">
               <div className="block-input">
-                <input type="checkbox" id={brand} />
-                <i className="ph-fill ph-check-square icon-checkbox text-2xl" />
+                <input
+                  onChange={handleChangeFilterBrand}
+                  type="checkbox"
+                  id={brand}
+                  name="brand"
+                  value={brand}
+                  className="size-4 rounded border-gray-300"
+                />
               </div>
               <label
                 htmlFor={brand}
