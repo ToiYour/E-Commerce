@@ -29,20 +29,26 @@ const Quantity = ({ maxTotal }: { maxTotal: number }) => {
     }
   };
   return (
-    <div className="flex  flex-col gap-3 md:flex-row md:items-center">
-      <div className="text-title ">Số lượng:</div>
-      <div className="choose-quantity flex items-center max-xl:flex-wrap lg:justify-between gap-5">
+    <div className="flex  flex-col gap-5 md:flex-row md:items-center">
+      <div className="text-title md:w-20">Số lượng:</div>
+      <div className="choose-quantity flex items-center max-xl:flex-wrap lg:justify-between gap-5 bg-white">
         <div className="quantity-block  flex items-center justify-between rounded border border-line sm:w-[140px] w-[120px] flex-shrink-0">
-          <div className="minus p-2 disabled" onClick={handleQuantity}>
+          <div
+            className="minus p-2 disabled border-r border-gray-200"
+            onClick={handleQuantity}
+          >
             <Minus />
           </div>
           <input
             type="number"
-            className="quantity body1 font-semibold w-14 text-center outline-none border-none"
+            className="quantity body1 font-semibold w-14  text-center outline-none border-none"
             readOnly
             defaultValue={1}
           />
-          <div className="plus p-2" onClick={handleQuantity}>
+          <div
+            className="plus p-2 border-l border-gray-200"
+            onClick={handleQuantity}
+          >
             {" "}
             <Plus />
           </div>

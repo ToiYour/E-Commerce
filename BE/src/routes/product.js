@@ -12,6 +12,7 @@ import {
   getDetailProduct,
   getDetailProductBySlug,
   getMaxPriceProduct,
+  getSearchProducts,
   getSimilarProducts,
   restoreAllProduct,
   restoreByIdProduct,
@@ -22,6 +23,7 @@ const router = express.Router();
 router.post("/", ProductValid, createProduct);
 router.get("/max-price", getMaxPriceProduct);
 router.get("/brand", getBrandProducts);
+router.get("/search", getSearchProducts);
 router.get("/", getAllProducts);
 router.get("/similar", getSimilarProducts);
 router.get("/take-update/:id", getByIdUpdateProduct);

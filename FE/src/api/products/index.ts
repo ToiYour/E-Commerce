@@ -8,6 +8,10 @@ export const getAllProduct = (search: string = "") => {
   const uri = "/product" + search;
   return instance.get(uri);
 };
+export const getSearchProducts = (search: string = "") => {
+  const uri = "/product/search?keywords=" + search;
+  return instance.get(uri);
+};
 export const getSimilarProducts = (category: string, slug: string) => {
   const uri = `product/similar?category=${category}&slug=${slug}`;
   return instance.get(uri);

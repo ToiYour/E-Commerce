@@ -88,6 +88,14 @@ const InfoDetailProduct = ({ product }: IPropsDetailProduct) => {
       setExtraPrice(chooseVariant?.extra_price as number);
     }
   };
+  const handleIsValidVariant = () => {
+    const chooseWrapper = document.querySelector(
+      ".list-action .choose-wrapper"
+    ) as HTMLDivElement;
+    if (chooseColorId == "" && chooseSizeId == "") {
+      chooseWrapper.classList.add("error");
+    } else chooseWrapper.classList.remove("error");
+  };
   return (
     <div className="product-item cursor-default product-infor col-span-5 w-full lg:pl-[15px] md:pl-2">
       <div className="flex justify-between">
@@ -126,36 +134,50 @@ const InfoDetailProduct = ({ product }: IPropsDetailProduct) => {
         </div>
       </div>
       <div className="list-action mt-6 space-y-10">
-        <div className="choose-color flex flex-col md:flex-row md:items-center gap-5">
-          <div className="text-title">
-            Màu sắc: <span className="text-title color" />
-          </div>
-          <ListColor
-            varians={product.variants as IVariantsDetail[]}
-            setColorId={setChooseColorId}
-          />
-        </div>
-        <div className="choose-size mt-5 flex flex-col md:flex-row md:items-center gap-5">
-          <div className="heading flex items-center justify-between">
-            <div className="text-title">
-              Size: <span className="text-title size" />
+        <div className="choose-wrapper  p-2 ">
+          <div className="choose-color flex flex-col md:flex-row md:items-center gap-5">
+            <div className="text-title md:w-20">
+              Màu sắc: <span className="text-title color" />
             </div>
+            <ListColor
+              varians={product.variants as IVariantsDetail[]}
+              setColorId={setChooseColorId}
+            />
           </div>
-          <ListSize
-            varians={product.variants as IVariantsDetail[]}
-            setSizeId={setChooseSizeId}
-          />
-        </div>
-        <div className="mt-5 flex items-end md:items-center gap-3">
-          <Quantity maxTotal={quantity as number} />
-          <span className=" text-[#757575]">{quantity} sản phẩm có sẵn</span>
+          <div className="choose-size mt-5 flex flex-col md:flex-row md:items-center gap-5">
+            <div className="heading flex items-center justify-between">
+              <div className="text-title md:w-20">
+                Size: <span className="text-title size" />
+              </div>
+            </div>
+            <ListSize
+              varians={product.variants as IVariantsDetail[]}
+              setSizeId={setChooseSizeId}
+              isValidChooseSize={handleIsValidVariant}
+            />
+          </div>
+          <div className="mt-5 flex items-end md:items-center gap-3">
+            <Quantity maxTotal={quantity as number} />
+            <span className=" text-[#757575]">{quantity} sản phẩm có sẵn</span>
+          </div>
+          <p className="choose-wrapper-message hidden text-red-500 mt-2 ml-24 pl-1">
+            Vui lòng chọn Phân loại hàng
+          </p>
         </div>
         <div className="flex flex-col md:flex-row justify-start md:items-center mt-8 gap-5">
           <div className="flex justify-center max-h-12 gap-x-2 px-5 py-3  capitalize border border-[#db4444] text-[#db4444] bg-[#ff57221a]">
             <ShoppingCart strokeWidth={1.3} color="#db4444" size={24} />{" "}
-            <span className="text-base">Thêm vào giỏ hàng</span>
+            <span
+              onClick={handleIsValidVariant}
+              className="text-base cursor-pointer"
+            >
+              Thêm vào giỏ hàng
+            </span>
           </div>
-          <div className="px-5 py-3 max-h-12 capitalize text-white text-base bg-[#ee4d2d] text-center">
+          <div
+            onClick={handleIsValidVariant}
+            className="px-5 py-3 max-h-12 capitalize text-white text-base bg-[#ee4d2d] text-center cursor-pointer"
+          >
             Mua ngay
           </div>
         </div>

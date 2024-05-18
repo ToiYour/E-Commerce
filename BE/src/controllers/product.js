@@ -1,10 +1,11 @@
 import mongoose from "mongoose";
+import Category from "../models/products/category.js";
 import Product from "../models/products/product.js";
 import Variant from "../models/products/variant.js";
-import Category from "../models/products/category.js";
 // import slugify from "slugify";
 export const createProduct = async (req, res) => {
   try {
+    req.body.brand = req.body.brand.toUpperCase();
     const data = await Product.create(req.body);
     if (!data) {
       return res.status(500).send({ messages: "Thêm mới thất bại" });
@@ -22,9 +23,35 @@ export const getAllProducts = async (req, res) => {
     ).sort({
       price: "desc",
     });
-    let categoryId;
+
+    let categoryId; //Danh sách ID danh mục  ( lấy sản phẩm theo ID danh mục)
+    let listVariantId; // Danh sách ID biến thể (lấy sản phẩm theo ID màu, ID size)
     if (req.query.category) {
       categoryId = await Category.findOne({ slug: req.query.category }, "_id");
+    }
+    if (req.query.size) {
+      listVariantId = Array.from(
+        new Set(await Variant.find({ sizeId: req.query.size }, "_id"))
+      );
+      listVariantId = listVariantId.map((v) => v._id.toString());
+    }
+    if (req.query.color) {
+      let listVariantId = Array.from(
+        new Set(await Variant.find({ colorId: req.query.color }, "_id"))
+      );
+      listVariantId = listVariantId.map((v) => v._id.toString());
+    }
+    // Check nếu cả size và color tồn tại
+    if (req.query.size && req.query.color) {
+      listVariantId = Array.from(
+        new Set(
+          await Variant.find(
+            { sizeId: req.query.size, colorId: req.query.color },
+            "_id"
+          )
+        )
+      );
+      listVariantId = listVariantId.map((v) => v._id.toString());
     }
     const page = req.query.page || 1;
     const order = req.query.order || "";
@@ -55,8 +82,20 @@ export const getAllProducts = async (req, res) => {
         price: { $gte: minPrice, $lte: maxPrice },
         [sortBy]: order,
       };
-      if (req.query.category) {
-        query.category = categoryId._id;
+      if (req.query.category) query.category = categoryId._id;
+      if (listVariantId) query.variants = { $in: listVariantId };
+      if (req.query.brand) {
+        let listBrand = req.query.brand.split(",");
+        query.brand = { $in: listBrand };
+      }
+      if (req.query.search) {
+        query = {
+          ...query,
+          $text: {
+            $search: `\"${req.query.search}\"`,
+            $caseSensitive: false,
+          },
+        };
       }
       data = await Product.paginate(query, options);
     } else {
@@ -64,8 +103,21 @@ export const getAllProducts = async (req, res) => {
         $or: [{ deleted: false }, { deleted: { $exists: false } }],
         price: { $gte: minPrice, $lte: maxPrice },
       };
-      if (req.query.category) {
-        query.category = categoryId._id;
+      if (req.query.category) query.category = categoryId._id;
+
+      if (listVariantId) query.variants = { $in: listVariantId };
+      if (req.query.brand) {
+        let listBrand = req.query.brand.split(",");
+        query.brand = { $in: listBrand };
+      }
+      if (req.query.search) {
+        query = {
+          ...query,
+          $text: {
+            $search: `\"${req.query.search}\"`,
+            $caseSensitive: false,
+          },
+        };
       }
       const paginatedDeletedColors = await Product.paginate(query, options);
       data = paginatedDeletedColors;
@@ -379,6 +431,7 @@ export const getByIdUpdateProduct = async (req, res) => {
 };
 export const updateProduct = async (req, res) => {
   try {
+    req.body.brand = req.body.brand.toUpperCase();
     const prevProduct = await Product.findById(req.params.id);
     await Variant.deleteMany({
       _id: { $in: prevProduct.variants },
@@ -421,5 +474,33 @@ export const getBrandProducts = async (req, res) => {
     });
   } catch (error) {
     return res.status(500).send({ messages: "Lỗi server" });
+  }
+};
+Product.collection.createIndex(
+  { name: "text", desc: "text" },
+  (err, result) => {
+    if (err) {
+      console.error("Error creating index:", err);
+    } else {
+      console.log("Index created:", result);
+    }
+  }
+);
+export const getSearchProducts = async (req, res) => {
+  try {
+    const data = await Product.find({
+      $text: { $search: `\"${req.query.keywords}\"`, $caseSensitive: false },
+    });
+    if (!data) {
+      return res
+        .status(500)
+        .send({ messages: "Lấy danh sách  sản phẩm   thất bại" });
+    }
+    return res.send({
+      message: "Lấy danh sách  sản phẩm  thành công",
+      data,
+    });
+  } catch (error) {
+    return res.status(500).send({ messages: "Lỗi server", error });
   }
 };

@@ -1,3 +1,4 @@
+import { Star } from "lucide-react";
 import React from "react";
 
 const ItemReview = () => {
@@ -18,11 +19,11 @@ const ItemReview = () => {
       </div>
       <div className="right ">
         <div className="rate flex">
-          <i className="ph-fill ph-star text-yellow" />
-          <i className="ph-fill ph-star text-yellow" />
-          <i className="ph-fill ph-star text-yellow" />
-          <i className="ph-fill ph-star text-yellow" />
-          <i className="ph-fill ph-star text-yellow" />
+          <Star fill="#ecb018" strokeWidth={0} size={16} />
+          <Star fill="#ecb018" strokeWidth={0} size={16} />
+          <Star fill="#ecb018" strokeWidth={0} size={16} />
+          <Star fill="#ecb018" strokeWidth={0} size={16} />
+          <Star fill="#dfdedd" strokeWidth={0} size={16} />
         </div>
         <div className="body1 text-sm">
           Tôi không thể có đủ những món đồ thời trang từ thương hiệu này. Họ có

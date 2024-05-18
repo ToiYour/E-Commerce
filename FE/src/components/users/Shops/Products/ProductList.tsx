@@ -29,6 +29,15 @@ const ProductList = () => {
   if (isError) {
     ToastError("Sảy ra lỗi ghi lấy sản phẩm");
   }
+  if (products?.length == 0) {
+    return (
+      <img
+        src="/images/no-product.png"
+        alt=""
+        className="w-3/4 mx-auto object-cover"
+      />
+    );
+  }
   return (
     <>
       <div
@@ -36,10 +45,10 @@ const ProductList = () => {
      sm:gap-[30px] gap-[20px] my-7"
       >
         {products?.map((product) => (
-          <ProductItem key={product._id} product={product} />
+          <ProductItem key={product?._id} product={product} />
         ))}
       </div>
-      <MyPagination totalPages={data.totalPages} />
+      <MyPagination totalPages={data?.totalPages} />
     </>
   );
 };

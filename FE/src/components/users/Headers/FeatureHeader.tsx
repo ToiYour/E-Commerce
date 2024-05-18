@@ -1,12 +1,19 @@
 import { Search, ShoppingCart, User } from "lucide-react";
+import FeatureSearch from "./FeatureSearch";
+import { useState } from "react";
 
 const FeatureHeader = () => {
+  const [isOpenModal, setIsOpenModal] = useState(false);
   return (
     <div className="right flex gap-12">
       <div className="max-md:hidden search-icon flex items-center cursor-pointer relative">
         {/* <i className="" /> */}
-        <Search className="ph-bold ph-magnifying-glass " />
-        <div className="line absolute bg-line w-px h-6 -right-6" />
+        {isOpenModal && <FeatureSearch onUIModal={setIsOpenModal} />}
+        <Search
+          className="ph-bold ph-magnifying-glass "
+          onClick={() => setIsOpenModal(true)}
+        />
+        <div className="line absolute bg-gray-300 w-px h-6 -right-6" />
       </div>
       <div className="list-action flex items-center gap-4">
         <div className="user-icon flex items-center justify-center cursor-pointer">

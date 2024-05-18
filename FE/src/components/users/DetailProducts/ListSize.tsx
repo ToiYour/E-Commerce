@@ -7,8 +7,13 @@ import { ChangeEvent, memo, useEffect, useState } from "react";
 interface IPropsListSize {
   varians: IVariantsDetail[];
   setSizeId: (sizeId: string) => void;
+  isValidChooseSize: () => void;
 }
-const ListSize = ({ varians, setSizeId }: IPropsListSize) => {
+const ListSize = ({
+  varians,
+  setSizeId,
+  isValidChooseSize,
+}: IPropsListSize) => {
   const isVariantSizes = Array.from(
     new Set(varians.map((v) => v?.sizeId?._id as string))
   );
@@ -32,6 +37,7 @@ const ListSize = ({ varians, setSizeId }: IPropsListSize) => {
     ) as HTMLElement;
     colorActive && colorActive.classList.remove("active");
     if (item.checked) {
+      isValidChooseSize();
       setSizeId(item.value);
       item.closest(".size-item")?.classList.add("active");
     }
@@ -44,7 +50,7 @@ const ListSize = ({ varians, setSizeId }: IPropsListSize) => {
           htmlFor={size._id}
           className={`size-item ${
             isVariantSizes.includes(size?._id as string) || "disabled"
-          } max-w-[95px] max-h-[43px]   relative overflow-hidden flex items-center border border-line  py-2.5 px-11 gap-2 rounded`}
+          } max-w-[95px] max-h-[43px]   relative overflow-hidden flex items-center border border-line  py-2.5 px-11 gap-2 rounded bg-white`}
         >
           <input
             onChange={(event) => handleActive(event)}
