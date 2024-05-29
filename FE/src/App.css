@@ -1398,21 +1398,21 @@ textarea:focus {
   margin-top: 12px;
 }
 .list-type .item.active .text-secondary,
-.list-type .item.active .text-secondary2,
+.list-type .item.active .text-gray-500,
 .list-type .item:hover .text-secondary,
-.list-type .item:hover .text-secondary2,
+.list-type .item:hover .text-gray-500,
 .list-type .brand-item.active .text-secondary,
-.list-type .brand-item.active .text-secondary2,
+.list-type .brand-item.active .text-gray-500,
 .list-type .brand-item:hover .text-secondary,
-.list-type .brand-item:hover .text-secondary2,
+.list-type .brand-item:hover .text-gray-500,
 .list-brand .item.active .text-secondary,
-.list-brand .item.active .text-secondary2,
+.list-brand .item.active .text-gray-500,
 .list-brand .item:hover .text-secondary,
-.list-brand .item:hover .text-secondary2,
+.list-brand .item:hover .text-gray-500,
 .list-brand .brand-item.active .text-secondary,
-.list-brand .brand-item.active .text-secondary2,
+.list-brand .brand-item.active .text-gray-500,
 .list-brand .brand-item:hover .text-secondary,
-.list-brand .brand-item:hover .text-secondary2 {
+.list-brand .brand-item:hover .text-gray-500 {
   transition: all ease 0.3s;
   color: var(--black);
 }
@@ -1719,7 +1719,9 @@ textarea:focus {
 .menu-tab.style-pet .tab-item.active {
   color: var(--white);
 }
-
+.menu-tab .item.active {
+  color: var(--red);
+}
 /* Text has line before */
 .has-line-before {
   position: relative;
@@ -2671,4 +2673,39 @@ textarea:focus {
   bottom: 0;
   background: #0091df;
   border-radius: 0 5px 5px 0;
+}
+.login-popup {
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(30px);
+  box-shadow: 0px 5px 10px 0px rgba(43, 52, 74, 0.2);
+  transition: all ease 0.4s;
+}
+.login-popup.open {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+@media (max-width: 1490px) {
+  .login-popup {
+    right: 16px;
+  }
+}
+@media (max-width: 767.98px) {
+  .login-popup {
+    top: 56px !important;
+  }
+}
+.tabs-purchase {
+  scrollbar-width: none;
+}
+.tabs-purchase li.active {
+  border-bottom: 2px solid var(--red);
+}
+.verify-wrapper input::-webkit-inner-spin-button,
+.verify-wrapper input::-webkit-outer-spin-button {
+  display: none;
+}
+button[disabled] {
+  opacity: 0.4;
 }

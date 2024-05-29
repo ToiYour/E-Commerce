@@ -1,14 +1,14 @@
+import { getComboboxCategory } from "@/api/categorys";
+import { getByIdUpdateProduct, getDetailProduct } from "@/api/products";
+import { getComboboxColors } from "@/api/variants/color";
+import { getComboboxSizes } from "@/api/variants/size";
 import {
   AddProducts,
   DetailProducts,
   ListProducts,
   TrashProducts,
   UpdateProducts,
-} from "@/admin/components/products";
-import { getComboboxCategory } from "@/api/categorys";
-import { getByIdUpdateProduct, getDetailProduct } from "@/api/products";
-import { getComboboxColors } from "@/api/variants/color";
-import { getComboboxSizes } from "@/api/variants/size";
+} from "@/pages/admin/products";
 const Products = [
   { path: "products", element: <ListProducts /> },
   {

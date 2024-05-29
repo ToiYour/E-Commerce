@@ -1,11 +1,21 @@
 import { createBrowserRouter } from "react-router-dom";
-import { ListProducts } from "./admin/components/products";
-import LayoutAdmin from "./admin/LayoutAdmin";
-import NotFound from "./NotFound";
-import HomePage from "./pages/HomePage";
-import LayoutHome from "./pages/LayoutHome";
-import ProductDetail from "./pages/ProductDetail";
-import ShopPage from "./pages/ShopPage";
+import LayoutAdmin from "./pages/admin/LayoutAdmin";
+import { ListProducts } from "./pages/admin/products";
+import NotFound from "./pages/NotFound";
+import {
+  ForgotPassWord,
+  LoginPage,
+  MeAccountPage,
+  Purchase,
+  RegisterPage,
+} from "./pages/users/Accounts";
+import AddressAccount from "./pages/users/Accounts/Address";
+import ChangeOrNewPassword from "./pages/users/Accounts/ChangeOrNewPassword";
+import LayOutAccount from "./pages/users/Accounts/Layout";
+import ProductDetail from "./pages/users/DetailProducts";
+import HomePage from "./pages/users/Homes";
+import LayoutHome from "./pages/users/LayoutHome";
+import ShopPage from "./pages/users/Shops";
 import {
   RouterCategory,
   RouterColors,
@@ -13,6 +23,7 @@ import {
   RouterProducts,
   RouterSizes,
 } from "./routes";
+import { accountMe } from "./api/customer";
 
 const router = createBrowserRouter([
   {
@@ -23,13 +34,63 @@ const router = createBrowserRouter([
         path: "",
         element: <HomePage />,
       },
+      // Danh sách sản phẩm
       {
         path: "shop",
         element: <ShopPage />,
       },
+      // Chi tiết sản phẩm
       {
         path: "shop/:slug",
         element: <ProductDetail />,
+      },
+      // Đăng nhập
+      {
+        path: "buyer/login",
+        element: <LoginPage />,
+      },
+      // Đăng ký
+      {
+        path: "buyer/register",
+        element: <RegisterPage />,
+      },
+      // Quên mật khẩu
+      {
+        path: "buyer/forgot-password",
+        element: <ForgotPassWord />,
+      },
+      // Trang cá nhân
+      {
+        path: "account",
+        element: <LayOutAccount />,
+        children: [
+          {
+            path: "profile",
+            element: <MeAccountPage />,
+          },
+          {
+            path: "password",
+            loader: async () => {
+              const token =
+                localStorage.getItem("token") ||
+                sessionStorage.getItem("token");
+              if (token) {
+                const { data } = await accountMe();
+                return data.account;
+              }
+              return false;
+            },
+            element: <ChangeOrNewPassword />,
+          },
+          {
+            path: "address",
+            element: <AddressAccount />,
+          },
+          {
+            path: "purchase",
+            element: <Purchase />,
+          },
+        ],
       },
       {
         path: "*",

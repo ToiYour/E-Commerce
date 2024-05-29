@@ -3,7 +3,8 @@ import {
   ListSize,
   TrashSize,
   UpdateSize,
-} from "../admin/components/variants/sizes";
+} from "@/pages/admin/variants/sizes";
+
 const Color = [
   {
     path: "variant/size",

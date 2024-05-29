@@ -38,4 +38,12 @@ const CustomerValid = (req, res, next) => {
   }
   next();
 };
-export default CustomerValid;
+const loginValid = (req, res, next) => {
+  if (!req.body.user_name_or_email && !req.body.password) {
+    return res
+      .status(400)
+      .send({ message: "Vui lòng nhập đầy đủ thông tin đăng nhập" });
+  }
+  next();
+};
+export { CustomerValid, loginValid };

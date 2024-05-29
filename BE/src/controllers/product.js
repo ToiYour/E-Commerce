@@ -36,7 +36,7 @@ export const getAllProducts = async (req, res) => {
       listVariantId = listVariantId.map((v) => v._id.toString());
     }
     if (req.query.color) {
-      let listVariantId = Array.from(
+      listVariantId = Array.from(
         new Set(await Variant.find({ colorId: req.query.color }, "_id"))
       );
       listVariantId = listVariantId.map((v) => v._id.toString());
@@ -53,6 +53,7 @@ export const getAllProducts = async (req, res) => {
       );
       listVariantId = listVariantId.map((v) => v._id.toString());
     }
+
     const page = req.query.page || 1;
     const order = req.query.order || "";
     const sortBy = req.query.sortBy || "";
@@ -82,8 +83,13 @@ export const getAllProducts = async (req, res) => {
         price: { $gte: minPrice, $lte: maxPrice },
         [sortBy]: order,
       };
-      if (req.query.category) query.category = categoryId._id;
-      if (listVariantId) query.variants = { $in: listVariantId };
+      if (req.query.category) {
+        query.category = categoryId._id;
+      }
+
+      if (listVariantId) {
+        query.variants = { $in: listVariantId };
+      }
       if (req.query.brand) {
         let listBrand = req.query.brand.split(",");
         query.brand = { $in: listBrand };
@@ -104,8 +110,9 @@ export const getAllProducts = async (req, res) => {
         price: { $gte: minPrice, $lte: maxPrice },
       };
       if (req.query.category) query.category = categoryId._id;
-
-      if (listVariantId) query.variants = { $in: listVariantId };
+      if (listVariantId) {
+        query.variants = { $in: listVariantId };
+      }
       if (req.query.brand) {
         let listBrand = req.query.brand.split(",");
         query.brand = { $in: listBrand };

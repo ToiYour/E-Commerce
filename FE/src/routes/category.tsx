@@ -3,7 +3,8 @@ import {
   ListCategory,
   TrashCategory,
   UpdateCategory,
-} from "../admin/components/categorys";
+} from "@/pages/admin/categorys";
+
 const Color = [
   {
     path: "category",

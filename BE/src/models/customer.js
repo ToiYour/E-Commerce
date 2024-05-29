@@ -9,10 +9,11 @@ const CustomerShema = new mongoose.Schema(
     avatar: {
       type: String,
       default:
-        "https://res.cloudinary.com/dlzhmxsqp/image/upload/v1714487885/e_commerce/rusrdthu5p2odgh3sfii.png",
+        "https://res.cloudinary.com/dlzhmxsqp/image/upload/v1716288330/e_commerce/s4nl3tlwpgafsvufcyke.jpg",
     },
+    uid: { type: String, default: "" },
     email: { type: String, default: null },
-    user_name: String,
+    user_name: { type: String, lowercase: true },
     password: String,
     phone: { type: String, default: null },
     address: {
@@ -21,7 +22,7 @@ const CustomerShema = new mongoose.Schema(
       commune: { type: String, default: null },
       specific: { type: String, default: null },
     },
-    role: { type: String, default: "customer" },
+    role: { type: String, default: "Khách hàng" },
     account_status: { type: Boolean, default: false },
     status: {
       type: Boolean,
