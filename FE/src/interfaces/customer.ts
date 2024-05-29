@@ -4,6 +4,7 @@ export interface ICustomer {
     first_name?: string;
     last_name?: string;
   };
+  uid?: string;
   avatar?: string | FileList;
   email?: string;
   user_name?: string;

@@ -3,7 +3,8 @@ import {
   ListColor,
   TrashColor,
   UpdateColor,
-} from "../admin/components/variants/colors";
+} from "@/pages/admin/variants/colors";
+
 const Color = [
   {
     path: "variant/color",

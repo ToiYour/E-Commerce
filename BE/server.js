@@ -1,17 +1,17 @@
+import cors from "cors";
+import dotenv from "dotenv";
 import express from "express";
 import mongoose from "mongoose";
-
-import cors from "cors";
-import routerColor from "./src/routes/color.js";
-import routerSize from "./src/routes/size.js";
 import routerCategory from "./src/routes/category.js";
-import routerVariant from "./src/routes/variant.js";
+import routerColor from "./src/routes/color.js";
+import routerAuth from "./src/routes/customer.js";
 import routerProduct from "./src/routes/product.js";
-import routerCustomer from "./src/routes/customer.js";
-
+import routerSize from "./src/routes/size.js";
+import routerVariant from "./src/routes/variant.js";
+dotenv.config();
 // Kết nối MongoDB
 mongoose
-  .connect("mongodb://127.0.0.1:27017/e-commerce")
+  .connect(process.env.URI_MONGODB || "mongodb://127.0.0.1:27017/e-commerce")
   .then(() => {
     console.log("Connect MongoDB Successfully");
   })
@@ -27,7 +27,7 @@ app.use("/api/size", routerSize);
 app.use("/api/category", routerCategory);
 app.use("/api/variant", routerVariant);
 app.use("/api/product", routerProduct);
-app.use("/api/customer", routerCustomer);
-app.listen(4000, () => {
+app.use("/api/auth", routerAuth);
+app.listen(process.env.PORT || 4000, () => {
   console.log(`Listening on port 4000`);
 });

@@ -1,9 +1,9 @@
+import { getByIdCustomer } from "@/api/customer";
 import {
   AddCustomer,
   ListCustomer,
   UpdateCustomer,
-} from "@/admin/components/customers";
-import { getByIdCustomer } from "@/api/customer";
+} from "@/pages/admin/customers";
 
 const Customer = [
   {

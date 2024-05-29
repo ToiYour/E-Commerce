@@ -47,6 +47,7 @@ const Address = ({
       );
       if (address && communeId == "") {
         queryClient.invalidateQueries({ queryKey: ["GET_BY_ID_CUSTOMER"] });
+        queryClient.invalidateQueries({ queryKey: ["GET_ACCOUNT_BY_TOKEN"] });
       }
       return data as ICommune[];
     },
@@ -54,8 +55,6 @@ const Address = ({
 
   const makeProvince: React.ChangeEventHandler<HTMLSelectElement> = useCallback(
     async (e) => {
-      console.log(JSON.parse(e.target.value).idProvince);
-
       setDistrictId(JSON.parse(e.target.value).idProvince);
     },
     []
