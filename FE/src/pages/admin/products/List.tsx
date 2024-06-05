@@ -2,10 +2,10 @@ import {
   deleteSoftAllProduct,
   deleteSoftProduct,
   getAllProduct,
-} from "@/api/products";
+} from "@/services/product";
 import ArrangeTable from "@/components/ArrangeTable";
 import BadgeStatus from "@/components/BadgeStatus";
-import Loading from "@/components/Loading";
+import Loading from "@/components/LoadingFixed";
 import MyPagination from "@/components/MyPagination";
 import {
   Breadcrumb,

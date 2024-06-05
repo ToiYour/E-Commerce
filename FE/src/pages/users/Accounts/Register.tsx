@@ -1,4 +1,4 @@
-import { createCustomer } from "@/api/customer";
+import { createCustomer } from "@/services/customer";
 import { ICustomer } from "@/interfaces/customer";
 import { useMutation } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
@@ -9,7 +9,7 @@ import { AxiosError } from "axios";
 import { MouseEvent, useState } from "react";
 import ButtonLoading from "@/components/ButtonLoading";
 import { Eye, EyeOff } from "lucide-react";
-import { useFacebookLogin, useGoogleLogin } from "@/firebase/handle";
+import { useFacebookLogin, useGoogleLogin } from "@/hooks/auth";
 
 const Register = () => {
   const { loginFacebook } = useFacebookLogin();
@@ -41,7 +41,7 @@ const Register = () => {
   } = useForm<ICustomer>();
   const registerAccount = useMutation({
     mutationFn: async (newData: ICustomer) => {
-      newData.role = "Khách hàng";
+      newData.role = false;
       sessionStorage.setItem("registerAccount", JSON.stringify(newData));
       return await createCustomer(newData);
     },

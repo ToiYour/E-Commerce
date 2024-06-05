@@ -1,4 +1,4 @@
-import { getBrandProducts } from "@/api/products";
+import { getBrandProducts } from "@/services/product";
 import LoadingFixed from "@/components/LoadingFixed";
 import { ToastError } from "@/lib/utils";
 import { useQuery } from "@tanstack/react-query";
@@ -35,8 +35,6 @@ const FilterBrand = () => {
     for (const [key, value] of searchParams.entries()) {
       queryParams = { ...queryParams, [key]: value };
     }
-    console.log(listBrandId);
-
     if (listBrandId?.length != 0) {
       setSearchParams({ ...queryParams, brand: listBrandId.join(",") });
     } else {

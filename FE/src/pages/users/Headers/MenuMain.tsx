@@ -1,6 +1,6 @@
-import { getAllCategory } from "@/api/categorys";
 import LoadingFixed from "@/components/LoadingFixed";
 import { ICategory } from "@/interfaces/category";
+import { getComboboxCategory } from "@/services/category";
 import { useQuery } from "@tanstack/react-query";
 import { Link, NavLink } from "react-router-dom";
 
@@ -8,8 +8,8 @@ const MenuMain = () => {
   const { data: categorys, isLoading } = useQuery<ICategory[]>({
     queryKey: ["GET_CATEGORYS_HOME"],
     queryFn: async () => {
-      const { data } = await getAllCategory("");
-      return data.data.docs as ICategory[];
+      const { data } = await getComboboxCategory();
+      return data.data as ICategory[];
     },
   });
   if (isLoading) {
@@ -36,16 +36,22 @@ const MenuMain = () => {
           </NavLink>
           <div className="sub-menu py-3 px-5 -left-10 absolute bg-white rounded-b-xl">
             <ul className="w-full">
-              {categorys?.map((category) => (
-                <li key={category._id}>
-                  <Link
-                    to={"/shop?category=" + category.slug}
-                    className="link text-gray-500 duration-300"
-                  >
-                    {category.name}
-                  </Link>
-                </li>
-              ))}
+              {categorys?.map(
+                (category) =>
+                  category.status && (
+                    <li key={category._id}>
+                      <Link
+                        onClick={() =>
+                          window.scrollTo({ top: 0, behavior: "auto" })
+                        }
+                        to={"/shop?category=" + category.slug}
+                        className="link text-gray-500 duration-300"
+                      >
+                        {category.name}
+                      </Link>
+                    </li>
+                  )
+              )}
             </ul>
           </div>
         </li>

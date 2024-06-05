@@ -1,4 +1,4 @@
-import { getByIdColor, updateColor } from "@/api/variants/color";
+import { getByIdColor, updateColor } from "@/services/variants/color";
 import {
   Breadcrumb,
   BreadcrumbItem,

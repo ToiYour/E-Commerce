@@ -1,4 +1,4 @@
-import { getByIdCustomer } from "@/api/customer";
+import { getByIdCustomer } from "@/services/customer";
 import {
   AddCustomer,
   ListCustomer,

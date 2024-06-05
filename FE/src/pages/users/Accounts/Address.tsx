@@ -1,87 +1,29 @@
-import { accountMe, logOut, updateCustomer } from "@/api/customer";
 import Address from "@/components/Address";
 import ButtonLoading from "@/components/ButtonLoading";
-import LoadingFixed from "@/components/LoadingFixed";
+import { useAuth } from "@/hooks/auth";
 import { ICustomer } from "@/interfaces/customer";
-import {
-  ToastError,
-  ToastSuccess,
-  ToastWarning,
-  upLoadFileOne,
-} from "@/lib/utils";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { ToastError, ToastSuccess } from "@/lib/utils";
+import { changeProfileInformation } from "@/services/auth";
 import { AxiosError } from "axios";
-import { useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
-import { useNavigate } from "react-router-dom";
 const AddressAccount = () => {
-  const [isLoadSubmit, setIsLoadSubmit] = useState(false);
-  const queryClient = useQueryClient();
-  const navigate = useNavigate();
+  const { authUser: account, setAuthUser } = useAuth();
   const {
     register,
     handleSubmit,
     reset,
-    formState: { errors },
-  } = useForm<ICustomer>();
-  const mutationCustomer = useMutation({
-    mutationFn: async (newData: ICustomer) => {
-      if (newData.avatar?.[0]) {
-        const linkImage = await upLoadFileOne(newData.avatar?.[0] as File);
-        newData.avatar = linkImage;
-        await updateCustomer(account?._id as string, newData);
-      } else {
-        await updateCustomer(account?._id as string, newData);
-      }
-    },
-    onError: (error) => {
-      setIsLoadSubmit(false);
-      const axiosError = error as AxiosError;
-      ToastError("Có lỗi khi cập nhập khách hàng!");
-      axiosError?.response?.data &&
-        ToastWarning(axiosError?.response?.data as string);
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["GET_ACCOUNT_BY_TOKEN"] });
-      setIsLoadSubmit(false);
-      ToastSuccess("Cập nhập khách hàng thành công!");
-    },
-  });
-  const {
-    data: account,
-    isLoading,
-    error,
-  } = useQuery<ICustomer>({
-    retryOnMount: false,
-    retry: false,
-    queryKey: ["GET_ACCOUNT_BY_TOKEN"],
-    queryFn: async () => {
-      const token =
-        localStorage.getItem("token") || sessionStorage.getItem("token");
-      if (token) {
-        const { data } = await accountMe();
-        reset(data.account);
-        return data.account;
-      }
-      return null;
-    },
-  });
-  if (isLoading) {
-    return <LoadingFixed />;
-  }
-  if (error) {
-    const { response } = error as AxiosError<{ message: string }>;
-    logOut();
-    localStorage.removeItem("token");
-    sessionStorage.removeItem("token");
-    navigate("/");
-    queryClient.invalidateQueries({ queryKey: ["GET_ACCOUNT_BY_TOKEN"] });
-    ToastError(response?.data.message as string);
-  }
-
+    formState: { errors, isSubmitting },
+  } = useForm<ICustomer>({ defaultValues: account });
   const onSubmit: SubmitHandler<ICustomer> = async (newData: ICustomer) => {
-    setIsLoadSubmit(true);
-    await mutationCustomer.mutate(newData);
+    try {
+      const { data } = await changeProfileInformation(newData);
+      setAuthUser?.(data.user);
+      ToastSuccess(data.message);
+    } catch (error) {
+      if (error instanceof AxiosError) {
+        ToastError(error.response?.data.message);
+      }
+    }
   };
   return (
     <form
@@ -94,6 +36,7 @@ const AddressAccount = () => {
           register={register}
           errors={errors}
           address={account?.address}
+          resendAddress={() => reset(account)}
         />
         <div className="col-span-6">
           <label
@@ -109,8 +52,8 @@ const AddressAccount = () => {
         </div>
       </div>
       <div className="block-button lg:mt-5 mt-3">
-        <button disabled={isLoadSubmit} className="button-main">
-          {isLoadSubmit ? <ButtonLoading /> : "Lưu"}
+        <button disabled={isSubmitting} className="button-main">
+          {isSubmitting ? <ButtonLoading /> : "Lưu"}
         </button>
       </div>
     </form>

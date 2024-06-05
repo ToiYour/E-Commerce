@@ -2,9 +2,9 @@ import {
   deleteSoftAllCategory,
   deleteSoftCategory,
   getAllCategory,
-} from "@/api/categorys";
+} from "@/services/category";
 import BadgeStatus from "@/components/BadgeStatus";
-import Loading from "@/components/Loading";
+import Loading from "@/components/LoadingFixed";
 import MyPagination from "@/components/MyPagination";
 import {
   Breadcrumb,

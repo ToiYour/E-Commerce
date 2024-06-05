@@ -1,7 +1,7 @@
 import MyPagination from "@/components/MyPagination";
 import ProductItem from "./ProductItem";
 import { useQuery } from "@tanstack/react-query";
-import { getAllProduct } from "@/api/products";
+import { getAllProduct } from "@/services/product";
 import LoadingFixed from "@/components/LoadingFixed";
 import { ToastError } from "@/lib/utils";
 import { IProduct } from "@/interfaces/product";
@@ -44,9 +44,12 @@ const ProductList = () => {
         className="list-product hide-product-sold grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-4
      sm:gap-[30px] gap-[20px] my-7"
       >
-        {products?.map((product) => (
-          <ProductItem key={product?._id} product={product} />
-        ))}
+        {products?.map(
+          (product) =>
+            product.status && (
+              <ProductItem key={product?._id} product={product} />
+            )
+        )}
       </div>
       <MyPagination totalPages={data?.totalPages} />
     </>

@@ -1,5 +1,5 @@
-import { getAllCategory } from "@/api/categorys";
 import { ICategory } from "@/interfaces/category";
+import { getComboboxCategory } from "@/services/category";
 import { useQueryClient } from "@tanstack/react-query";
 import { ChevronLeft, ChevronRight, Search, X } from "lucide-react";
 import { useEffect, useState } from "react";
@@ -18,8 +18,8 @@ const MenuMobile = ({
       const data = await queryClient.ensureQueryData({
         queryKey: ["GET_CATEGORYS_HOME"],
         queryFn: async () => {
-          const { data } = await getAllCategory("");
-          return data.data.docs as ICategory[];
+          const { data } = await getComboboxCategory();
+          return data.data as ICategory[];
         },
       });
       setCategorys(data);

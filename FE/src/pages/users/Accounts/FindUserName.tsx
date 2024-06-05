@@ -1,4 +1,4 @@
-import { forgotPassWord } from "@/api/customer";
+import { forgotPassWord } from "@/services/customer";
 import ButtonLoading from "@/components/ButtonLoading";
 import { ICustomer } from "@/interfaces/customer";
 import { ToastError, ToastSuccess } from "@/lib/utils";

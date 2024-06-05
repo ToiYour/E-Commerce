@@ -6,12 +6,15 @@ import "react-toastify/dist/ReactToastify.css";
 import "./App.css";
 import router from "./App.tsx";
 import "./index.css";
+import { AuthProvider } from "./contexts/AuthProvider.tsx";
 
 const queryClient = new QueryClient();
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
-    <QueryClientProvider client={queryClient}>
-      <RouterProvider router={router} />
-    </QueryClientProvider>
+    <AuthProvider>
+      <QueryClientProvider client={queryClient}>
+        <RouterProvider router={router} />
+      </QueryClientProvider>
+    </AuthProvider>
   </React.StrictMode>
 );

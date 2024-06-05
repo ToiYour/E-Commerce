@@ -1,4 +1,4 @@
-import { compareOTP, forgotPassWord } from "@/api/customer";
+import { compareOTP, forgotPassWord } from "@/services/customer";
 import { ICustomer } from "@/interfaces/customer";
 import { ToastError, ToastSuccess } from "@/lib/utils";
 import { AxiosError } from "axios";

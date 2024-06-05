@@ -63,7 +63,7 @@ export const getAllProducts = async (req, res) => {
     const maxPrice = req.query.maxPrice || findMaxPriceProduct;
     const options = {
       page,
-      limit: 4,
+      limit: 8,
       sort: {
         [arrange]: orderBy,
       },
@@ -166,7 +166,7 @@ export const getAllSoftProduct = async (req, res) => {
     const orderBy = req.query.orderBy || "asc";
     const options = {
       page,
-      limit: 4,
+      limit: 8,
       sort: {
         [arrange]: orderBy,
       },

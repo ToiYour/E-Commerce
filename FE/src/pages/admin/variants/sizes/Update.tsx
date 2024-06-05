@@ -1,4 +1,4 @@
-import { getByIdSize, updateSize } from "@/api/variants/size";
+import { getByIdSize, updateSize } from "@/services/variants/size";
 import {
   Breadcrumb,
   BreadcrumbItem,

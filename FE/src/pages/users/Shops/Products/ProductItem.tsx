@@ -11,9 +11,9 @@ const ProductItem = ({ product }: { product: IProduct }) => {
       >
         <div className="product-main  block">
           <div className="product-thumb bg-white relative overflow-hidden rounded-2xl">
-            <div className=" product-tag text-button-uppercase bg-green px-3 py-0.5 inline-block rounded-full absolute top-3 left-3 z-50">
+            {/* <div className=" product-tag text-button-uppercase bg-green px-3 py-0.5 inline-block rounded-full absolute top-3 left-3 z-50">
               New
-            </div>
+            </div> */}
             <div className="product-img w-full h-full aspect-[3/4] pt-3 ">
               <img
                 className="w-full h-full object-cover duration-700"

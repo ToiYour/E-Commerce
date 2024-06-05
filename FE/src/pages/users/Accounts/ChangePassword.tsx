@@ -1,21 +1,17 @@
-import { changePassword } from "@/api/customer";
 import ButtonLoading from "@/components/ButtonLoading";
 import { ToastError, ToastSuccess } from "@/lib/utils";
 import { AxiosError } from "axios";
 import { useForm } from "react-hook-form";
-interface IChangePasswordForm {
-  password: string;
-  newPassword: string;
-  confirmPassword?: string;
-}
+import { changePassword, IChangePassword } from "@/services/auth";
+
 const ChangePassword = () => {
   const {
     register,
     handleSubmit,
     watch,
     formState: { errors, isSubmitting },
-  } = useForm<IChangePasswordForm>();
-  const onSubmit = async (newData: IChangePasswordForm) => {
+  } = useForm<IChangePassword>();
+  const onSubmit = async (newData: IChangePassword) => {
     try {
       const { data } = await changePassword(newData);
       ToastSuccess(data.message);
@@ -25,7 +21,7 @@ const ChangePassword = () => {
       }
     }
   };
-  const newPasswordValue = watch("newPassword");
+  const newPasswordValue = watch("password");
   return (
     <form
       onSubmit={handleSubmit(onSubmit)}
@@ -37,32 +33,30 @@ const ChangePassword = () => {
       </div>
       <div className="pass">
         <input
-          {...register("password", {
+          {...register("oldPassword", {
             required: "Vui lòng nhập mật khẩu cũ",
             minLength: { value: 6, message: "Mật khẩu ít nhất 6 ký tự" },
           })}
           className="border border-gray-200 px-4 pt-3 pb-3 w-full rounded-lg"
-          id="password"
           type="password"
-          placeholder="Mật khẩu *"
+          placeholder="Mật khẩu cũ*"
         />
-        {errors.password && (
-          <p className="text-red-500">{errors.password.message}</p>
+        {errors.oldPassword && (
+          <p className="text-red-500">{errors.oldPassword.message}</p>
         )}
       </div>
       <div className="new-pass mt-5">
         <input
-          {...register("newPassword", {
+          {...register("password", {
             required: "Vui lòng nhập mật khẩu mới",
             minLength: { value: 6, message: "Mật khẩu ít nhất 6 ký tự" },
           })}
           className="border border-gray-200 px-4 pt-3 pb-3 w-full rounded-lg"
-          id="newPassword"
           type="password"
           placeholder="Mật khẩu mới *"
         />
-        {errors.newPassword && (
-          <p className="text-red-500">{errors.newPassword?.message}</p>
+        {errors.password && (
+          <p className="text-red-500">{errors.password?.message}</p>
         )}
       </div>
       <div className="confirm-pass mt-5">

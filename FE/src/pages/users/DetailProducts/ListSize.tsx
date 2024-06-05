@@ -1,4 +1,4 @@
-import { getAllSize } from "@/api/variants/size";
+import { getAllSize } from "@/services/variants/size";
 import { ISize } from "@/interfaces/size";
 import { IVariantsDetail } from "@/interfaces/variant";
 import { useQueryClient } from "@tanstack/react-query";
@@ -44,33 +44,36 @@ const ListSize = ({
   };
   return (
     <div className=" list-size flex items-center gap-2 flex-wrap ">
-      {listSize?.map((size) => (
-        <label
-          key={size._id}
-          htmlFor={size._id}
-          className={`size-item ${
-            isVariantSizes.includes(size?._id as string) || "disabled"
-          } max-w-[95px] max-h-[43px]   relative overflow-hidden flex items-center border border-line  py-2.5 px-11 gap-2 rounded bg-white`}
-        >
-          <input
-            onChange={(event) => handleActive(event)}
-            type="radio"
-            name="size"
-            hidden
-            value={size._id}
-            id={size._id}
-          />
-          <div className="size text-[#333]">{size.name}</div>
-          <span className="selection-box-tick hidden absolute bottom-0 right-0 ">
-            <Check
-              size={12}
-              color="#fff"
-              strokeWidth={2}
-              className="-rotate-2"
-            />
-          </span>
-        </label>
-      ))}
+      {listSize?.map(
+        (size) =>
+          size.status && (
+            <label
+              key={size._id}
+              htmlFor={size._id}
+              className={`size-item ${
+                isVariantSizes.includes(size?._id as string) || "disabled"
+              } max-w-[95px] max-h-[43px]   relative overflow-hidden flex items-center border border-line  py-2.5 px-11 gap-2 rounded bg-white`}
+            >
+              <input
+                onChange={(event) => handleActive(event)}
+                type="radio"
+                name="size"
+                hidden
+                value={size._id}
+                id={size._id}
+              />
+              <div className="size text-[#333]">{size.name}</div>
+              <span className="selection-box-tick hidden absolute bottom-0 right-0 ">
+                <Check
+                  size={12}
+                  color="#fff"
+                  strokeWidth={2}
+                  className="-rotate-2"
+                />
+              </span>
+            </label>
+          )
+      )}
     </div>
   );
 };

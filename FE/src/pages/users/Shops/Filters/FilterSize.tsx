@@ -1,7 +1,7 @@
-import { getAllSize } from "@/api/variants/size";
 import LoadingFixed from "@/components/LoadingFixed";
 import { ISize } from "@/interfaces/size";
 import { ToastError } from "@/lib/utils";
+import { getComboboxSizes } from "@/services/variants/size";
 import { useQuery } from "@tanstack/react-query";
 import { MouseEventHandler } from "react";
 import { useSearchParams } from "react-router-dom";
@@ -16,8 +16,8 @@ const FilterSize = () => {
   } = useQuery({
     queryKey: ["GET_FILTER_SIZES"],
     queryFn: async () => {
-      const { data } = await getAllSize("");
-      return data?.data?.docs;
+      const { data } = await getComboboxSizes();
+      return data?.data;
     },
   });
   if (isLoading) {
@@ -46,18 +46,21 @@ const FilterSize = () => {
     <div className="filter-size pb-8 border-b border-line mt-8">
       <div className="heading6">Size</div>
       <div className="list-size flex items-center flex-wrap gap-3 gap-y-4 mt-4">
-        {listSize?.map((size: ISize) => (
-          <div
-            onClick={handleFilterSize}
-            key={size._id}
-            data-id={size._id}
-            className={`${
-              searchParams.get("size") == size._id && "active"
-            } size-item text-button w-[44px] h-[44px] flex items-center justify-center rounded-full border border-line`}
-          >
-            {size.name}
-          </div>
-        ))}
+        {listSize?.map(
+          (size: ISize) =>
+            size.status && (
+              <div
+                onClick={handleFilterSize}
+                key={size._id}
+                data-id={size._id}
+                className={`${
+                  searchParams.get("size") == size._id && "active"
+                } size-item text-button w-[44px] h-[44px] flex items-center justify-center rounded-full border border-line`}
+              >
+                {size.name}
+              </div>
+            )
+        )}
       </div>
     </div>
   );

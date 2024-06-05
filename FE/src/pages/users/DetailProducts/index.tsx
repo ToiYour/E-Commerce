@@ -1,4 +1,4 @@
-import { getProductBySlug } from "@/api/products";
+import { getProductBySlug } from "@/services/product";
 import LoadingFixed from "@/components/LoadingFixed";
 import CustomerReview from "@/pages/users/CustomerReview";
 import Album from "@/pages/users/DetailProducts/Album";

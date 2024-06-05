@@ -1,4 +1,4 @@
-import { getMaxPriceProduct } from "@/api/products";
+import { getMaxPriceProduct } from "@/services/product";
 import LoadingFixed from "@/components/LoadingFixed";
 import { formatMoney, ToastError } from "@/lib/utils";
 import { useQuery } from "@tanstack/react-query";

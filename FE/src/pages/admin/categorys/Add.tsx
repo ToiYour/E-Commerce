@@ -1,4 +1,3 @@
-import { createCategory } from "@/api/categorys/index";
 import ButtonLoading from "@/components/ButtonLoading";
 import {
   Breadcrumb,
@@ -11,74 +10,46 @@ import { ICategory } from "@/interfaces/category";
 import {
   ToastError,
   ToastSuccess,
-  ToastWarning,
-  upLoadFileOne,
+  transformationCloudinary,
+  upLoadFiles,
 } from "@/lib/utils";
-import { useMutation } from "@tanstack/react-query";
+import { createCategory } from "@/services/category";
+import { AxiosError } from "axios";
 import { ImageUp } from "lucide-react";
-import { useRef, useState } from "react";
+import { useRef } from "react";
 import { useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
 const Add = () => {
-  const [isSubmitLoading, setSubmitLoading] = useState(false);
   const imgRef = useRef<HTMLImageElement>(null);
   const navigate = useNavigate();
   const {
     register,
     handleSubmit,
-    formState: { errors },
+    formState: { errors, isSubmitting },
   } = useForm<ICategory>({
     defaultValues: {
       status: true,
     },
   });
-  const { mutate } = useMutation({
-    mutationFn: async (newData: ICategory) => {
-      const linkImg = await upLoadFileOne(newData?.img?.[0] as File);
-      newData.img = linkImg;
-      await createCategory(newData);
-    },
-
-    onError: (err) => {
-      console.log(err);
-      ToastError("Có lỗi xảy ra khi thêm danh mục mới mới ");
-    },
-    onSuccess: async () => {
-      setSubmitLoading(false);
-      ToastSuccess("Thêm mới danh mục thành công");
-      navigate("/admin/category");
-    },
-  });
   const onSubmit = async (newData: ICategory) => {
-    const image = new Image();
-    console.log(newData.img?.[0]);
-
-    image.src = URL.createObjectURL(newData.img?.[0] as File);
-    image.onload = () => {
-      if (image.width != 564 || image.height != 810) {
-        ToastWarning("Vui lòng chọn ảnh danh mục có kích thước là 564x810");
-        imgRef!.current!.src = "/images/no-img.jpg";
-      } else {
-        setSubmitLoading(true);
-        mutate(newData);
+    try {
+      const linkImg = await upLoadFiles(newData?.img?.[0] as File);
+      newData.img = transformationCloudinary(
+        linkImg,
+        "c_pad,w_564,h_810,g_center,b_gen_fill"
+      );
+      const { data } = await createCategory(newData);
+      ToastSuccess(data.message || "Thêm danh mục thành công");
+      navigate("/admin/category");
+    } catch (error) {
+      if (error instanceof AxiosError) {
+        ToastError(error.response?.data.messages);
       }
-    };
+    }
   };
   const handleImageUp: React.ChangeEventHandler<HTMLInputElement> = (e) => {
     if (e?.target?.files?.[0]) {
-      const image = new Image();
-      image.src = URL.createObjectURL(e?.target?.files?.[0] as File);
-
-      image.onload = () => {
-        if (image.width != 564 || image.height != 810) {
-          ToastWarning("Vui lòng chọn ảnh danh mục có kích thước là 564x810");
-          imgRef!.current!.src = "/images/no-img.jpg";
-        } else {
-          imgRef!.current!.src = URL.createObjectURL(
-            e?.target?.files?.[0] as File
-          );
-        }
-      };
+      imgRef!.current!.src = URL.createObjectURL(e?.target?.files?.[0] as File);
       e.target.onload = () => {
         URL.revokeObjectURL(imgRef!.current!.src);
       };
@@ -215,11 +186,11 @@ const Add = () => {
               </fieldset>
             </div>
             <button
-              disabled={isSubmitLoading}
+              disabled={isSubmitting}
               type="submit"
               className="block w-full rounded-lg bg-indigo-600 px-5 py-3 text-sm font-medium text-white"
             >
-              {isSubmitLoading ? <ButtonLoading /> : "Thêm mới"}
+              {isSubmitting ? <ButtonLoading /> : "Thêm mới"}
             </button>
           </form>
         </div>

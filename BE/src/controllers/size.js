@@ -57,7 +57,7 @@ export const getAllNotSoftSizes = async (req, res) => {
     const sortBy = req.query.sortBy || "";
     const options = {
       page,
-      limit: 4,
+      limit: 10,
     };
     let data;
     if (sortBy && order != "all") {
@@ -89,7 +89,7 @@ export const getAllSoftSizes = async (req, res) => {
     const sortBy = req.query.sortBy || "";
     const options = {
       page,
-      limit: 4,
+      limit: 10,
       withDeleted: true,
     };
     let data;

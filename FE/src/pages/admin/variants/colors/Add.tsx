@@ -1,4 +1,4 @@
-import { createColor } from "@/api/variants/color";
+import { createColor } from "@/services/variants/color";
 import ButtonLoading from "@/components/ButtonLoading";
 import {
   Breadcrumb,

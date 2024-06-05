@@ -1,4 +1,4 @@
-import { getCommune, getDistrict, getProvince } from "@/api/address";
+import { getCommune, getDistrict, getProvince } from "@/services/address";
 import { ICommune, IDistrict, IProvince } from "@/interfaces/address";
 import { ICustomer } from "@/interfaces/customer";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
@@ -10,6 +10,7 @@ const Address = ({
   errors,
   checkNul = false,
   address,
+  resendAddress,
 }: {
   checkNul?: boolean;
   register: UseFormRegister<FieldValues>;
@@ -19,6 +20,7 @@ const Address = ({
     district?: string;
     commune?: string;
   };
+  resendAddress?: () => void;
 }) => {
   const queryClient = useQueryClient();
   const [districtId, setDistrictId] = useState("");
@@ -47,7 +49,7 @@ const Address = ({
       );
       if (address && communeId == "") {
         queryClient.invalidateQueries({ queryKey: ["GET_BY_ID_CUSTOMER"] });
-        queryClient.invalidateQueries({ queryKey: ["GET_ACCOUNT_BY_TOKEN"] });
+        resendAddress?.();
       }
       return data as ICommune[];
     },

@@ -1,13 +1,13 @@
-import { newPasswordAccountLink } from "@/api/customer";
 import ButtonLoading from "@/components/ButtonLoading";
 import { ToastError, ToastSuccess } from "@/lib/utils";
+import { setAPasswordForTheLinkedAccount } from "@/services/auth";
 import { AxiosError } from "axios";
 import { Eye, EyeOff } from "lucide-react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 interface IResetPassword {
   password: string;
-  confirmPassword?: string;
+  confirmPassword: string;
 }
 const NewPassword = () => {
   const [showPass, setShowPass] = useState(false);
@@ -22,9 +22,7 @@ const NewPassword = () => {
 
   const onSubmit = async (newPass: IResetPassword) => {
     try {
-      const { data } = await newPasswordAccountLink({
-        newPassword: newPass.password,
-      });
+      const { data } = await setAPasswordForTheLinkedAccount(newPass);
       ToastSuccess(data?.message);
     } catch (error) {
       if (error instanceof AxiosError) {

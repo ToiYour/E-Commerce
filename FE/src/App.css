@@ -2709,3 +2709,8 @@ textarea:focus {
 button[disabled] {
   opacity: 0.4;
 }
+.detail-product-ablums .swiper-pagination-fraction {
+  bottom: -3.5px;
+  color: var(--red);
+  filter: drop-shadow(0 25px 25px rgb(0 0 0 / 0.15));
+}

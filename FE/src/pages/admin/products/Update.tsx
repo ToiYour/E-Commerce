@@ -1,4 +1,4 @@
-import { updateProduct } from "@/api/products";
+import { updateProduct } from "@/services/product";
 import ButtonLoading from "@/components/ButtonLoading";
 import {
   Breadcrumb,
@@ -33,6 +33,7 @@ import {
   ToastError,
   ToastSuccess,
   ToastWarning,
+  transformationCloudinary,
   upLoadFiles,
   upLoadVariants,
 } from "@/lib/utils";
@@ -94,10 +95,16 @@ const Add = () => {
     mutationFn: async (newData: IFormProduct) => {
       let images: string[];
       if (arrImages.length > 0) {
-        images = (await upLoadFiles(
+        let cloudImages = (await upLoadFiles(
           arrImages as { dataURL: string; file: File }[]
         )) as string[];
-        images?.unshift(...prevImages);
+        cloudImages = cloudImages.map((image: string) =>
+          transformationCloudinary(
+            image,
+            "c_pad,w_500,h_500,g_center,b_gen_fill"
+          )
+        );
+        images = [...prevImages, ...cloudImages];
       } else {
         images = prevImages;
       }
@@ -109,6 +116,7 @@ const Add = () => {
         desc: newData.desc,
         price: newData.price,
         category: newData.category,
+        status: newData.status,
         images,
         variants,
       };
@@ -559,7 +567,6 @@ const Add = () => {
                             {...register("status")}
                             type="radio"
                             value="true"
-                            defaultChecked
                             id="DeliveryStandard"
                             className="size-5 border-gray-300 text-blue-500"
                           />

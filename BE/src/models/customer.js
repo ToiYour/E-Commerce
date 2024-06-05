@@ -22,7 +22,7 @@ const CustomerShema = new mongoose.Schema(
       commune: { type: String, default: null },
       specific: { type: String, default: null },
     },
-    role: { type: String, default: "Khách hàng" },
+    role: { type: Boolean, default: false },
     account_status: { type: Boolean, default: false },
     status: {
       type: Boolean,

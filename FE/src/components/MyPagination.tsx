@@ -16,13 +16,13 @@ const MyPagination = ({ totalPages }: { totalPages: string | number }) => {
   };
   return (
     <ReactPaginate
-      breakLabel={<Ellipsis />} // Icon ...
-      nextLabel={<ChevronRight />} // Icon next page
-      previousLabel={<ChevronLeft />} // Icon previous page
-      onPageChange={handlePageClick} // Sử lý khi chuyển trang
-      pageRangeDisplayed={3} // Số trang được hiện thị (Số trang bên tay trái)
-      marginPagesDisplayed={2} // Lề trang được hiện thị (Số trang bên tay phải)
-      pageCount={totalPages as number} // Tổng số trang
+      breakLabel={<Ellipsis />}
+      nextLabel={<ChevronRight />}
+      previousLabel={<ChevronLeft />}
+      onPageChange={handlePageClick}
+      pageRangeDisplayed={3}
+      marginPagesDisplayed={2}
+      pageCount={totalPages as number}
       renderOnZeroPageCount={null}
       // class css
       containerClassName="flex flex-row items-center justify-end gap-1" // CSS class wrapper phân trang

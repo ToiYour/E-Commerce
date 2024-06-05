@@ -3,7 +3,7 @@ import { twMerge } from "tailwind-merge";
 import { downloadExcel } from "react-export-table-to-excel";
 import axios from "axios";
 import { IVariant } from "@/interfaces/variant";
-import { createVariant } from "@/api/variant";
+import { createVariant } from "@/services/variant";
 import { Flip, toast } from "react-toastify";
 import Swal from "sweetalert2";
 
@@ -32,44 +32,43 @@ export const handleDownloadExcel = (
     },
   });
 };
-export const upLoadFiles = async (files: { dataURL: string; file: File }[]) => {
+export const upLoadFiles = async (
+  files: { dataURL: string; file: File }[] | File
+) => {
   if (files) {
-    const CLOUND_NAME = "dlzhmxsqp";
-    const PRESET_NAME = "yhlsqnix";
-    const FOLDER_NAME = "e_commerce";
+    const CLOUND_NAME = process.env.CLOUND_NAME;
+    const PRESET_NAME = process.env.PRESET_NAME;
+    const FOLDER_NAME = process.env.FOLDER_NAME;
 
     const api = `https://api.cloudinary.com/v1_1/${CLOUND_NAME}/image/upload`;
-    const formData = new FormData();
-    formData.append("upload_preset", PRESET_NAME);
-    formData.append("folder", FOLDER_NAME);
-    const urls: string[] = [];
-    for (const file of files) {
-      formData.append("file", file.file as File);
+    const uploadSingleFile = async (file: File) => {
+      const formData = new FormData();
+      formData.append("upload_preset", PRESET_NAME as string);
+      formData.append("folder", FOLDER_NAME as string);
+      formData.append("file", file);
       const { data } = await axios.post(api, formData, {
         headers: { "Content-Type": "multipart/form-data" },
       });
-      urls.push(data.url);
+      return data.url;
+    };
+    if (files instanceof File) {
+      return uploadSingleFile(files);
+    } else {
+      const urls: string[] = [];
+      for (const fileObj of files) {
+        const url = await uploadSingleFile(fileObj.file);
+        urls.push(url);
+      }
+      return urls;
     }
-    return urls;
   }
 };
-export const upLoadFileOne = async (files: File) => {
-  if (typeof files !== "string") {
-    const CLOUND_NAME = "dlzhmxsqp";
-    const PRESET_NAME = "yhlsqnix";
-    const FOLDER_NAME = "e_commerce";
-
-    const api = `https://api.cloudinary.com/v1_1/${CLOUND_NAME}/image/upload`;
-    const formData = new FormData();
-    formData.append("upload_preset", PRESET_NAME);
-    formData.append("folder", FOLDER_NAME);
-
-    formData.append("file", files as File);
-    const { data } = await axios.post(api, formData, {
-      headers: { "Content-Type": "multipart/form-data" },
-    });
-    return data.url;
-  }
+export const transformationCloudinary = (
+  url: string,
+  transformation: string
+) => {
+  const arrUrl = url.split("/upload/");
+  return `${arrUrl[0]}/upload/${transformation}/${arrUrl[1]}`;
 };
 export const upLoadVariants = async (data: IVariant[]) => {
   if (data) {

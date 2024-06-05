@@ -1,4 +1,4 @@
-import { getSearchProducts } from "@/api/products";
+import { getSearchProducts } from "@/services/product";
 import { IProduct } from "@/interfaces/product";
 import { Search, X } from "lucide-react";
 import { FormEvent, useState } from "react";

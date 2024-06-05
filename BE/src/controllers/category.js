@@ -59,7 +59,7 @@ export const getAllNotSoftCategorys = async (req, res) => {
     const sortBy = req.query.sortBy || "";
     const options = {
       page,
-      limit: 4,
+      limit: 10,
     };
     let data;
     if (sortBy && order != "all") {
@@ -91,7 +91,7 @@ export const getAllSoftCategorys = async (req, res) => {
     const sortBy = req.query.sortBy || "";
     const options = {
       page,
-      limit: 4,
+      limit: 10,
     };
     let data;
     if (sortBy && order != "all") {
@@ -173,7 +173,10 @@ export const deleteForeverAllCategorys = async (req, res) => {
 };
 export const getComboboxCategory = async (req, res) => {
   try {
-    const data = await Category.find({ status: true });
+    const data = await Category.find({
+      status: true,
+      $or: [{ deleted: false }, { deleted: { $exists: false } }],
+    });
     if (!data) {
       return res.status(500).send({ messages: "Get data thất bại" });
     }
