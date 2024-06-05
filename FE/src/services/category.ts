@@ -1,5 +1,5 @@
 import { ICategory } from "@/interfaces/category";
-import instance from "../instance";
+import instance from "../config/instance";
 export const createCategory = (data: ICategory) => {
   const uri = "/category";
   return instance.post(uri, data);

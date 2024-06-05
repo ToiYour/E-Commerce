@@ -1,4 +1,4 @@
-import { getSimilarProducts } from "@/api/products";
+import { getSimilarProducts } from "@/services/product";
 import LoadingFixed from "@/components/LoadingFixed";
 import { IProduct } from "@/interfaces/product";
 import { ToastError } from "@/lib/utils";
@@ -28,6 +28,19 @@ const SimilarProduct = (props: IPropsSimilarProduct) => {
   }
   if (isError) {
     ToastError("Sảy ra lỗi khi lấy sản phẩm tương tự");
+  }
+
+  if (listProductSimilar && listProductSimilar?.length <= 0) {
+    return (
+      <div className="collection-block container max-w-7xl bg-white mt-10 pt-10 py-20">
+        <div className="container">
+          <div className="heading3 text-center">Sản phẩm tương tự</div>
+        </div>
+        <div className="flex items-center justify-center">
+          <img src="/images/product-not-found.jpg" alt="" />
+        </div>
+      </div>
+    );
   }
   return (
     <div className="collection-block container max-w-7xl bg-white mt-10 pt-10 py-20">
@@ -71,7 +84,13 @@ const SimilarProduct = (props: IPropsSimilarProduct) => {
                 key={product._id}
                 className="swiper-slide bg-gray-100 p-3 rounded-lg"
               >
-                <ProductItem product={product} />
+                <div
+                  onClick={() =>
+                    window.scrollTo({ top: 0, behavior: "smooth" })
+                  }
+                >
+                  <ProductItem product={product} />
+                </div>
               </SwiperSlide>
             ))}
           </Swiper>

@@ -23,7 +23,6 @@ import {
   RouterProducts,
   RouterSizes,
 } from "./routes";
-import { accountMe } from "./api/customer";
 
 const router = createBrowserRouter([
   {
@@ -70,16 +69,7 @@ const router = createBrowserRouter([
           },
           {
             path: "password",
-            loader: async () => {
-              const token =
-                localStorage.getItem("token") ||
-                sessionStorage.getItem("token");
-              if (token) {
-                const { data } = await accountMe();
-                return data.account;
-              }
-              return false;
-            },
+
             element: <ChangeOrNewPassword />,
           },
           {

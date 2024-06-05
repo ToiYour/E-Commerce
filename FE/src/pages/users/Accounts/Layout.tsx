@@ -1,51 +1,10 @@
-import { accountMe, logOut } from "@/api/customer";
-import LoadingFixed from "@/components/LoadingFixed";
-import { ICustomer } from "@/interfaces/customer";
-import { ToastError } from "@/lib/utils";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { AxiosError } from "axios";
+import { useAuth } from "@/hooks/auth";
 import { ClipboardList, User } from "lucide-react";
-import {
-  NavLink,
-  Outlet,
-  useNavigate,
-  useOutletContext,
-} from "react-router-dom";
+import { NavLink, Outlet } from "react-router-dom";
 import Breadcrumd from "../Breadcrumd";
 
 const LayOutAccount = () => {
-  const navigate = useNavigate();
-  const queryClient = useQueryClient();
-  const {
-    data: account,
-    isLoading,
-    error,
-  } = useQuery<ICustomer>({
-    retryOnMount: false,
-    retry: false,
-    queryKey: ["GET_ACCOUNT_BY_TOKEN"],
-    queryFn: async () => {
-      const token =
-        localStorage.getItem("token") || sessionStorage.getItem("token");
-      if (token) {
-        const { data } = await accountMe();
-        return data.account;
-      }
-      return null;
-    },
-  });
-  if (isLoading) {
-    return <LoadingFixed />;
-  }
-  if (error) {
-    const { response } = error as AxiosError<{ message: string }>;
-    logOut();
-    localStorage.removeItem("token");
-    sessionStorage.removeItem("token");
-    navigate("/");
-    queryClient.invalidateQueries({ queryKey: ["GET_ACCOUNT_BY_TOKEN"] });
-    ToastError(response?.data.message as string);
-  }
+  const { authUser: account } = useAuth();
   const closeDetails = () => {
     const details = document.querySelector("details") as HTMLDetailsElement;
     details.open = false;
@@ -130,6 +89,3 @@ const LayOutAccount = () => {
 };
 
 export default LayOutAccount;
-export function useAccount() {
-  return useOutletContext<ICustomer>();
-}

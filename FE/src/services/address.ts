@@ -1,4 +1,4 @@
-import instance from "./instance";
+import instance from "../config/instance";
 // const api1 = "https://toinh-api-tinh-thanh.onrender.com";
 const api2 = "https://api-tinh-thanh-git-main-toiyours-projects.vercel.app";
 const endpointProvince = "/province";

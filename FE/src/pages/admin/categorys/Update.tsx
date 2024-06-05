@@ -1,4 +1,3 @@
-import { getByIdCategory, updateCategory } from "@/api/categorys";
 import ButtonLoading from "@/components/ButtonLoading";
 import {
   Breadcrumb,
@@ -12,20 +11,21 @@ import { ICategory } from "@/interfaces/category";
 import {
   ToastError,
   ToastSuccess,
-  ToastWarning,
-  upLoadFileOne,
+  transformationCloudinary,
+  upLoadFiles,
 } from "@/lib/utils";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { getByIdCategory, updateCategory } from "@/services/category";
+import { useQuery } from "@tanstack/react-query";
+import { AxiosError } from "axios";
 import { ImageUp } from "lucide-react";
-import { useRef, useState } from "react";
+import { useRef } from "react";
 import { useForm } from "react-hook-form";
 import { Link, useParams } from "react-router-dom";
 const Update = () => {
-  const [isSubmitLoading, setSubmitLoading] = useState(false);
   const imgRef = useRef<HTMLImageElement>(null);
   const { id } = useParams();
   const { data: prevCategory } = useQuery({
-    queryKey: ["GET_SIZES", id],
+    queryKey: ["GET_BY_ID_CATEGORY", id],
     queryFn: async () => {
       const { data } = await getByIdCategory(id as string);
       reset({ ...data.data, status: data.data.status.toString() });
@@ -36,63 +36,29 @@ const Update = () => {
     register,
     handleSubmit,
     reset,
-    formState: { errors },
+    formState: { errors, isSubmitting },
   } = useForm<ICategory>();
-  const { mutate } = useMutation({
-    mutationFn: async (newData: ICategory) => {
-      if (typeof newData.img == "object") {
-        const linkImg = await upLoadFileOne(newData?.img?.[0] as File);
-        newData.img = linkImg;
-        await updateCategory(id as string, newData);
-      } else {
-        await updateCategory(id as string, newData);
-      }
-    },
 
-    onError: (err) => {
-      console.log(err);
-      ToastError("Có lỗi xảy ra khi cập nhập danh mục ");
-    },
-    onSuccess: async () => {
-      setSubmitLoading(false);
-      ToastSuccess("Cập nhập danh mục thành công");
-    },
-  });
   const onSubmit = async (newData: ICategory) => {
-    if (typeof newData.img == "object") {
-      const image = new Image();
-      console.log(newData.img[0]);
-
-      image.src = URL.createObjectURL(newData.img?.[0] as File);
-      image.onload = () => {
-        if (image.width != 564 || image.height != 810) {
-          ToastWarning("Vui lòng chọn ảnh danh mục có kích thước là 564x810");
-          imgRef!.current!.src = "/images/no-img.jpg";
-        } else {
-          setSubmitLoading(true);
-          mutate(newData);
-        }
-      };
-    } else {
-      setSubmitLoading(true);
-      mutate(newData);
+    try {
+      if (typeof newData.img == "object") {
+        const linkImg = await upLoadFiles(newData?.img?.[0] as File);
+        newData.img = transformationCloudinary(
+          linkImg,
+          "c_pad,w_564,h_810,g_center,b_gen_fill"
+        );
+      }
+      const { data } = await updateCategory(id!, newData);
+      ToastSuccess(data.message || "Cập nhập danh mục thành công");
+    } catch (error) {
+      if (error instanceof AxiosError) {
+        ToastError(error.response?.data.messages);
+      }
     }
   };
   const handleImageUp: React.ChangeEventHandler<HTMLInputElement> = (e) => {
     if (e?.target?.files?.[0]) {
-      const image = new Image();
-      image.src = URL.createObjectURL(e?.target?.files?.[0] as File);
-
-      image.onload = () => {
-        if (image.width != 564 || image.height != 810) {
-          ToastWarning("Vui lòng chọn ảnh danh mục có kích thước là 564x810");
-          imgRef!.current!.src = "/images/no-img.jpg";
-        } else {
-          imgRef!.current!.src = URL.createObjectURL(
-            e?.target?.files?.[0] as File
-          );
-        }
-      };
+      imgRef!.current!.src = URL.createObjectURL(e?.target?.files?.[0] as File);
       e.target.onload = () => {
         URL.revokeObjectURL(imgRef!.current!.src);
       };
@@ -231,11 +197,11 @@ const Update = () => {
               </fieldset>
             </div>
             <button
-              disabled={isSubmitLoading}
+              disabled={isSubmitting}
               type="submit"
               className="block w-full rounded-lg bg-indigo-600 px-5 py-3 text-sm font-medium text-white"
             >
-              {isSubmitLoading ? <ButtonLoading /> : "Cập nhập"}
+              {isSubmitting ? <ButtonLoading /> : "Cập nhập"}
             </button>
           </form>
         </div>

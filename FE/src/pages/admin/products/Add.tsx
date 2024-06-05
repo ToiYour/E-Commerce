@@ -1,4 +1,4 @@
-import { createProduct } from "@/api/products";
+import { createProduct } from "@/services/product";
 import ButtonLoading from "@/components/ButtonLoading";
 import {
   Breadcrumb,
@@ -33,6 +33,7 @@ import {
   ToastError,
   ToastSuccess,
   ToastWarning,
+  transformationCloudinary,
   upLoadFiles,
   upLoadVariants,
 } from "@/lib/utils";
@@ -80,8 +81,11 @@ const Add = () => {
   // Sử lý thêm mới sản phẩm
   const mutationProduct = useMutation({
     mutationFn: async (newData: IFormProduct) => {
-      const images = await upLoadFiles(
+      let images = await upLoadFiles(
         arrImages as { dataURL: string; file: File }[]
+      );
+      images = images.map((image: string) =>
+        transformationCloudinary(image, "c_pad,w_500,h_500,g_center,b_gen_fill")
       );
       const variants = await upLoadVariants(newData.variants as IVariant[]);
       const payload = {

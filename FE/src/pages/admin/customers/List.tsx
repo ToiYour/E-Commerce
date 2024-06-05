@@ -3,8 +3,8 @@ import {
   deleteCustomer,
   getAllCustomer,
   updateAccountStatus,
-} from "@/api/customer";
-import Loading from "@/components/Loading";
+} from "@/services/customer";
+import Loading from "@/components/LoadingFixed";
 import MyPagination from "@/components/MyPagination";
 import {
   Breadcrumb,
@@ -409,7 +409,7 @@ const List = () => {
                       />
                     </TableCell>
                     <TableCell className="hidden md:table-cell">
-                      {customer.role}
+                      {customer.role ? "Quản trị" : "Khách hàng"}
                     </TableCell>
                     <TableCell>
                       <DropdownMenu>

@@ -2,9 +2,9 @@ import {
   deleteSoftAllSize,
   deleteSoftSize,
   getAllSize,
-} from "@/api/variants/size";
+} from "@/services/variants/size";
 import BadgeStatus from "@/components/BadgeStatus";
-import Loading from "@/components/Loading";
+import Loading from "@/components/LoadingFixed";
 import MyPagination from "@/components/MyPagination";
 import {
   Breadcrumb,

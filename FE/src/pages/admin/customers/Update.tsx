@@ -1,4 +1,4 @@
-import { getByIdCustomer, updateCustomer } from "@/api/customer";
+import { getByIdCustomer, updateCustomer } from "@/services/customer";
 import Address from "@/components/Address";
 import ButtonLoading from "@/components/ButtonLoading";
 import {
@@ -14,7 +14,7 @@ import {
   ToastError,
   ToastSuccess,
   ToastWarning,
-  upLoadFileOne,
+  upLoadFiles,
 } from "@/lib/utils";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { AxiosError } from "axios";
@@ -43,15 +43,13 @@ const Update = () => {
     formState: { errors },
   } = useForm<ICustomer>({});
   const onSubmit: SubmitHandler<ICustomer> = async (newData: ICustomer) => {
-    console.log(newData);
-
     setIsLoadSubmit(true);
     await mutationCustomer.mutate(newData);
   };
   const mutationCustomer = useMutation({
     mutationFn: async (newData: ICustomer) => {
-      if (newData.avatar?.[0]) {
-        const linkImage = await upLoadFileOne(newData.avatar?.[0] as File);
+      if (typeof newData.avatar != "string") {
+        const linkImage = await upLoadFiles(newData.avatar?.[0] as File);
         newData.avatar = linkImage;
         await updateCustomer(id as string, newData);
       } else {
@@ -179,7 +177,7 @@ const Update = () => {
                 </p>
               )}
             </div>
-            <div className="col-span-6 sm:col-span-3">
+            <div className="col-span-6 ">
               <label
                 htmlFor="Email"
                 className="block text-sm font-medium text-gray-700"
@@ -258,9 +256,8 @@ const Update = () => {
                 {...register("role", { required: "Vui lòng chọn vai trò" })}
                 className="mt-1 w-full p-1  rounded border border-gray-200 bg-white text-sm text-gray-700 shadow-sm"
               >
-                <option value="Khách hàng">Khách hàng</option>
-                <option value="Nhân viên">Nhân viên</option>
-                <option value="Admin">Admin</option>
+                <option value="false">Khách hàng</option>
+                <option value="true">Admin</option>
               </select>
               {errors.role && (
                 <p className="text-red-500">{errors.role.message}</p>

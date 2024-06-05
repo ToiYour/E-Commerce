@@ -1,4 +1,4 @@
-import { createCustomer } from "@/api/customer";
+import { createCustomer } from "@/services/customer";
 import Address from "@/components/Address";
 import ButtonLoading from "@/components/ButtonLoading";
 import {
@@ -14,7 +14,7 @@ import {
   ToastError,
   ToastSuccess,
   ToastWarning,
-  upLoadFileOne,
+  upLoadFiles,
 } from "@/lib/utils";
 import { useMutation } from "@tanstack/react-query";
 import { AxiosError } from "axios";
@@ -31,7 +31,7 @@ const Add = () => {
     handleSubmit,
     formState: { errors },
   } = useForm<ICustomer>({
-    defaultValues: { role: "Khách hàng", account_status: false },
+    defaultValues: { role: false, account_status: false },
   });
   const onSubmit: SubmitHandler<ICustomer> = async (newData: ICustomer) => {
     setIsLoadSubmit(true);
@@ -40,7 +40,7 @@ const Add = () => {
   const mutationCustomer = useMutation({
     mutationFn: async (newData: ICustomer) => {
       if (newData.avatar?.[0]) {
-        const linkImage = await upLoadFileOne(newData.avatar?.[0] as File);
+        const linkImage = await upLoadFiles(newData.avatar?.[0] as File);
         newData.avatar = linkImage;
         await createCustomer(newData);
       } else {
@@ -282,9 +282,8 @@ const Add = () => {
                 {...register("role", { required: "Vui lòng chọn vai trò" })}
                 className="mt-1 w-full p-1  rounded border border-gray-200 bg-white text-sm text-gray-700 shadow-sm"
               >
-                <option value="Khách hàng">Khách hàng</option>
-                <option value="Nhân viên">Nhân viên</option>
-                <option value="Admin">Admin</option>
+                <option value="false">Khách hàng</option>
+                <option value="true">Admin</option>
               </select>
               {errors.role && (
                 <p className="text-red-500">{errors.role.message}</p>

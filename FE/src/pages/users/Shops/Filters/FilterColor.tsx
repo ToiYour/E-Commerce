@@ -1,7 +1,7 @@
-import { getAllColor } from "@/api/variants/color";
 import LoadingFixed from "@/components/LoadingFixed";
 import { IColor } from "@/interfaces/color";
 import { ToastError } from "@/lib/utils";
+import { getComboboxColors } from "@/services/variants/color";
 import { useQuery } from "@tanstack/react-query";
 import { MouseEventHandler } from "react";
 import { useSearchParams } from "react-router-dom";
@@ -15,8 +15,8 @@ const FilterColor = () => {
   } = useQuery({
     queryKey: ["GET_FILTER_COLORS"],
     queryFn: async () => {
-      const { data } = await getAllColor("");
-      return data?.data?.docs;
+      const { data } = await getComboboxColors();
+      return data?.data;
     },
   });
   if (isLoading) {
@@ -48,23 +48,26 @@ const FilterColor = () => {
     <div className="filter-color pb-8 border-b border-line mt-8">
       <div className="heading6">Màu sắc</div>
       <div className="list-color flex items-center flex-wrap gap-3 gap-y-4 mt-4">
-        {colors?.map((color: IColor) => (
-          <div
-            onClick={handleFilterColor}
-            key={color._id}
-            data-id={color._id}
-            className={`${
-              searchParams.get("color") == color._id && "active"
-            } color-item px-3 py-[5px] flex items-center justify-center gap-2 rounded-full border
+        {colors?.map(
+          (color: IColor) =>
+            color.status && (
+              <div
+                onClick={handleFilterColor}
+                key={color._id}
+                data-id={color._id}
+                className={`${
+                  searchParams.get("color") == color._id && "active"
+                } color-item px-3 py-[5px] flex items-center justify-center gap-2 rounded-full border
                                           border-line cursor-pointer`}
-          >
-            <div
-              style={{ backgroundColor: color.hex }}
-              className={`color shadow-md w-5 h-5 rounded-full`}
-            />
-            <div className="caption1 capitalize">{color.name}</div>
-          </div>
-        ))}
+              >
+                <div
+                  style={{ backgroundColor: color.hex }}
+                  className={`color shadow-md w-5 h-5 rounded-full`}
+                />
+                <div className="caption1 capitalize">{color.name}</div>
+              </div>
+            )
+        )}
       </div>
     </div>
   );

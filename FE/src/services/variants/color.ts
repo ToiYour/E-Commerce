@@ -1,5 +1,5 @@
 import { IColor } from "@/interfaces/color";
-import instance from "../instance";
+import instance from "../../config/instance";
 export const createColor = (data: IColor) => {
   const uri = "/color";
   return instance.post(uri, data);

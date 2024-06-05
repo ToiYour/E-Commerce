@@ -1,30 +1,23 @@
 import ButtonLoading from "@/components/ButtonLoading";
+import { useAuth } from "@/hooks/auth";
 import { ICustomer } from "@/interfaces/customer";
-import { useEffect, useRef, useState } from "react";
-import { SubmitHandler, useForm } from "react-hook-form";
-import { useAccount } from "./Layout";
-import { ImageUp } from "lucide-react";
-import { updateCustomer } from "@/api/customer";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import {
-  ToastError,
-  ToastSuccess,
-  ToastWarning,
-  upLoadFileOne,
-} from "@/lib/utils";
+import { ToastError, ToastSuccess, upLoadFiles } from "@/lib/utils";
+import { changeProfileInformation } from "@/services/auth";
 import { AxiosError } from "axios";
+import { ImageUp } from "lucide-react";
+import { useRef } from "react";
+import { SubmitHandler, useForm } from "react-hook-form";
 
 const MeAccount = () => {
-  const account = useAccount();
-  const queryClient = useQueryClient();
-  const [isLoadSubmit, setIsLoadSubmit] = useState(false);
+  const { authUser: account, setAuthUser } = useAuth();
   const avartarRef = useRef<HTMLImageElement>(null);
   const {
     register,
     handleSubmit,
-    reset,
-    formState: { errors },
-  } = useForm<ICustomer>();
+    formState: { errors, isSubmitting },
+  } = useForm<ICustomer>({
+    defaultValues: account,
+  });
   const handleImageUp: React.ChangeEventHandler<HTMLInputElement> = (e) => {
     if (e?.target?.files?.[0]) {
       avartarRef!.current!.src = URL.createObjectURL(
@@ -34,38 +27,24 @@ const MeAccount = () => {
         URL.revokeObjectURL(avartarRef!.current!.src);
       };
     } else {
-      avartarRef!.current!.src = account.avatar as string;
+      avartarRef!.current!.src = account?.avatar as string;
     }
   };
-  useEffect(() => {
-    reset(account);
-  }, [account, reset]);
-  const mutationCustomer = useMutation({
-    mutationFn: async (newData: ICustomer) => {
-      if (newData.avatar?.[0]) {
-        const linkImage = await upLoadFileOne(newData.avatar?.[0] as File);
-        newData.avatar = linkImage;
-        await updateCustomer(account._id as string, newData);
-      } else {
-        await updateCustomer(account._id as string, newData);
-      }
-    },
-    onError: (error) => {
-      setIsLoadSubmit(false);
-      const axiosError = error as AxiosError;
-      ToastError("Có lỗi khi cập nhập khách hàng!");
-      axiosError?.response?.data &&
-        ToastWarning(axiosError?.response?.data as string);
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["GET_ACCOUNT_BY_TOKEN"] });
-      setIsLoadSubmit(false);
-      ToastSuccess("Cập nhập khách hàng thành công!");
-    },
-  });
+
   const onSubmit: SubmitHandler<ICustomer> = async (newData: ICustomer) => {
-    setIsLoadSubmit(true);
-    await mutationCustomer.mutate(newData);
+    try {
+      if (typeof newData.avatar != "string") {
+        const linkImage = await upLoadFiles(newData.avatar?.[0] as File);
+        newData.avatar = linkImage;
+      }
+      const { data } = await changeProfileInformation(newData);
+      setAuthUser?.(data.user);
+      ToastSuccess(data.message);
+    } catch (error) {
+      if (error instanceof AxiosError) {
+        ToastError(error.response?.data.message);
+      }
+    }
   };
   return (
     <div className="text-content w-full bg-white p-10 border border-gray-100   rounded shadow">
@@ -77,7 +56,7 @@ const MeAccount = () => {
           </p>
         </div>
         <div className="grid grid-cols-6 ">
-          <div className="grid gap-3 col-span-6 sm:col-span-4 pb-6 border-b sm:pe-6 sm:border-e border-gray-100 ">
+          <div className="grid gap-3 col-span-6 md:col-span-4 pb-6 border-b md:pe-6 md:border-e border-gray-100 ">
             <div className="">
               <label
                 htmlFor="LastName"
@@ -226,8 +205,8 @@ const MeAccount = () => {
         </div>
 
         <div className="block-button lg:mt-5 mt-3">
-          <button disabled={isLoadSubmit} className="button-main">
-            {isLoadSubmit ? <ButtonLoading /> : "Lưu"}
+          <button disabled={isSubmitting} className="button-main">
+            {isSubmitting ? <ButtonLoading /> : "Lưu"}
           </button>
         </div>
       </form>

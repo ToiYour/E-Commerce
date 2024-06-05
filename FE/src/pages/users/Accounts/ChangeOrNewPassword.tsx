@@ -1,11 +1,10 @@
-import { ICustomer } from "@/interfaces/customer";
-import { useLoaderData } from "react-router-dom";
-import NewPassword from "./NewPassword";
+import { useAuth } from "@/hooks/auth";
 import ChangePassword from "./ChangePassword";
+import NewPassword from "./NewPassword";
 
 const ChangeOrNewPassword = () => {
-  const user = useLoaderData() as ICustomer;
-  return user.uid && !user.password ? <NewPassword /> : <ChangePassword />;
+  const { authUser: user } = useAuth();
+  return user?.uid && !user.password ? <NewPassword /> : <ChangePassword />;
 };
 
 export default ChangeOrNewPassword;

@@ -1,73 +1,37 @@
-import { loginAccount } from "@/api/customer";
 import ButtonLoading from "@/components/ButtonLoading";
-import { useFacebookLogin, useGoogleLogin } from "@/firebase/handle";
+import { useFacebookLogin, useGoogleLogin, useLogin } from "@/hooks/auth";
 import { ICustomer } from "@/interfaces/customer";
-import { ToastError, ToastSuccess } from "@/lib/utils";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { ToastError } from "@/lib/utils";
+import { loginUser } from "@/services/auth";
 import { AxiosError } from "axios";
 import { Eye, EyeOff } from "lucide-react";
-import { MouseEvent, useState } from "react";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import Breadcrumd from "../Breadcrumd";
 
 const Login = () => {
+  const loginSuccess = useLogin();
   const { loginGoogle } = useGoogleLogin();
   const { loginFacebook } = useFacebookLogin();
-  const queryClient = useQueryClient();
-  const [isLoadSubmit, setIsLoadSubmit] = useState(false);
-  const [isRemerber, setIsRemerber] = useState(false);
-  const navigate = useNavigate();
+  const [showPass, setShowPass] = useState(false);
   const dataRegister = JSON.parse(
     sessionStorage.getItem("registerAccount") as string
   );
   const {
     register,
     handleSubmit,
-    formState: { errors },
+    formState: { errors, isSubmitting },
   } = useForm<ICustomer>({ defaultValues: dataRegister });
-  const handleShowPassword = (e: MouseEvent<SVGSVGElement>) => {
-    const elementTarget = e.target as HTMLElement;
-    const passwordElement = document.querySelector(
-      ".pass .password"
-    ) as HTMLInputElement;
-    const isSVGElement = elementTarget.closest("svg") as SVGElement;
-    if (!isSVGElement?.className.baseVal.includes("lucide-eye-off")) {
-      const eyeOff = isSVGElement.nextSibling as SVGElement;
-      passwordElement.type = "text";
-      isSVGElement.classList.add("hidden");
-      eyeOff.classList.remove("hidden");
-    } else {
-      const eye = isSVGElement.previousSibling as SVGElement;
-      passwordElement.type = "password";
-      isSVGElement.classList.add("hidden");
-      eye.classList.remove("hidden");
-    }
-  };
-  const loginMutation = useMutation({
-    mutationFn: async (newData: ICustomer) => {
-      return await loginAccount(newData);
-    },
-    onSuccess: (respon) => {
-      setIsLoadSubmit(false);
-      if (isRemerber) {
-        localStorage.setItem("token", respon.data.access_token);
-      } else {
-        sessionStorage.setItem("token", respon.data.access_token);
+  const onSubmit = async (newData: ICustomer) => {
+    try {
+      const { data } = await loginUser(newData);
+      loginSuccess(data);
+    } catch (error) {
+      if (error instanceof AxiosError) {
+        ToastError(error.response?.data.message);
       }
-      ToastSuccess("Đăng nhập thành công");
-      navigate("/");
-      queryClient.invalidateQueries({ queryKey: ["GET_ACCOUNT_BY_TOKEN"] });
-    },
-    onError: (err: AxiosError) => {
-      setIsLoadSubmit(false);
-      const { message } = err.response?.data as { message: string };
-      ToastError(message as string);
-    },
-  });
-  const onSubmit = (newData: ICustomer) => {
-    setIsLoadSubmit(true);
-    loginMutation.mutate(newData);
+    }
   };
   return (
     <>
@@ -104,7 +68,7 @@ const Login = () => {
                       className={` password border ${
                         errors.password ? "border-red-500" : "border-gray-200 "
                       }  px-4 pt-3 pb-3 w-full rounded-lg`}
-                      type="password"
+                      type={showPass ? "text" : "password"}
                       placeholder="Mật khẩu *"
                       {...register("password", {
                         required: "Vui lòng nhập Mật khẩu",
@@ -116,14 +80,16 @@ const Login = () => {
                     />
 
                     <Eye
-                      onClick={handleShowPassword}
+                      onClick={() => setShowPass((prev) => !prev)}
                       strokeWidth={1.5}
                       className="eye absolute  top-1/2 right-5 -translate-y-1/2 cursor-pointer"
                     />
                     <EyeOff
-                      onClick={handleShowPassword}
+                      onClick={() => setShowPass((prev) => !prev)}
                       strokeWidth={1.5}
-                      className="absolute hidden top-1/2 right-5 -translate-y-1/2 cursor-pointer"
+                      className={`${
+                        showPass || "hidden"
+                      } absolute  top-1/2 right-5 -translate-y-1/2 cursor-pointer`}
                     />
                   </div>
                   {errors?.password && (
@@ -132,21 +98,7 @@ const Login = () => {
                     </span>
                   )}
                 </div>
-                <div className="flex items-center justify-between mt-5">
-                  <div className="flex items-center">
-                    <div className="block-input">
-                      <input
-                        onChange={(e) => setIsRemerber(e.target.checked)}
-                        type="checkbox"
-                        name="remember"
-                        id="remember"
-                      />
-                      <i className="ph-fill ph-check-square icon-checkbox" />
-                    </div>
-                    <label htmlFor="remember" className="pl-2 cursor-pointer">
-                      Ghi nhớ
-                    </label>
-                  </div>
+                <div className="flex items-center justify-end mt-5">
                   <Link
                     to={"/buyer/forgot-password"}
                     className="font-semibold hover:underline"
@@ -156,10 +108,10 @@ const Login = () => {
                 </div>
                 <div className="block-button md:mt-7 mt-4">
                   <button
-                    disabled={isLoadSubmit}
+                    disabled={isSubmitting}
                     className="button-main w-full"
                   >
-                    {isLoadSubmit ? <ButtonLoading /> : "Đăng nhập"}
+                    {isSubmitting ? <ButtonLoading /> : "Đăng nhập"}
                   </button>
                 </div>
                 <span className="flex items-center justify-center space-x-2 my-5">

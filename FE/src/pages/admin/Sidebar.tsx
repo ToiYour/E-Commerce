@@ -70,7 +70,7 @@ const Sidebar = () => {
                 </div>{" "}
                 <ChevronDown size={16} />
               </li>
-              <ul ref={childrenVariant} className="hidden mt-1 pl-10">
+              <ul ref={childrenVariant} className="hidden mt-1 pl-5">
                 <NavLink
                   to={"/admin/variant/color"}
                   className="text-xs flex pl-10 items-center gap-3 rounded-lg text-muted-foreground  px-3 py-2  transition-all hover:text-primary "

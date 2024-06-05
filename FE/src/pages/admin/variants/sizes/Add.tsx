@@ -1,4 +1,4 @@
-import { createSize } from "@/api/variants/size";
+import { createSize } from "@/services/variants/size";
 import ButtonLoading from "@/components/ButtonLoading";
 import {
   Breadcrumb,

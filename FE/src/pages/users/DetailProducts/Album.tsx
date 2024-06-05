@@ -1,33 +1,55 @@
 import { Swiper, SwiperSlide } from "swiper/react";
 // Import Swiper styles
+import { ArrowLeft, ArrowRight } from "lucide-react";
+import { memo, useRef } from "react";
 import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
 import { Navigation, Pagination } from "swiper/modules";
-import { memo } from "react";
+import { Swiper as SwiperType } from "swiper/types";
+
 const Album = ({ images }: { images: string[] }) => {
+  const swiperRef = useRef<SwiperType>();
   return (
-    <div className="list-img col-span-3  w-full ">
-      <div className="list-collection relative section-swiper-navigation">
-        <div className="swiper-button-prev lg:left-7 left-6 " />
+    <div className="detail-product-ablums col-span-3  w-full ">
+      <div className=" relative">
         <Swiper
+          rewind={true}
           pagination={{
             type: "fraction",
           }}
-          navigation={{
-            prevEl: ".swiper-button-prev",
-            nextEl: ".swiper-button-next",
-          }}
           modules={[Pagination, Navigation]}
           className="mySwiper"
+          lazyPreloaderClass="swiper-lazy-preloader"
+          onSwiper={(swiper) => {
+            swiperRef.current = swiper;
+          }}
         >
           {images?.map((image) => (
             <SwiperSlide key={image}>
-              <img src={image} alt="" className="w-auto h-auto " />
+              <img
+                src={image}
+                alt=""
+                className="w-auto h-auto "
+                loading="lazy"
+              />
             </SwiperSlide>
           ))}
         </Swiper>
-        <div className="swiper-button-next lg:right-7 right-6" />
+
+        <ArrowLeft
+          onClick={() => swiperRef?.current?.slidePrev()}
+          className="absolute top-1/2 lg:left-7 left-6 z-50 cursor-pointer"
+          size={34}
+          color="#ee4d2d"
+        />
+
+        <ArrowRight
+          onClick={() => swiperRef?.current?.slideNext()}
+          className="absolute top-1/2 lg:right-7 right-6 z-50 cursor-pointer "
+          size={34}
+          color="#ee4d2d"
+        />
       </div>
     </div>
   );

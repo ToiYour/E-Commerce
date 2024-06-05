@@ -18,7 +18,7 @@ const BadgeStatus = ({ status = true }: { status: boolean }) => {
           ) : (
             <Ban color="orange" size={16} />
           )}
-          {status ? "Active" : "Draft"}
+          {status ? "Hiện" : "Ẩn"}
         </div>
       </span>
     </>

@@ -1,7 +1,7 @@
-import { getComboboxCategory } from "@/api/categorys";
-import { getByIdUpdateProduct, getDetailProduct } from "@/api/products";
-import { getComboboxColors } from "@/api/variants/color";
-import { getComboboxSizes } from "@/api/variants/size";
+import { getComboboxCategory } from "@/services/category";
+import { getByIdUpdateProduct, getDetailProduct } from "@/services/product";
+import { getComboboxColors } from "@/services/variants/color";
+import { getComboboxSizes } from "@/services/variants/size";
 import {
   AddProducts,
   DetailProducts,

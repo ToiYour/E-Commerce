@@ -16,7 +16,7 @@ export interface ICustomer {
     commune?: string;
     specific?: string;
   };
-  role?: string;
+  role?: boolean;
   account_status?: boolean;
   status?: boolean;
   createdAt?: string;

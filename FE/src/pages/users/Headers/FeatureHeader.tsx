@@ -1,17 +1,15 @@
-import { accountMe, logOut } from "@/api/customer";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useAuth, useLogout } from "@/hooks/auth";
 import { Search, ShoppingCart, User } from "lucide-react";
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import FeatureSearch from "./FeatureSearch";
-import LoadingFixed from "@/components/LoadingFixed";
-import { ICustomer } from "@/interfaces/customer";
-import { AxiosError } from "axios";
+import { logOutAccount } from "@/services/auth";
 import { ToastError } from "@/lib/utils";
+import { AxiosError } from "axios";
 
 const FeatureHeader = () => {
-  const navigate = useNavigate();
-  const queryClient = useQueryClient();
+  const { authUser: account, isLoggedIn } = useAuth();
+  const logOutSuccess = useLogout();
   const [isOpenModalSearch, setIsOpenModalSearch] = useState(false);
   const handleLoginPopup = () => {
     const loginPopup = document.querySelector(
@@ -19,40 +17,16 @@ const FeatureHeader = () => {
     ) as HTMLElement;
     loginPopup.classList.toggle("open");
   };
-  const handleLogOut = async () => {
-    await logOut();
-    localStorage.removeItem("token");
-    sessionStorage.removeItem("token");
-    navigate("/");
-    queryClient.invalidateQueries({ queryKey: ["GET_ACCOUNT_BY_TOKEN"] });
-  };
-  const {
-    data: account,
-    isLoading,
-    error,
-  } = useQuery<ICustomer>({
-    retryOnMount: false,
-    retry: false,
-    queryKey: ["GET_ACCOUNT_BY_TOKEN"],
-    queryFn: async () => {
-      const token =
-        localStorage.getItem("token") || sessionStorage.getItem("token");
-      if (token) {
-        const { data } = await accountMe();
-        return data.account;
+  const handleLogout = async () => {
+    try {
+      const { data } = await logOutAccount();
+      logOutSuccess(data.message);
+    } catch (error) {
+      if (error instanceof AxiosError) {
+        ToastError(error.response?.data.message);
       }
-      return null;
-    },
-  });
-  if (isLoading) {
-    return <LoadingFixed />;
-  }
-  if (error) {
-    const { response } = error as AxiosError<{ message: string }>;
-    ToastError(response?.data.message as string);
-    handleLogOut();
-  }
-
+    }
+  };
   return (
     <div className="right flex gap-12">
       <div className="max-md:hidden search-icon flex items-center cursor-pointer relative">
@@ -92,17 +66,17 @@ const FeatureHeader = () => {
           </div>
         )}
         {/* Đã đăng nhập */}
-        {account && (
+        {isLoggedIn && (
           <div className="relative group">
             <div className="flex items-center gap-x-2 cursor-pointer ">
               <img
-                src={account.avatar as string}
+                src={account?.avatar as string}
                 alt=""
                 className="size-8 object-cover rounded-full shadow-lg"
               />
               <span className="text-base font-medium">
-                {`${account.name?.last_name} ${account.name?.first_name}` ||
-                  account.user_name}
+                {`${account?.name?.last_name} ${account?.name?.first_name}` ||
+                  account?.user_name}
               </span>
             </div>
             <ul className="hidden group-hover:block absolute w-44 rounded top-10 right-3 *:px-3 *:py-1 *:cursor-pointer bg-gray-100 shadow-lg after:absolute after:-top-2 after:content-[''] after:right-0 after:left-0 after:h-5  before:absolute before:content-[''] before:size-3 before:border-t-transparent before:border-l-transparent before:border-r-transparent  before:border-8  before:border-b-gray-200 before:-top-4 before:right-5 ">
@@ -113,7 +87,7 @@ const FeatureHeader = () => {
                 <Link to={"/account/purchase"}>Đơn mua</Link>
               </li>
               <li
-                onClick={handleLogOut}
+                onClick={handleLogout}
                 className="hover:bg-white hover:text-green-400"
               >
                 Đăng xuất

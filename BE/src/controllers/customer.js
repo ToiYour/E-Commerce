@@ -1,10 +1,7 @@
+import bcryptjs from "bcryptjs";
 import sendMail from "../mails/mail-config.js";
 import Customer from "../models/customer.js";
 import OTP from "../models/otp.js";
-import bcryptjs from "bcryptjs";
-import jsonwebtoken from "jsonwebtoken";
-import randomstring from "randomstring";
-const blacklistedTokens = new Set();
 export const createCustomer = async (req, res) => {
   try {
     const isUserName = await Customer.findOne({
@@ -45,7 +42,7 @@ export const getAllCustomers = async (req, res) => {
     const sortBy = req.query.sortBy || "";
     const options = {
       page,
-      limit: 4,
+      limit: 10,
     };
     let data;
     if (sortBy && order != "all") {
@@ -115,66 +112,7 @@ export const updateAccoutStatus = async (req, res) => {
     return res.status(500).send({ messages: "Lỗi server" });
   }
 };
-export const loginAccount = async (req, res) => {
-  try {
-    const isAccount = await Customer.findOne({
-      user_name: req.body.user_name,
-    });
-    if (!isAccount) {
-      return res
-        .status(404)
-        .send({ message: "Tài khoản của bạn chưa đăng ký!" });
-    }
-    const isConfirmPassword = await bcryptjs.compare(
-      req.body.password,
-      isAccount.password
-    );
-    if (!isConfirmPassword) {
-      return res
-        .status(404)
-        .send({ message: "Mật khẩu bạn nhập không đúng bạn thử nhớ lại xem." });
-    }
-    if (isAccount.account_status)
-      return res.status(400).send({ message: "Tài khoản của bạn đã bị khoá" });
-    const access_token = jsonwebtoken.sign(
-      { id: isAccount._id },
-      process.env.ACCESS_TOKEN
-    );
-    return res.send({ access_token });
-  } catch (error) {
-    return res.status(500).send({ messages: "Lỗi server" });
-  }
-};
-export function logOut(req, res) {
-  const authHeader = req.headers["authorization"];
-  const token = authHeader && authHeader.split(" ")[1];
-  blacklistedTokens.add(token);
-  return res.status(200).send({ message: "Logout successfully" });
-}
-function isTokenBlacklisted(token) {
-  return blacklistedTokens.has(token);
-}
-export const authenticateToken = (req, res) => {
-  const authHeader = req.headers["authorization"];
-  const token = authHeader && authHeader.split(" ")[1];
 
-  if (!token) return res.sendStatus(400);
-
-  if (isTokenBlacklisted(token)) {
-    return res
-      .status(400)
-      .send({ message: "Phiên đăng nhập đã hết hạn vui lòng đăng nhập lại" });
-  }
-
-  jsonwebtoken.verify(token, process.env.ACCESS_TOKEN, async (err, user) => {
-    console.log(err);
-    if (err) return res.sendStatus(403);
-    const account = await Customer.findById(user.id);
-    if (account?.account_status)
-      return res.status(400).send({ message: "Tài khoản của bạn đã bị khoá" });
-    return res.status(200).send({ status: "ok", account });
-  });
-};
 export const forgotPassword = async (req, res) => {
   try {
     if (!req.body.user_name)
@@ -267,81 +205,5 @@ export const resetPassword = async (req, res) => {
   } catch (error) {
     console.log(error);
     return res.status(500).send({ messages: "Lỗi server" });
-  }
-};
-export const newPasswordAccountLink = (req, res) => {
-  try {
-    const authHeader = req.headers["authorization"];
-    const token = authHeader && authHeader.split(" ")[1];
-    if (!token) return res.sendStatus(400);
-    jsonwebtoken.verify(token, process.env.ACCESS_TOKEN, async (err, user) => {
-      if (err) return res.sendStatus(403);
-      req.body.newPassword = await bcryptjs.hash(req.body.newPassword, 10);
-      await Customer.findByIdAndUpdate(user.id, {
-        password: req.body.newPassword,
-      });
-      return res.send({ message: "Đặt mật khẩu thành công!" });
-    });
-  } catch (error) {
-    console.log(error);
-    return res.status(500).send({ message: "Lỗi server" });
-  }
-};
-export const changePassword = async (req, res) => {
-  try {
-    const authHeader = req.headers["authorization"];
-    const token = authHeader && authHeader.split(" ")[1];
-    if (!token) return res.sendStatus(400);
-    jsonwebtoken.verify(token, process.env.ACCESS_TOKEN, async (err, user) => {
-      if (err) return res.sendStatus(403);
-      const isAccout = await Customer.findById(user.id);
-      const isComparePass = await bcryptjs.compare(
-        req.body.password,
-        isAccout.password
-      );
-      if (!isComparePass)
-        return res
-          .status(400)
-          .send({ message: "Mật khẩu cũ không đúng bạn thử nhớ lại xem" });
-      req.body.newPassword = await bcryptjs.hash(req.body.newPassword, 10);
-      await Customer.findByIdAndUpdate(user.id, {
-        password: req.body.newPassword,
-      });
-      return res.send({ message: "Đổi mật khẩu thành công!" });
-    });
-  } catch (error) {
-    console.log(error);
-    return res.status(500).send({ message: "Lỗi server" });
-  }
-};
-export const createUserWithGoogleAndFacebook = async (req, res) => {
-  try {
-    const isUid = await Customer.findOne({ uid: req.body.uid });
-    console.log(isUid);
-    if (isUid) {
-      if (isUid.account_status)
-        return res
-          .status(400)
-          .send({ message: "Tài khoản của bạn đã bị khoá" });
-      // Nếu không khoá trả về token
-      const access_token = jsonwebtoken.sign(
-        { id: isUid._id },
-        process.env.ACCESS_TOKEN
-      );
-      return res.send({ message: "Đăng nhập thành công", access_token });
-    } else {
-      req.body.user_name = randomstring
-        .generate(8)
-        .concat(req.body.user_name.slice(-5));
-      const data = await Customer.create(req.body);
-      const access_token = jsonwebtoken.sign(
-        { id: data._id },
-        process.env.ACCESS_TOKEN
-      );
-      return res.send({ message: "Đăng nhập thành công", access_token });
-    }
-  } catch (error) {
-    console.log(error);
-    return res.status(500).send({ message: "Lỗi server" });
   }
 };

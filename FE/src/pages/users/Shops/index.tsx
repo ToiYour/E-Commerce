@@ -1,4 +1,4 @@
-import { getBySlugCategory } from "@/api/categorys";
+import { getBySlugCategory } from "@/services/category";
 import Breadcrumd from "@/pages/users/Breadcrumd";
 import FilterHeading from "@/pages/users/Shops/Filters/FilterHeading";
 import ProductList from "@/pages/users/Shops/Products/ProductList";
