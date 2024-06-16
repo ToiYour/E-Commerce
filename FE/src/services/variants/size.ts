@@ -1,5 +1,5 @@
 import { ISize } from "@/interfaces/size";
-import instance from "../../config/instance";
+import instance from "@/config/instance";
 export const createSize = (data: ISize) => {
   const uri = "/size";
   return instance.post(uri, data);

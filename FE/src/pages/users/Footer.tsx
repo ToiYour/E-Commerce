@@ -13,24 +13,43 @@ const Footer = () => {
                 </Link>
                 <div className="flex gap-3 mt-3">
                   <div className="flex flex-col ">
-                    <span className="text-button">Mail:</span>
-                    <span className="text-button ">Số điện thoại:</span>
-                    <span className="text-button ">Địa chỉ:</span>
-                    <span className="text-button ">Github:</span>
-                    <span className="text-button ">Facebook:</span>
-                  </div>
-                  <div className="flex flex-col ">
-                    <a href="mailto:toidz25102004@gmail.com?subject=Tiêu đề email&body=Nội dung email">
-                      toidz25102004@gmail.com
-                    </a>
-                    <a href="sms:+84385521231">0385521231</a>
-                    <span className="">Thạch Thất - Hà Nội</span>
-                    <a href="https://github.com/ToiYour">
-                      https://github.com/ToiYour
-                    </a>
-                    <a href="https://www.facebook.com/NguyenHuyToi.Your">
-                      https://www.facebook.com/NguyenHuyToi.Your
-                    </a>
+                    <span className="flex items-center font-bold">
+                      Mail:{" "}
+                      <a
+                        className="font-normal"
+                        href="mailto:toidz25102004@gmail.com?subject=Tiêu đề email&body=Nội dung email"
+                      >
+                        toidz25102004@gmail.com
+                      </a>
+                    </span>
+                    <span className="flex items-center font-bold ">
+                      Số điện thoại:{" "}
+                      <a className="font-normal" href="tel:+84385521231">
+                        0385521231
+                      </a>
+                    </span>
+                    <span className="flex items-center font-bold ">
+                      Địa chỉ:{" "}
+                      <span className="font-normal">Thạch Thất - Hà Nội</span>
+                    </span>
+                    <span className="flex items-center font-bold ">
+                      Github:{" "}
+                      <a
+                        className="font-normal"
+                        href="https://github.com/ToiYour"
+                      >
+                        https://github.com/ToiYour
+                      </a>
+                    </span>
+                    <span className="flex items-center font-bold ">
+                      Facebook:{" "}
+                      <a
+                        className="font-normal"
+                        href="https://www.facebook.com/NguyenHuyToi.Your"
+                      >
+                        https://www.facebook.com/NguyenHuyToi.Your
+                      </a>
+                    </span>
                   </div>
                 </div>
               </div>

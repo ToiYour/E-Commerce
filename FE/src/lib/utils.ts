@@ -6,6 +6,7 @@ import { IVariant } from "@/interfaces/variant";
 import { createVariant } from "@/services/variant";
 import { Flip, toast } from "react-toastify";
 import Swal from "sweetalert2";
+import { ReactNode } from "react";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -111,6 +112,19 @@ export const ToastError = (title: string) => {
     position: "top-right",
     autoClose: 2000,
     hideProgressBar: false,
+    closeOnClick: true,
+    pauseOnHover: true,
+    draggable: true,
+    progress: undefined,
+    theme: "light",
+    transition: Flip,
+  });
+};
+export const ToastCustom = (title: ReactNode) => {
+  toast.error(title, {
+    position: "top-right",
+    autoClose: 2000,
+    hideProgressBar: true,
     closeOnClick: true,
     pauseOnHover: true,
     draggable: true,

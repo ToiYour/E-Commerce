@@ -19,6 +19,7 @@ export interface ICustomer {
   role?: boolean;
   account_status?: boolean;
   status?: boolean;
+  status_at: string;
   createdAt?: string;
   updatedAt?: string;
 }

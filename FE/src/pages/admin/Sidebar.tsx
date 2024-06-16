@@ -1,10 +1,12 @@
 import { Badge } from "@/components/ui/badge";
+import { cn } from "@/lib/utils";
 import {
   ChevronDown,
   GanttChart,
   Home,
   LineChart,
   ListTodo,
+  MessageCircleMore,
   Package,
   Palette,
   ShoppingCart,
@@ -12,8 +14,11 @@ import {
 } from "lucide-react";
 import { useRef } from "react";
 import { Link, NavLink } from "react-router-dom";
-
-const Sidebar = () => {
+type SidebarType = {
+  isNewMassage: boolean;
+  setIsNewMassage: (value: boolean) => void;
+};
+const Sidebar = (props: SidebarType) => {
   const childrenVariant = useRef<HTMLUListElement | null>(null);
   const handlerVariant = () => {
     const element =
@@ -42,12 +47,33 @@ const Sidebar = () => {
               Trang chủ
             </NavLink>
             <NavLink
+              onClick={() => props.setIsNewMassage(false)}
+              to={"/admin/messages"}
+              className=" flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary"
+            >
+              <MessageCircleMore className="h-4 w-4" />
+              <div className="relative">
+                Quản lý tin nhắn
+                <div
+                  className={cn(
+                    "absolute -right-3 -top-1",
+                    !props.isNewMassage && "hidden"
+                  )}
+                >
+                  <span className="relative flex h-3 w-3">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
+                    <span className="relative inline-flex rounded-full h-3 w-3 bg-blue-400"></span>
+                  </span>
+                </div>
+              </div>
+            </NavLink>
+            <NavLink
               to={"/admin/orders"}
               className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary"
             >
               <ShoppingCart className="h-4 w-4" />
               Quản lý đơn hàng
-              <Badge className="ml-auto flex h-6 w-6 shrink-0 items-center justify-center rounded-full">
+              <Badge className="bg-[#ee4d2d] hover:bg-[#f05d40] ml-auto flex h-6 w-6 shrink-0 items-center justify-center rounded-full">
                 6
               </Badge>
             </NavLink>

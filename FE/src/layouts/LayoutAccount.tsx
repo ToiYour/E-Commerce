@@ -1,7 +1,7 @@
 import { useAuth } from "@/hooks/auth";
+import Breadcrumd from "@/pages/users/Breadcrumd";
 import { ClipboardList, User } from "lucide-react";
 import { NavLink, Outlet } from "react-router-dom";
-import Breadcrumd from "../Breadcrumd";
 
 const LayOutAccount = () => {
   const { authUser: account } = useAuth();

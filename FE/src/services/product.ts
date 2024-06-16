@@ -1,5 +1,5 @@
 import { IProduct } from "@/interfaces/product";
-import instance from "../config/instance";
+import instance from "@/config/instance";
 export const createProduct = (data: IProduct) => {
   const uri = "/product";
   return instance.post(uri, data);
