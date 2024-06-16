@@ -2,7 +2,7 @@ import { refreshToken } from "@/services/auth";
 import { getItemLocal, setItemLocal } from "@/services/localStorageService";
 import axios from "axios";
 const instance = axios.create({
-  baseURL: process.env.baseURL,
+  baseURL: `${process.env.SERVER}/api`,
   timeout: 5000,
   withCredentials: true,
 });

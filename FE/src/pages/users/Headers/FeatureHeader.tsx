@@ -4,7 +4,7 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import FeatureSearch from "./FeatureSearch";
 import { logOutAccount } from "@/services/auth";
-import { ToastError } from "@/lib/utils";
+import { cn, ToastError } from "@/lib/utils";
 import { AxiosError } from "axios";
 
 const FeatureHeader = () => {
@@ -83,9 +83,18 @@ const FeatureHeader = () => {
               <li className="hover:bg-white hover:text-green-400">
                 <Link to={"/account/profile"}>Tài khoản của tôi</Link>
               </li>
+              <li
+                className={cn(
+                  !account?.role && "hidden",
+                  "hover:bg-white hover:text-green-400"
+                )}
+              >
+                <Link to={"/admin"}>Trang quản trị</Link>
+              </li>
               <li className="hover:bg-white hover:text-green-400">
                 <Link to={"/account/purchase"}>Đơn mua</Link>
               </li>
+
               <li
                 onClick={handleLogout}
                 className="hover:bg-white hover:text-green-400"

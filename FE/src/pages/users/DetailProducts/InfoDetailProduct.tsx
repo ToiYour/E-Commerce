@@ -101,7 +101,7 @@ const InfoDetailProduct = ({ product }: IPropsDetailProduct) => {
       <div className="flex justify-between">
         <div>
           <div className="product-category caption2 text-gray-500 font-semibold uppercase">
-            {product?.category?.[0]?.name as string}
+            Danh mục: {product?.category?.[0]?.name as string}
           </div>
           <div className="product-name heading4 mt-1">{product.name}</div>
         </div>
@@ -122,12 +122,12 @@ const InfoDetailProduct = ({ product }: IPropsDetailProduct) => {
             {formatMoney(Number(product?.price) + extraPrice || 0)}
           </div>
           <div className="w-px h-4 bg-line" />
-          <div className="product-origin-price font-normal text-gray-500">
+          {/* <div className="product-origin-price font-normal text-gray-500">
             <del>$32.00</del>
           </div>
           <div className="product-sale caption2 font-semibold bg-green px-3 py-0.5 inline-block rounded-full">
             -19%
-          </div>
+          </div> */}
         </div>
         <div className="product-description text-gray-500 mt-3">
           {product.desc}

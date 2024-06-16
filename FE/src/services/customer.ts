@@ -1,5 +1,5 @@
 import { ICustomer } from "@/interfaces/customer";
-import instance from "../config/instance";
+import instance from "@/config/instance";
 
 export const createCustomer = (data: ICustomer) => {
   const uri = "/customer";

@@ -1,4 +1,5 @@
 import { ICustomer } from "@/interfaces/customer";
+import { ToastError } from "@/lib/utils";
 import { getAccountIsLoggedIn } from "@/services/auth";
 import { getItemLocal } from "@/services/localStorageService";
 import { AxiosError } from "axios";
@@ -32,7 +33,7 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
           }
         } catch (error) {
           if (error instanceof AxiosError) {
-            console.warn(error.response?.data.message);
+            error.response && ToastError(error.response?.data.message);
           }
         }
       }

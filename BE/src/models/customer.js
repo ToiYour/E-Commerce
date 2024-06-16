@@ -28,6 +28,7 @@ const CustomerShema = new mongoose.Schema(
       type: Boolean,
       default: true,
     },
+    status_at: { type: String, default: "" },
   },
   { timestamps: true }
 );

@@ -1,5 +1,5 @@
 import bcryptjs from "bcryptjs";
-import sendMail from "../mails/mail-config.js";
+import sendMail from "../../src/config/mail-config.js";
 import Customer from "../models/customer.js";
 import OTP from "../models/otp.js";
 export const createCustomer = async (req, res) => {

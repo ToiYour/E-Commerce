@@ -10,6 +10,10 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { useAuth, useLogout } from "@/hooks/auth";
+import { ToastError } from "@/lib/utils";
+import { logOutAccount } from "@/services/auth";
+import { AxiosError } from "axios";
 import {
   ChevronDown,
   CircleUser,
@@ -27,12 +31,24 @@ import { useRef } from "react";
 import { NavLink } from "react-router-dom";
 
 const Header = () => {
+  const { authUser: account } = useAuth();
+  const logOutSuccess = useLogout();
   const childrenVariant = useRef<HTMLUListElement | null>(null);
   const handlerVariant = () => {
     const element =
       childrenVariant.current && (childrenVariant.current as HTMLElement);
     if (element) {
       element.classList.toggle("hidden");
+    }
+  };
+  const hanlderLogout = async () => {
+    try {
+      const { data } = await logOutAccount();
+      logOutSuccess(data.message);
+    } catch (error) {
+      if (error instanceof AxiosError) {
+        ToastError(error.response?.data.message);
+      }
     }
   };
   return (
@@ -143,12 +159,12 @@ const Header = () => {
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
-          <DropdownMenuLabel>My Account</DropdownMenuLabel>
+          <DropdownMenuLabel>{`${account?.name?.last_name} ${account?.name?.first_name}`}</DropdownMenuLabel>
           <DropdownMenuSeparator />
           <DropdownMenuItem>Settings</DropdownMenuItem>
           <DropdownMenuItem>Support</DropdownMenuItem>
           <DropdownMenuSeparator />
-          <DropdownMenuItem>Logout</DropdownMenuItem>
+          <DropdownMenuItem onClick={hanlderLogout}>Đăng xuất</DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
     </header>

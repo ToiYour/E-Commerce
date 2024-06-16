@@ -14,6 +14,7 @@ import {
 import { auth } from "@/config/firebase";
 import { signInWithGoogleAndFacebook } from "@/services/auth";
 import { AxiosError } from "axios";
+import { useSocket } from "./socket";
 export const useAuth = () => {
   return useContext(AuthContext);
 };
@@ -23,6 +24,7 @@ interface useLogin {
   user?: ICustomer;
 }
 export const useLogin = () => {
+  const socket = useSocket();
   const navigate = useNavigate();
   const { setAuthUser, setIsLoggedIn } = useAuth();
   const handleLogin = (playload: useLogin) => {
@@ -30,11 +32,15 @@ export const useLogin = () => {
     setIsLoggedIn?.(true);
     setItemLocal("token", playload.access_token);
     ToastSuccess(playload.message as string);
+    if (!socket?.connected) {
+      socket?.connect();
+    }
     navigate("/");
   };
   return handleLogin;
 };
 export const useLogout = () => {
+  const socket = useSocket();
   const navigate = useNavigate();
   const { setAuthUser, setIsLoggedIn } = useAuth();
   const handleLogout = async (message: string) => {
@@ -43,6 +49,7 @@ export const useLogout = () => {
     removeItemLocal("token");
     ToastSuccess(message as string);
     await signOut(auth);
+    socket?.disconnect();
     navigate("/");
   };
   return handleLogout;

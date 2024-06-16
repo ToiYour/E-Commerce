@@ -1,28 +1,33 @@
-import { createBrowserRouter } from "react-router-dom";
-import LayoutAdmin from "./pages/admin/LayoutAdmin";
-import { ListProducts } from "./pages/admin/products";
-import NotFound from "./pages/NotFound";
+import LayOutAccount from "@/layouts/LayoutAccount";
+import LayoutAdmin from "@/layouts/LayoutAdmin";
+import LayoutHome from "@/layouts/LayoutHome";
+import { ListProducts } from "@/pages/admin/products";
+import NotFound from "@/pages/NotFound";
 import {
   ForgotPassWord,
   LoginPage,
   MeAccountPage,
   Purchase,
   RegisterPage,
-} from "./pages/users/Accounts";
-import AddressAccount from "./pages/users/Accounts/Address";
-import ChangeOrNewPassword from "./pages/users/Accounts/ChangeOrNewPassword";
-import LayOutAccount from "./pages/users/Accounts/Layout";
-import ProductDetail from "./pages/users/DetailProducts";
-import HomePage from "./pages/users/Homes";
-import LayoutHome from "./pages/users/LayoutHome";
-import ShopPage from "./pages/users/Shops";
+} from "@/pages/users/Accounts";
+import AddressAccount from "@/pages/users/Accounts/Address";
+import ChangeOrNewPassword from "@/pages/users/Accounts/ChangeOrNewPassword";
+import ProductDetail from "@/pages/users/DetailProducts";
+import HomePage from "@/pages/users/Homes";
+import ShopPage from "@/pages/users/Shops";
 import {
   RouterCategory,
   RouterColors,
   RouterCustomer,
   RouterProducts,
   RouterSizes,
-} from "./routes";
+} from "@/routes";
+import PrivateRoute from "@/routes/PrivateRoute";
+import { ProtectedRoute } from "@/routes/ProtectedRoute";
+import { createBrowserRouter } from "react-router-dom";
+import WelcomeChat from "./components/WelcomeChat";
+import LayoutChatAdmin from "./layouts/LayoutChatAdmin";
+import MainChat from "./pages/admin/chats/MainChat";
 
 const router = createBrowserRouter([
   {
@@ -61,7 +66,11 @@ const router = createBrowserRouter([
       // Trang cá nhân
       {
         path: "account",
-        element: <LayOutAccount />,
+        element: (
+          <ProtectedRoute>
+            <LayOutAccount />
+          </ProtectedRoute>
+        ),
         children: [
           {
             path: "profile",
@@ -90,11 +99,30 @@ const router = createBrowserRouter([
   },
   {
     path: "/admin",
-    element: <LayoutAdmin />,
+    element: (
+      <PrivateRoute>
+        <LayoutAdmin />
+      </PrivateRoute>
+    ),
     children: [
       {
         path: "",
         element: <ListProducts />,
+      },
+      //Quản lý tin nhắn
+      {
+        path: "messages",
+        element: <LayoutChatAdmin />,
+        children: [
+          {
+            path: "",
+            element: <WelcomeChat />,
+          },
+          {
+            path: ":id",
+            element: <MainChat />,
+          },
+        ],
       },
       //Quản lý sản phẩm
       ...RouterProducts,
