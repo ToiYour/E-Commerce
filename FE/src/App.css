@@ -408,7 +408,6 @@ textarea:focus {
   border-color: var(--black);
 }
 
-/* Main class used in Anvogue */
 .container {
   max-width: 1322px !important;
   width: 100%;
