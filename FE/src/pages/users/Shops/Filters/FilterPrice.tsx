@@ -7,6 +7,7 @@ import { useSearchParams } from "react-router-dom";
 import { useDebouncedCallback } from "use-debounce";
 const FilterPrice = () => {
   const [searchParams, setSearchParams] = useSearchParams();
+
   let queryParams = { page: "1" };
   for (const [key, value] of searchParams.entries()) {
     queryParams = { ...queryParams, [key]: value };
@@ -25,7 +26,7 @@ const FilterPrice = () => {
 
   useEffect(() => {
     handleProgressPrice();
-  });
+  }, []);
   const handleChangeMinPrice = useDebouncedCallback((value) => {
     setSearchParams({ ...queryParams, minPrice: value });
   }, 1000);

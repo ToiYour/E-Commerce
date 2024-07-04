@@ -252,6 +252,8 @@ export const getDetailProduct = async (req, res) => {
           price: { $first: "$price" },
           views: { $first: "$views" },
           desc: { $first: "$desc" },
+          sold: { $first: "$sold" },
+          averageRating: { $first: "$averageRating" },
           variants: {
             $push: {
               _id: "$unpackedVariants._id",
@@ -279,6 +281,7 @@ export const getDetailProduct = async (req, res) => {
 export const getDetailProductBySlug = async (req, res) => {
   try {
     const slug = req.params.slug;
+
     const data = await Product.aggregate([
       { $match: { slug } },
       {
@@ -326,6 +329,8 @@ export const getDetailProductBySlug = async (req, res) => {
           views: { $first: "$views" },
           desc: { $first: "$desc" },
           slug: { $first: "$slug" },
+          sold: { $first: "$sold" },
+          averageRating: { $first: "$averageRating" },
           variants: {
             $push: {
               _id: "$unpackedVariants._id",
@@ -337,10 +342,12 @@ export const getDetailProductBySlug = async (req, res) => {
               sizeId: { $first: "$sizeId" },
             },
           },
+
           totalStock: { $sum: "$unpackedVariants.stock" },
         },
       },
     ]);
+    await Product.findOneAndUpdate({ slug: slug }, { $inc: { views: 1 } });
     if (!data) {
       return res.status(500).send({ messages: "Get data thất bại" });
     }

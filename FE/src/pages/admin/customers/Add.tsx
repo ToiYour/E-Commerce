@@ -312,7 +312,7 @@ const Add = () => {
               )}
             </div>
             {/*  */}
-            <Address register={register} errors={errors} />
+            <Address register={register} />
             <div className="col-span-6">
               <label
                 htmlFor="PasswordConfirmation"

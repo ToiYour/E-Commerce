@@ -1,24 +1,34 @@
-import { getAllSize } from "@/services/variants/size";
 import { ISize } from "@/interfaces/size";
 import { IVariantsDetail } from "@/interfaces/variant";
+import { cn } from "@/lib/utils";
+import { getAllSize } from "@/services/variants/size";
 import { useQueryClient } from "@tanstack/react-query";
 import { Check } from "lucide-react";
-import { ChangeEvent, memo, useEffect, useState } from "react";
+import { memo, useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
 interface IPropsListSize {
   varians: IVariantsDetail[];
   setSizeId: (sizeId: string) => void;
-  isValidChooseSize: () => void;
+  defaultSize?: string;
 }
-const ListSize = ({
-  varians,
-  setSizeId,
-  isValidChooseSize,
-}: IPropsListSize) => {
+const ListSize = ({ varians, setSizeId, defaultSize }: IPropsListSize) => {
+  const { slug } = useParams();
   const isVariantSizes = Array.from(
-    new Set(varians.map((v) => v?.sizeId?._id as string))
+    new Set(varians.map((v) => v?.sizeId?._id))
   );
   const [listSize, setListSize] = useState<ISize[]>([]);
   const queryClient = useQueryClient();
+  useEffect(() => {
+    return () => {
+      const checkedRadio = document.querySelector(
+        '.list-size .size-item input[type="radio"]:checked'
+      ) as HTMLInputElement;
+      if (checkedRadio) {
+        checkedRadio.checked = false;
+        setSizeId("");
+      }
+    };
+  }, [slug]);
   useEffect(() => {
     queryClient
       .ensureQueryData({
@@ -28,20 +38,21 @@ const ListSize = ({
           return data?.data?.docs;
         },
       })
-      .then((data) => setListSize(data));
+      .then((data) => {
+        setListSize(data);
+        if (defaultSize) {
+          setSizeId("");
+        }
+      });
   }, [queryClient]);
-  const handleActive = (event: ChangeEvent<HTMLInputElement>) => {
-    const item = event.target as HTMLInputElement;
-    const colorActive = document.querySelector(
-      ".list-size .size-item.active"
-    ) as HTMLElement;
-    colorActive && colorActive.classList.remove("active");
-    if (item.checked) {
-      isValidChooseSize();
-      setSizeId(item.value);
-      item.closest(".size-item")?.classList.add("active");
+  useEffect(() => {
+    if (defaultSize) {
+      setSizeId(defaultSize);
     }
-  };
+    return () => {
+      setSizeId("");
+    };
+  }, []);
   return (
     <div className=" list-size flex items-center gap-2 flex-wrap ">
       {listSize?.map(
@@ -50,20 +61,23 @@ const ListSize = ({
             <label
               key={size._id}
               htmlFor={size._id}
-              className={`size-item ${
+              className={cn(
+                " size-item max-w-[95px] max-h-[43px]   relative overflow-hidden flex items-center border border-line  py-2.5 px-11 gap-2 rounded bg-white hover:text-[#ee4d2d]   hover:border-[#ee4d2d] has-[:checked]:text-[#ee4d2d]   has-[:checked]:border-[#ee4d2d]",
                 isVariantSizes.includes(size?._id as string) || "disabled"
-              } max-w-[95px] max-h-[43px]   relative overflow-hidden flex items-center border border-line  py-2.5 px-11 gap-2 rounded bg-white`}
+              )}
             >
               <input
-                onChange={(event) => handleActive(event)}
+                className="peer"
+                defaultChecked={size._id === defaultSize}
+                onChange={(event) => setSizeId(event.target.value)}
                 type="radio"
                 name="size"
                 hidden
                 value={size._id}
                 id={size._id}
               />
-              <div className="size text-[#333]">{size.name}</div>
-              <span className="selection-box-tick hidden absolute bottom-0 right-0 ">
+              <div className="caption1 capitalize">{size.name}</div>
+              <span className="selection-box-tick hidden absolute bottom-0 right-0 peer-checked:block">
                 <Check
                   size={12}
                   color="#fff"

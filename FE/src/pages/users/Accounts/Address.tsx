@@ -34,7 +34,6 @@ const AddressAccount = () => {
       <div className="grid grid-cols-6 gap-6">
         <Address
           register={register}
-          errors={errors}
           address={account?.address}
           resendAddress={() => reset(account)}
         />

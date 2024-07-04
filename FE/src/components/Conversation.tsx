@@ -37,10 +37,12 @@ const Conversation = ({
         <p className="text-xs font-light text-gray-300">
           {status ? (
             "Online"
-          ) : (
+          ) : cancelConnectAt ? (
             <>
-              Hoạt động <TimeAgoVi date={cancelConnectAt as string} />{" "}
+              Hoạt động <TimeAgoVi date={cancelConnectAt as string} />
             </>
+          ) : (
+            "Offline"
           )}
         </p>
       </div>

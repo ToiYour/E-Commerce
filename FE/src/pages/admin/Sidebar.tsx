@@ -10,6 +10,7 @@ import {
   Package,
   Palette,
   ShoppingCart,
+  Ticket,
   Users,
 } from "lucide-react";
 import { useRef } from "react";
@@ -118,6 +119,13 @@ const Sidebar = (props: SidebarType) => {
             >
               <Package className="h-4 w-4" />
               Quản lý sản phẩm{" "}
+            </NavLink>
+            <NavLink
+              to={"/admin/voucher"}
+              className="flex items-center gap-3 rounded-lg text-muted-foreground  px-3 py-2  transition-all hover:text-primary"
+            >
+              <Ticket className="h-4 w-4" />
+              Quản lý mã giảm giá{" "}
             </NavLink>
             <NavLink
               to={"/admin/customers"}

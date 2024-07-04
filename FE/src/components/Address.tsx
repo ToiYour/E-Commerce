@@ -1,20 +1,17 @@
-import { getCommune, getDistrict, getProvince } from "@/services/address";
 import { ICommune, IDistrict, IProvince } from "@/interfaces/address";
-import { ICustomer } from "@/interfaces/customer";
+import { getCommune, getDistrict, getProvince } from "@/services/address";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { RotateCw } from "lucide-react";
 import { useCallback, useState } from "react";
-import { FieldErrors, FieldValues, UseFormRegister } from "react-hook-form";
+import { FieldValues, UseFormRegister } from "react-hook-form";
 const Address = ({
   register,
-  errors,
   checkNul = false,
   address,
   resendAddress,
 }: {
   checkNul?: boolean;
   register: UseFormRegister<FieldValues>;
-  errors?: FieldErrors<ICustomer>;
   address?: {
     province?: string;
     district?: string;
@@ -69,7 +66,7 @@ const Address = ({
   );
   return (
     <>
-      <div className="col-span-6 sm:col-span-2">
+      <div className="col-span-6 sm:col-span-2 w-full">
         <label htmlFor="" className="block text-sm font-medium text-gray-700">
           Tình thành
         </label>
@@ -102,17 +99,16 @@ const Address = ({
             <RotateCw className="animate-spin " size={16} color={"#ccc"} />
           </div>
         </div>
-        {errors?.address?.province && (
-          <p className="text-red-500">{errors?.address?.province?.message}</p>
-        )}
       </div>
-      <div className="col-span-6 sm:col-span-2">
+      <div className="col-span-6 sm:col-span-2 w-full">
         <label htmlFor="" className="block text-sm font-medium text-gray-700">
           Quận huyện
         </label>
         <div className="relative">
           <select
-            {...register("address.district")}
+            {...register("address.district", {
+              ...(checkNul && { required: "Vui lòng nhập quận huyện" }),
+            })}
             onChange={makeDistrict}
             className="address-district mt-1.5 w-full rounded border p-1 border-gray-300 text-gray-700 sm:text-sm"
           >
@@ -138,13 +134,15 @@ const Address = ({
           </div>
         </div>
       </div>
-      <div className="col-span-6 sm:col-span-2">
+      <div className="col-span-6 sm:col-span-2 w-full">
         <label htmlFor="" className="block text-sm font-medium text-gray-700">
           Phường xã
         </label>
         <div className="relative">
           <select
-            {...register("address.commune")}
+            {...register("address.commune", {
+              ...(checkNul && { required: "Vui lòng nhập phường xã" }),
+            })}
             className="address-commune mt-1.5 w-full rounded border p-1 border-gray-300 text-gray-700 sm:text-sm"
           >
             <option value="" hidden>

@@ -67,9 +67,6 @@ const Collections = () => {
                 category.status && (
                   <SwiperSlide key={category._id} className="swiper-slide">
                     <Link
-                      onClick={() =>
-                        window.scrollTo({ top: 0, behavior: "smooth" })
-                      }
                       to={`/shop?category=${category.slug}`}
                       className="collection-item block relative rounded-2xl overflow-hidden cursor-pointer h-full"
                     >

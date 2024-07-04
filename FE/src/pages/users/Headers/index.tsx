@@ -31,7 +31,7 @@ const Header = () => {
   };
   const { pathname } = useLocation();
   return (
-    <div id="header" className="relative w-full">
+    <div id="header" className="relative w-full z-20">
       <div
         ref={headerMenu}
         className={`header-menu style-one absolute top-0 left-0 right-0 w-full md:h-[74px] h-[56px] ${
@@ -45,6 +45,8 @@ const Header = () => {
             "/buyer/register",
             "/account/address",
             "/account/password",
+            "/cart",
+            "/checkout",
           ].includes(pathname)
             ? "bg-transparent"
             : "bg-white"
@@ -54,7 +56,7 @@ const Header = () => {
           <div className="header-main flex justify-between h-full">
             <div
               onClick={handleMenuMobile}
-              className="menu-mobile-icon lg:hidden flex items-center"
+              className="menu-mobile-icon lg:hidden flex items-center cursor-pointer"
             >
               <AlignLeft />
             </div>

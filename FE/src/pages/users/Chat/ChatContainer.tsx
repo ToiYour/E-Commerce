@@ -72,8 +72,8 @@ const ChatContainer = ({
         <div className="bg-white shadow-md rounded-lg rounded-br-none  w-full h-full relative ">
           <div className="p-4 border-b bg-blue-500 text-white rounded-t-lg flex justify-between items-center">
             <Conversation
-              imgUrl={isAdminConnected?.avatar}
-              name={isAdminConnected?.name}
+              imgUrl={isAdminConnected?.avatar || "/images/isfeature.png"}
+              name={isAdminConnected?.name || "Admin"}
               status={isAdminConnected?.is_connected}
               role={isAdminConnected?.is_admin}
               cancelConnectAt={isAdminConnected?.cancel_connect_at}
@@ -87,7 +87,9 @@ const ChatContainer = ({
             </button>
           </div>
           {!isLoggedIn ? (
-            <LoginToUseTheFunction title="Đăng nhập để gửi tin nhắn" />
+            <div className="mt-16">
+              <LoginToUseTheFunction title="Đăng nhập để gửi tin nhắn" />
+            </div>
           ) : (
             <>
               <ListMessage messages={messages} />

@@ -7,7 +7,40 @@ import { Autoplay, Pagination } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/pagination";
 import { Star } from "lucide-react";
+import { useEffect, useState } from "react";
+import { IReviews } from "@/interfaces/reviews";
+import { getAllReviews } from "@/services/reviews";
+import { AxiosError } from "axios";
+import { ToastError } from "@/lib/utils";
 const Testimonial = () => {
+  const [reviews, setReviews] = useState<IReviews[]>();
+  useEffect(() => {
+    (async () => {
+      try {
+        const { data } = await getAllReviews("review", "nonempty");
+        setReviews(data?.data);
+      } catch (error) {
+        if (error instanceof AxiosError) {
+          ToastError(error?.response?.data?.message);
+        }
+      }
+    })();
+  }, []);
+  const renderStars = (avg: number, size: number) => {
+    const stars = [];
+    for (let i = 0; i < 5; i++) {
+      stars.push(
+        <Star
+          key={i}
+          size={size}
+          className=""
+          color="#ee4d2d"
+          fill={i < avg ? "#ee4d2d" : "#eee"}
+        />
+      );
+    }
+    return stars;
+  };
   return (
     <div className="testimonial-block md:pt-20 md:pb-16 pt-10 pb-8 md:mt-20 mt-10 bg-surface">
       <div className="container">
@@ -44,131 +77,33 @@ const Testimonial = () => {
                 },
               }}
             >
-              <SwiperSlide className="swiper-slide ">
-                <div className="testimonial-item style-one h-full">
-                  <div className="testimonial-main bg-gray-50 p-8 rounded-2xl h-full">
-                    <div className="flex items-center gap-1">
-                      <Star fill="#ecb018" strokeWidth={0} />
-                      <Star fill="#ecb018" strokeWidth={0} />
-                      <Star fill="#ecb018" strokeWidth={0} />
-                      <Star fill="#ecb018" strokeWidth={0} />
-                      <Star fill="#dfdedd" strokeWidth={0} />
-                    </div>
-                    <div className="heading6 title mt-4">
-                      Variety of Styles!
-                    </div>
-                    <div className="desc mt-2">
-                      "Fantastic shop! Great selection, fair prices, and
-                      friendly staff. Highly recommended. The quality of the
-                      products is exceptional, and the prices are very
-                      reasonable!"
-                    </div>
-                    <div className="text-button name mt-4">Lisa K.</div>
-                    <div className="caption2 date text-gray-500 mt-1">
-                      August 13, 2024
-                    </div>
-                  </div>
-                </div>
-              </SwiperSlide>
-              <SwiperSlide className="swiper-slide">
-                <div className="testimonial-item style-one h-full">
-                  <div className="testimonial-main bg-gray-50 p-8 rounded-2xl h-full">
-                    <div className="flex items-center gap-1">
-                      <Star fill="#ecb018" strokeWidth={0} />
-                      <Star fill="#ecb018" strokeWidth={0} />
-                      <Star fill="#ecb018" strokeWidth={0} />
-                      <Star fill="#ecb018" strokeWidth={0} />
-                      <Star fill="#dfdedd" strokeWidth={0} />
-                    </div>
-                    <div className="heading6 title mt-4">
-                      Quality of Clothing!
-                    </div>
-                    <div className="desc mt-2">
-                      "Anvouge's fashion collection is a game-changer! Their
-                      unique and trendy pieces have completely transformed my
-                      style. It's comfortable, stylish, and always on-trend."
-                    </div>
-                    <div className="text-button name mt-4">Elizabeth A.</div>
-                    <div className="caption2 date text-gray-500 mt-1">
-                      August 13, 2024
+              {reviews?.map((review) => (
+                <SwiperSlide key={review?._id} className="swiper-slide ">
+                  <div className="testimonial-item style-one h-full">
+                    <div className="testimonial-main bg-gray-50 p-8 rounded-2xl h-full">
+                      <div className="flex items-center gap-1">
+                        {renderStars(Math.floor(review?.rating), 20).map(
+                          (star, index) => (
+                            <li key={index}>{star}</li>
+                          )
+                        )}
+                      </div>
+
+                      <div className="heading6 title mt-4">
+                        {review?.productId?.name}
+                      </div>
+                      <div className="desc mt-2">{review?.review}</div>
+                      <div className="text-button name mt-4">
+                        {review?.userId?.name?.last_name}{" "}
+                        {review?.userId?.name?.first_name}
+                      </div>
+                      <div className="caption2 date text-gray-500 mt-1">
+                        {new Date(review?.createdAt).toLocaleDateString()}
+                      </div>
                     </div>
                   </div>
-                </div>
-              </SwiperSlide>
-              <SwiperSlide className="swiper-slide">
-                <div className="testimonial-item style-one h-full">
-                  <div className="testimonial-main bg-gray-50 p-8 rounded-2xl h-full">
-                    <div className="flex items-center gap-1">
-                      <Star fill="#ecb018" strokeWidth={0} />
-                      <Star fill="#ecb018" strokeWidth={0} />
-                      <Star fill="#ecb018" strokeWidth={0} />
-                      <Star fill="#ecb018" strokeWidth={0} />
-                      <Star fill="#dfdedd" strokeWidth={0} />
-                    </div>
-                    <div className="heading6 title mt-4">Customer Service!</div>
-                    <div className="desc mt-2">
-                      "I absolutely love this shop! The products are
-                      high-quality and the customer service is excellent. I
-                      always leave with exactly what I need and a smile on my
-                      face."
-                    </div>
-                    <div className="text-button name mt-4">Christin H.</div>
-                    <div className="caption2 date text-gray-500 mt-1">
-                      August 13, 2024
-                    </div>
-                  </div>
-                </div>
-              </SwiperSlide>
-              <SwiperSlide className="swiper-slide">
-                <div className="testimonial-item style-one h-full">
-                  <div className="testimonial-main bg-gray-50 p-8 rounded-2xl h-full">
-                    <div className="flex items-center gap-1">
-                      <Star fill="#ecb018" strokeWidth={0} />
-                      <Star fill="#ecb018" strokeWidth={0} />
-                      <Star fill="#ecb018" strokeWidth={0} />
-                      <Star fill="#ecb018" strokeWidth={0} />
-                      <Star fill="#dfdedd" strokeWidth={0} />
-                    </div>
-                    <div className="heading6 title mt-4">
-                      Quality of Clothing!
-                    </div>
-                    <div className="desc mt-2">
-                      "I can't get enough of Anvouge's high-quality clothing.
-                      It's comfortable, stylish, and always on-trend. The
-                      products are high-quality and the customer service is
-                      excellent."
-                    </div>
-                    <div className="text-button name mt-4">Emily G.</div>
-                    <div className="caption2 date text-gray-500 mt-1">
-                      August 13, 2024
-                    </div>
-                  </div>
-                </div>
-              </SwiperSlide>
-              <SwiperSlide className="swiper-slide">
-                <div className="testimonial-item style-one h-full">
-                  <div className="testimonial-main bg-gray-50 p-8 rounded-2xl h-full">
-                    <div className="flex items-center gap-1">
-                      <Star fill="#ecb018" strokeWidth={0} />
-                      <Star fill="#ecb018" strokeWidth={0} />
-                      <Star fill="#ecb018" strokeWidth={0} />
-                      <Star fill="#ecb018" strokeWidth={0} />
-                      <Star fill="#dfdedd" strokeWidth={0} />
-                    </div>
-                    <div className="heading6 title mt-4">Customer Service!</div>
-                    <div className="desc mt-2">
-                      "I love this shop! The products are always top-quality,
-                      and the staff is incredibly friendly and helpful. They go
-                      out of their way to make sure that I'm satisfied my
-                      purchase."
-                    </div>
-                    <div className="text-button name mt-4">Carolina C.</div>
-                    <div className="caption2 date text-gray-500 mt-1">
-                      August 13, 2024
-                    </div>
-                  </div>
-                </div>
-              </SwiperSlide>
+                </SwiperSlide>
+              ))}
             </Swiper>
             <div className="swiper-pagination" />
           </div>

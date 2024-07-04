@@ -145,11 +145,3 @@ export const SwalWarningConfirm = (title: string, text: string) => {
     confirmButtonText: "Đồng ý xoá nó!",
   });
 };
-export const statusOrder = [
-  { key: "all", value: "Tất cả" },
-  { key: "waitForConfirmation", value: "Chờ xác nhận" },
-  { key: "waitingForDelivery", value: "Chờ lấy hàng" },
-  { key: "waitForShip", value: "Chờ giao hàng" },
-  { key: "done", value: "Đã giao" },
-  { key: "canceled", value: "Đã huỷ" },
-];

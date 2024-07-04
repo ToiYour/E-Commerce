@@ -1,14 +1,15 @@
-import { getProductBySlug } from "@/services/product";
 import LoadingFixed from "@/components/LoadingFixed";
-import CustomerReview from "@/pages/users/CustomerReview";
+import { IProduct } from "@/interfaces/product";
+import { ToastError } from "@/lib/utils";
 import Album from "@/pages/users/DetailProducts/Album";
 import InfoDetailProduct from "@/pages/users/DetailProducts/InfoDetailProduct";
 import SimilarProduct from "@/pages/users/DetailProducts/SimilarProduct";
-import { IProduct } from "@/interfaces/product";
-import { ToastError } from "@/lib/utils";
+import { getProductBySlug } from "@/services/product";
 import { useQuery } from "@tanstack/react-query";
 import { ChevronRight } from "lucide-react";
 import { Link, useParams } from "react-router-dom";
+import CommentOrReviews from "../CommentOrReview";
+import ShareDialog from "./ShareDialog";
 
 const ProductDetail = () => {
   const { slug } = useParams();
@@ -47,7 +48,7 @@ const ProductDetail = () => {
     breadcrumbs.page = detailProduct?.name as string;
   }
   return (
-    <>
+    <div className="bg-gray-100">
       <div className="breadcrumb-product bg-gray-100 ">
         <div className="main bg-surface md:pt-[88px] pt-[70px] pb-[14px]">
           <div className="container flex items-center justify-between flex-wrap gap-3">
@@ -59,7 +60,7 @@ const ProductDetail = () => {
                 >
                   <Link
                     to={breadcrumb.urlLink}
-                    className="caption1 text-gray-500 hover:underline"
+                    className="caption1 text-sm text-nowrap text-gray-500 hover:underline"
                   >
                     {breadcrumb.title}
                   </Link>
@@ -67,26 +68,35 @@ const ProductDetail = () => {
                 </div>
               ))}
 
-              <div className="caption1 capitalize">{breadcrumbs.page}</div>
+              <div className="caption1 capitalize caption1 text-sm  line-clamp-1">
+                {breadcrumbs.page}
+              </div>
             </div>
           </div>
         </div>
       </div>
 
-      <div className="product-detail default">
-        <div className="featured-product underwear filter-product-img md:py-20 py-14">
-          <div className="container grid grid-cols-1 md:grid-cols-8 gap-y-6 md:gap-x-5 ">
-            <Album images={detailProduct?.images as string[]} />
+      <div className="product-detail default space-y-10">
+        <div className="featured-product underwear filter-product-img   ">
+          <div className="container grid grid-cols-1 md:grid-cols-8 gap-y-6 md:gap-x-5 bg-white py-10">
+            <div className="col-span-3 space-y-5">
+              <Album images={detailProduct?.images as string[]} />
+              <ShareDialog
+                title={detailProduct?.name || ""}
+                desc={detailProduct?.desc || ""}
+                img={detailProduct?.images?.[0] as string}
+              />
+            </div>
             <InfoDetailProduct product={detailProduct as IProduct} />
           </div>
         </div>
-        <CustomerReview />
+        <CommentOrReviews />
         <SimilarProduct
           category={detailProduct?.category?.[0].slug as string}
           slug={detailProduct?.slug as string}
         />
       </div>
-    </>
+    </div>
   );
 };
 

@@ -50,11 +50,6 @@ export const authorization = (req, res, next) => {
       if (!account) {
         return res.status(404).send({ message: "Tài khoản không  tồn tại" });
       }
-      if (account?.account_status) {
-        return res
-          .status(403)
-          .send({ message: "Tài khoản của bạn đã bị khoá" });
-      }
       if (!account.role) {
         return res.status(403).json({
           message: "Bạn không có đủ quyền",

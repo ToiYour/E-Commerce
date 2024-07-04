@@ -1,9 +1,10 @@
+import { auth } from "@/config/firebase";
 import { AuthContext } from "@/contexts/AuthProvider";
 import { ICustomer } from "@/interfaces/customer";
 import { ToastError, ToastSuccess } from "@/lib/utils";
+import { signInWithGoogleAndFacebook } from "@/services/auth";
 import { removeItemLocal, setItemLocal } from "@/services/localStorageService";
-import { useContext } from "react";
-import { useNavigate } from "react-router-dom";
+import { AxiosError } from "axios";
 import {
   FacebookAuthProvider,
   getAdditionalUserInfo,
@@ -11,9 +12,9 @@ import {
   signInWithPopup,
   signOut,
 } from "firebase/auth";
-import { auth } from "@/config/firebase";
-import { signInWithGoogleAndFacebook } from "@/services/auth";
-import { AxiosError } from "axios";
+import { useContext } from "react";
+import { useNavigate } from "react-router-dom";
+import { useHistoryRouter } from "./router";
 import { useSocket } from "./socket";
 export const useAuth = () => {
   return useContext(AuthContext);
@@ -24,8 +25,8 @@ interface useLogin {
   user?: ICustomer;
 }
 export const useLogin = () => {
+  const historyRouter = useHistoryRouter();
   const socket = useSocket();
-  const navigate = useNavigate();
   const { setAuthUser, setIsLoggedIn } = useAuth();
   const handleLogin = (playload: useLogin) => {
     setAuthUser?.(playload.user);
@@ -35,7 +36,7 @@ export const useLogin = () => {
     if (!socket?.connected) {
       socket?.connect();
     }
-    navigate("/");
+    historyRouter();
   };
   return handleLogin;
 };
@@ -99,7 +100,6 @@ export const useFacebookLogin = () => {
   const loginSuccess = useLogin();
   const loginFacebook = () => {
     const provider = new FacebookAuthProvider();
-    provider.setCustomParameters({ position: "center" });
     signInWithPopup(auth, provider)
       .then((result) => {
         const data = getAdditionalUserInfo(result)?.profile;
