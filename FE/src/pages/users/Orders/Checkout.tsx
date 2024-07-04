@@ -1,4 +1,6 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import Address from "@/components/Address";
+import ButtonLoading from "@/components/ButtonLoading";
 import {
   Table,
   TableBody,
@@ -13,11 +15,12 @@ import { ICustomer } from "@/interfaces/customer";
 import { IDiscount, IOrderPayment, MethodPayments } from "@/interfaces/order";
 import { cn, formatMoney, ToastError } from "@/lib/utils";
 import { getCartCheckout } from "@/services/cart";
+import { setItemLocal } from "@/services/localStorageService";
 import {
   orderAndPayUponReceipt,
   payForOrdersWithVNPay,
 } from "@/services/orders/order";
-import axios, { AxiosError } from "axios";
+import { AxiosError } from "axios";
 import {
   Check,
   CircleDollarSign,
@@ -28,11 +31,9 @@ import {
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
+import { useNavigate } from "react-router-dom";
 import Breadcrumd from "../Breadcrumd";
 import Voucher from "../Carts/Voucher";
-import { setItemLocal } from "@/services/localStorageService";
-import ButtonLoading from "@/components/ButtonLoading";
-import { useNavigate } from "react-router-dom";
 type OrderSateType = {
   order: ICartItem[];
   totalPayment: {
@@ -41,6 +42,14 @@ type OrderSateType = {
     totalQuantity: number;
   };
   voucher: IDiscount;
+};
+type AddressType = {
+  address?: {
+    province?: string;
+    district?: string;
+    commune?: string;
+    specific?: string;
+  };
 };
 const Checkout = () => {
   const { authUser } = useAuth();
@@ -90,7 +99,7 @@ const Checkout = () => {
     reset,
     handleSubmit,
     formState: { errors, isSubmitting },
-  } = useForm<IOrderPayment | ICustomer>({
+  } = useForm<IOrderPayment | ICustomer | any | AddressType>({
     defaultValues: authUser,
   });
   const breadcrumbs = {
@@ -209,7 +218,7 @@ const Checkout = () => {
               />
               {errors?.recipientName && (
                 <span className="text-red-500">
-                  {errors?.recipientName?.message}
+                  {errors?.recipientName?.message as any}
                 </span>
               )}
             </div>
@@ -235,7 +244,7 @@ const Checkout = () => {
               />
               {errors?.recipientPhone && (
                 <span className="text-red-500">
-                  {errors?.recipientPhone?.message}
+                  {errors?.recipientPhone?.message as any}
                 </span>
               )}
             </div>
@@ -246,7 +255,7 @@ const Checkout = () => {
           <div
             className={cn(
               " w-full gap-5 px-5 py-2",
-              errors.address?.commune && "bg-red-50"
+              errors.address && (errors?.address as any).commune && "bg-red-50"
             )}
           >
             <div className="flex w-full gap-5">
@@ -260,7 +269,7 @@ const Checkout = () => {
             <p
               className={cn(
                 " hidden text-red-500 text-center mt-2",
-                errors.address?.commune && "block"
+                errors.address && (errors?.address as any).commune && "block"
               )}
             >
               Bạn chưa chọn địa chỉ

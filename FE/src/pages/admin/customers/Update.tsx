@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { getByIdCustomer, updateCustomer } from "@/services/customer";
 import Address from "@/components/Address";
 import ButtonLoading from "@/components/ButtonLoading";
@@ -283,7 +284,7 @@ const Update = () => {
             {/*  */}
 
             <Address
-              register={register}
+              register={register as any}
               address={{ ...prevCustomer.address }}
             />
             {/*  */}

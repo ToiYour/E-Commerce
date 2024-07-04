@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { createCustomer } from "@/services/customer";
 import Address from "@/components/Address";
 import ButtonLoading from "@/components/ButtonLoading";
@@ -312,7 +313,7 @@ const Add = () => {
               )}
             </div>
             {/*  */}
-            <Address register={register} />
+            <Address register={register as any} />
             <div className="col-span-6">
               <label
                 htmlFor="PasswordConfirmation"

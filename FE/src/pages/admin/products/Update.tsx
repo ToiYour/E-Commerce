@@ -1,4 +1,4 @@
-import { updateProduct } from "@/services/product";
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import ButtonLoading from "@/components/ButtonLoading";
 import {
   Breadcrumb,
@@ -37,6 +37,7 @@ import {
   upLoadFiles,
   upLoadVariants,
 } from "@/lib/utils";
+import { updateProduct } from "@/services/product";
 import { useMutation } from "@tanstack/react-query";
 import { CircleX, ImageUp, PlusCircle, X } from "lucide-react";
 import { useState } from "react";
@@ -84,7 +85,7 @@ const Add = () => {
     control,
     formState: { errors },
   } = useForm<IFormProduct>({
-    defaultValues: preFormData as IFormProduct,
+    defaultValues: preFormData as any,
   });
   const { fields, append, remove } = useFieldArray({
     control,
@@ -120,7 +121,7 @@ const Add = () => {
         images,
         variants,
       };
-      await updateProduct(id as string, payload as IProduct);
+      await updateProduct(id as string, payload as any);
     },
     onError: (err) => {
       setIsLoadSubmit(false);

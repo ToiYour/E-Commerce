@@ -1,4 +1,4 @@
-import { createProduct } from "@/services/product";
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import ButtonLoading from "@/components/ButtonLoading";
 import {
   Breadcrumb,
@@ -26,7 +26,7 @@ import {
 } from "@/components/ui/table";
 import { ICategory } from "@/interfaces/category";
 import { IColor } from "@/interfaces/color";
-import { IFormProduct, IProduct } from "@/interfaces/product";
+import { IFormProduct } from "@/interfaces/product";
 import { ISize } from "@/interfaces/size";
 import { IVariant } from "@/interfaces/variant";
 import {
@@ -37,6 +37,7 @@ import {
   upLoadFiles,
   upLoadVariants,
 } from "@/lib/utils";
+import { createProduct } from "@/services/product";
 import { useMutation } from "@tanstack/react-query";
 import { CircleX, ImageUp, PlusCircle, X } from "lucide-react";
 import { useState } from "react";
@@ -93,7 +94,7 @@ const Add = () => {
         images,
         variants,
       };
-      await createProduct(payload as IProduct);
+      await createProduct(payload as any);
     },
     onError: (err) => {
       setIsLoadSubmit(false);

@@ -74,7 +74,7 @@ export const useGoogleLogin = () => {
           avatar: data?.picture as string,
           email: email as string,
         };
-        signInWithGoogleAndFacebook(payload)
+        signInWithGoogleAndFacebook(payload as ICustomer)
           .then(({ data }) => {
             loginSuccess(data);
           })
@@ -114,7 +114,7 @@ export const useFacebookLogin = () => {
           avatar: picture?.url as string,
           email: data?.email as string,
         };
-        signInWithGoogleAndFacebook(payload)
+        signInWithGoogleAndFacebook(payload as ICustomer)
           .then(({ data }) => {
             loginSuccess(data);
           })
