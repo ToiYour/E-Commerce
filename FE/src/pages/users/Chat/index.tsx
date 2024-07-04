@@ -37,7 +37,7 @@ const ChatClient = () => {
   return (
     <>
       <div
-        className={cn(isOpenChat && "hidden", "fixed bottom-0 right-3  z-50")}
+        className={cn(isOpenChat && "hidden", "fixed bottom-0 right-3  z-10")}
       >
         <button
           onClick={() => setIsOpenChat(true)}
