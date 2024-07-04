@@ -9,7 +9,7 @@ import { useQuery } from "@tanstack/react-query";
 import { ChevronRight } from "lucide-react";
 import { Link, useParams } from "react-router-dom";
 import CommentOrReviews from "../CommentOrReview";
-import ShareDialog from "./ShareDialog";
+// import ShareDialog from "./ShareDialog";
 
 const ProductDetail = () => {
   const { slug } = useParams();
@@ -81,11 +81,11 @@ const ProductDetail = () => {
           <div className="container grid grid-cols-1 md:grid-cols-8 gap-y-6 md:gap-x-5 bg-white py-10">
             <div className="col-span-3 space-y-5">
               <Album images={detailProduct?.images as string[]} />
-              <ShareDialog
+              {/* <ShareDialog
                 title={detailProduct?.name || ""}
                 desc={detailProduct?.desc || ""}
                 img={detailProduct?.images?.[0] as string}
-              />
+              /> */}
             </div>
             <InfoDetailProduct product={detailProduct as IProduct} />
           </div>

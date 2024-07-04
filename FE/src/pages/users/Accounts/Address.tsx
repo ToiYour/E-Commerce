@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import Address from "@/components/Address";
 import ButtonLoading from "@/components/ButtonLoading";
 import { useAuth } from "@/hooks/auth";
@@ -12,7 +13,7 @@ const AddressAccount = () => {
     register,
     handleSubmit,
     reset,
-    formState: { errors, isSubmitting },
+    formState: { isSubmitting },
   } = useForm<ICustomer>({ defaultValues: account });
   const onSubmit: SubmitHandler<ICustomer> = async (newData: ICustomer) => {
     try {
@@ -33,7 +34,7 @@ const AddressAccount = () => {
       <h2 className="pb-10 text-2xl">Địa chỉ của tôi</h2>
       <div className="grid grid-cols-6 gap-6">
         <Address
-          register={register}
+          register={register as any}
           address={account?.address}
           resendAddress={() => reset(account)}
         />

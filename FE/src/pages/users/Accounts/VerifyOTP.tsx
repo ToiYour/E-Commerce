@@ -129,6 +129,7 @@ const VerifyOTP = ({ user, setStep }: IPropsVerifyOTP) => {
                         className="appearance-none size-14 md:size-16  flex flex-col items-center justify-center text-center px-5 outline-none rounded-xl border border-gray-200 text-lg bg-white focus:bg-gray-50 focus:ring-1 ring-blue-700"
                         type="number"
                         disabled={index != 0}
+                        value={value}
                       />
                     ))}
                   </div>
