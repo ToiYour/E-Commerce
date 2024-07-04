@@ -11,6 +11,20 @@ const ProductShema = new mongoose.Schema(
     images: Array,
     variants: [{ type: mongoose.Schema.Types.ObjectId, ref: "Variant" }],
     views: { type: Number, default: 0 },
+    averageRating: {
+      totalScore: {
+        type: Number,
+        default: 0,
+      },
+      numberOfReviews: {
+        type: Number,
+        default: 0,
+      },
+    },
+    sold: {
+      type: Number,
+      default: 0,
+    },
     status: { type: Boolean, default: true },
     brand: String,
     slug: {

@@ -36,15 +36,17 @@ export const useMessageClientSocket = (props: useMessageSocketType) => {
   useEffect(() => {
     (async () => {
       try {
-        const { data } = await getAllMessageByIdConversation(
-          props.conversationId
-        );
-        const { data: dataConversation } = await getConversationById(
-          props.conversationId as string
-        );
-        socket?.emit("conversation", props.conversationId);
-        setConversation(dataConversation.data);
-        setMessages(data.data);
+        if (isLoggedIn) {
+          const { data } = await getAllMessageByIdConversation(
+            props.conversationId
+          );
+          const { data: dataConversation } = await getConversationById(
+            props.conversationId as string
+          );
+          socket?.emit("conversation", props.conversationId);
+          setConversation(dataConversation.data);
+          setMessages(data.data);
+        }
       } catch (error) {
         if (error instanceof AxiosError) {
           ToastError(error?.response?.data.message);

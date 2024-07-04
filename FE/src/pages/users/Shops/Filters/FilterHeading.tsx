@@ -10,9 +10,9 @@ const FilterHeading = () => {
     }
     switch (e.target.value) {
       case "soldQuantityHighToLow":
+        setSearchParams({ ...queryParams, arrange: "sold", orderBy: "desc" });
         break;
-      case "discountHighToLow":
-        break;
+
       case "priceHighToLow":
         setSearchParams({ ...queryParams, arrange: "price", orderBy: "desc" });
         break;
@@ -39,7 +39,6 @@ const FilterHeading = () => {
           >
             <option value="">Mặc định</option>
             <option value="soldQuantityHighToLow">Bán chạy nhất</option>
-            <option value="discountHighToLow">Giảm giá tốt nhất</option>
             <option value="priceHighToLow">Giá từ cao đến thấp</option>
             <option value="priceLowToHigh">Giá thấp đến cao</option>
           </select>

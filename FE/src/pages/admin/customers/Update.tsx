@@ -284,7 +284,6 @@ const Update = () => {
 
             <Address
               register={register}
-              errors={errors}
               address={{ ...prevCustomer.address }}
             />
             {/*  */}

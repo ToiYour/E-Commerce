@@ -1,7 +1,7 @@
 import ChatClient from "@/pages/users/Chat";
 import Footer from "@/pages/users/Footer";
 import Header from "@/pages/users/Headers";
-import { Outlet } from "react-router-dom";
+import { Outlet, ScrollRestoration } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 
 const LayoutHome = () => {
@@ -14,6 +14,7 @@ const LayoutHome = () => {
         <Outlet />
       </div>
       <Footer />
+      <ScrollRestoration />
     </>
   );
 };

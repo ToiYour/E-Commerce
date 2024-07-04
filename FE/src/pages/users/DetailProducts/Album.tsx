@@ -11,7 +11,7 @@ import { Swiper as SwiperType } from "swiper/types";
 const Album = ({ images }: { images: string[] }) => {
   const swiperRef = useRef<SwiperType>();
   return (
-    <div className="detail-product-ablums col-span-3  w-full ">
+    <div className="detail-product-ablums   w-full bg-white">
       <div className=" relative">
         <Swiper
           rewind={true}
@@ -26,7 +26,7 @@ const Album = ({ images }: { images: string[] }) => {
           }}
         >
           {images?.map((image) => (
-            <SwiperSlide key={image}>
+            <SwiperSlide key={image} className="">
               <img
                 src={image}
                 alt=""
@@ -39,14 +39,14 @@ const Album = ({ images }: { images: string[] }) => {
 
         <ArrowLeft
           onClick={() => swiperRef?.current?.slidePrev()}
-          className="absolute top-1/2 lg:left-7 left-6 z-50 cursor-pointer"
+          className="absolute top-1/2 lg:left-7 left-6 z-10 cursor-pointer"
           size={34}
           color="#ee4d2d"
         />
 
         <ArrowRight
           onClick={() => swiperRef?.current?.slideNext()}
-          className="absolute top-1/2 lg:right-7 right-6 z-50 cursor-pointer "
+          className="absolute top-1/2 lg:right-7 right-6 z-10 cursor-pointer "
           size={34}
           color="#ee4d2d"
         />

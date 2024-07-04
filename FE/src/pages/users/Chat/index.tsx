@@ -37,17 +37,15 @@ const ChatClient = () => {
   return (
     <>
       <div
-        className={cn(
-          isOpenChat && "hidden",
-          "fixed bottom-0 right-0 mb-4 mr-4 z-50"
-        )}
+        className={cn(isOpenChat && "hidden", "fixed bottom-0 right-3  z-50")}
       >
         <button
           onClick={() => setIsOpenChat(true)}
           id="open-chat"
-          className="rounded-2xl bg-[#ee4d2d] text-white py-2 px-4  hover:bg-[#f98770] transition duration-300 flex items-center"
+          className="rounded-t shadow-[0_0_15px_1px_#ccc]  bg-white text-[#ee4d2d] py-2 px-4  hover:bg-gray-100 transition duration-300 flex items-center justify-center gap-2"
         >
-          <MessageCircleMore />
+          <MessageCircleMore color="#ee4d2d" />
+          <span className="font-semibold">Chat</span>
         </button>
       </div>
       {isOpenChat && (

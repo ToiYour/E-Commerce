@@ -13,6 +13,12 @@ export interface IFormProduct {
 }
 export interface IProduct {
   status?: boolean;
+  sold: number;
+  averageRating: {
+    totalScore: number;
+    numberOfReviews: number;
+  };
+
   slug?: string;
   _id?: string;
   brand?: string;

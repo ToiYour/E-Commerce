@@ -27,13 +27,7 @@ const Slides = () => {
                     <div className="text-display md:mt-5 mt-2">
                       Nâng tầm phong cách của bạn
                     </div>
-                    <Link
-                      to={"/shop"}
-                      onClick={() =>
-                        window.scrollTo({ top: 0, behavior: "auto" })
-                      }
-                      className="button-main md:mt-8 mt-3"
-                    >
+                    <Link to={"/shop"} className="button-main md:mt-8 mt-3">
                       Mua Ngay
                     </Link>
                   </div>
@@ -58,13 +52,7 @@ const Slides = () => {
                     <div className="text-display md:mt-5 mt-2">
                       Thể hiện phong cách riêng của bạn
                     </div>
-                    <Link
-                      to={"/shop"}
-                      onClick={() =>
-                        window.scrollTo({ top: 0, behavior: "auto" })
-                      }
-                      className="button-main md:mt-8 mt-3"
-                    >
+                    <Link to={"/shop"} className="button-main md:mt-8 mt-3">
                       Mua Ngay
                     </Link>
                   </div>

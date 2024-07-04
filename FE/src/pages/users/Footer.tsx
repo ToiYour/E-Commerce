@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 const Footer = () => {
   return (
     <>
-      <footer id="footer" className="footer bg-gray-50">
+      <footer id="footer" className="footer bg-gray-50 ">
         <div className="footer-main bg-surface">
           <div className="container">
             <div className="content-footer md:py-[60px] py-10 flex justify-between flex-wrap gap-y-8">
@@ -13,7 +13,7 @@ const Footer = () => {
                 </Link>
                 <div className="flex gap-3 mt-3">
                   <div className="flex flex-col ">
-                    <span className="flex items-center font-bold">
+                    <span className="flex flex-wrap items-center font-bold">
                       Mail:{" "}
                       <a
                         className="font-normal"
@@ -22,17 +22,13 @@ const Footer = () => {
                         toidz25102004@gmail.com
                       </a>
                     </span>
-                    <span className="flex items-center font-bold ">
+                    <span className="flex flex-wrap items-center font-bold ">
                       Số điện thoại:{" "}
                       <a className="font-normal" href="tel:+84385521231">
                         0385521231
                       </a>
                     </span>
-                    <span className="flex items-center font-bold ">
-                      Địa chỉ:{" "}
-                      <span className="font-normal">Thạch Thất - Hà Nội</span>
-                    </span>
-                    <span className="flex items-center font-bold ">
+                    <span className="flex flex-wrap items-center font-bold ">
                       Github:{" "}
                       <a
                         className="font-normal"
@@ -41,7 +37,7 @@ const Footer = () => {
                         https://github.com/ToiYour
                       </a>
                     </span>
-                    <span className="flex items-center font-bold ">
+                    <span className="flex flex-wrap items-center font-bold ">
                       Facebook:{" "}
                       <a
                         className="font-normal"

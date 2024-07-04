@@ -15,7 +15,7 @@ const LayOutAccount = () => {
         breadcrumbs={[{ title: "Trang chủ", urlLink: "/" }]}
         page="Tài khoản của tôi"
       />
-      <div className="my-account-block md:py-20 py-10 bg-white">
+      <div className="my-account-block md:py-20 py-10 bg-gray-100">
         <div className="container">
           <div className="content-main grid grid-cols-8 gap-5">
             <div className=" col-span-8 md:col-span-2">

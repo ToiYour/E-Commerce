@@ -1,33 +1,28 @@
-import LayOutAccount from "@/layouts/LayoutAccount";
 import LayoutAdmin from "@/layouts/LayoutAdmin";
 import LayoutHome from "@/layouts/LayoutHome";
 import { ListProducts } from "@/pages/admin/products";
 import NotFound from "@/pages/NotFound";
-import {
-  ForgotPassWord,
-  LoginPage,
-  MeAccountPage,
-  Purchase,
-  RegisterPage,
-} from "@/pages/users/Accounts";
-import AddressAccount from "@/pages/users/Accounts/Address";
-import ChangeOrNewPassword from "@/pages/users/Accounts/ChangeOrNewPassword";
 import ProductDetail from "@/pages/users/DetailProducts";
 import HomePage from "@/pages/users/Homes";
 import ShopPage from "@/pages/users/Shops";
 import {
+  RouterAuth,
   RouterCategory,
   RouterColors,
   RouterCustomer,
+  RouterDiscount,
   RouterProducts,
   RouterSizes,
 } from "@/routes";
 import PrivateRoute from "@/routes/PrivateRoute";
-import { ProtectedRoute } from "@/routes/ProtectedRoute";
 import { createBrowserRouter } from "react-router-dom";
-import WelcomeChat from "./components/WelcomeChat";
-import LayoutChatAdmin from "./layouts/LayoutChatAdmin";
-import MainChat from "./pages/admin/chats/MainChat";
+import WelcomeChat from "@/components/WelcomeChat";
+import LayoutChatAdmin from "@/layouts/LayoutChatAdmin";
+import MainChat from "@/pages/admin/chats/MainChat";
+import Carts from "@/pages/users/Carts";
+import { ProtectedRoute } from "@/routes/ProtectedRoute";
+import Checkout from "@/pages/users/Orders/Checkout";
+import VerifyPayment from "./pages/users/Orders/VerifyPayment";
 
 const router = createBrowserRouter([
   {
@@ -48,48 +43,24 @@ const router = createBrowserRouter([
         path: "shop/:slug",
         element: <ProductDetail />,
       },
-      // Đăng nhập
+      ...RouterAuth,
+      // Giỏ hàng
       {
-        path: "buyer/login",
-        element: <LoginPage />,
-      },
-      // Đăng ký
-      {
-        path: "buyer/register",
-        element: <RegisterPage />,
-      },
-      // Quên mật khẩu
-      {
-        path: "buyer/forgot-password",
-        element: <ForgotPassWord />,
-      },
-      // Trang cá nhân
-      {
-        path: "account",
+        path: "cart",
         element: (
           <ProtectedRoute>
-            <LayOutAccount />
+            {" "}
+            <Carts />
           </ProtectedRoute>
         ),
-        children: [
-          {
-            path: "profile",
-            element: <MeAccountPage />,
-          },
-          {
-            path: "password",
-
-            element: <ChangeOrNewPassword />,
-          },
-          {
-            path: "address",
-            element: <AddressAccount />,
-          },
-          {
-            path: "purchase",
-            element: <Purchase />,
-          },
-        ],
+      },
+      {
+        path: "checkout",
+        element: <Checkout />,
+      },
+      {
+        path: "checkout/verify-payment",
+        element: <VerifyPayment />,
       },
       {
         path: "*",
@@ -132,6 +103,8 @@ const router = createBrowserRouter([
       ...RouterSizes,
       //Quản lý danh mục
       ...RouterCategory,
+      //Quản lý mã giảm giá
+      ...RouterDiscount,
       // Quản lý khách hàng
       ...RouterCustomer,
       {

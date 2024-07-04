@@ -3,9 +3,22 @@ import LoadingFixed from "@/components/LoadingFixed";
 import { ToastError } from "@/lib/utils";
 import { useQuery } from "@tanstack/react-query";
 import { useSearchParams } from "react-router-dom";
+import { useEffect } from "react";
 
 const FilterBrand = () => {
   const [searchParams, setSearchParams] = useSearchParams();
+  const brand = searchParams.get("brand");
+  useEffect(() => {
+    const checkboxs = document.querySelectorAll(
+      ".filter-brand .brand-item input[type='checkbox']:checked"
+    );
+    if (checkboxs.length > 0 && !brand) {
+      checkboxs.forEach((checkbox) => {
+        const current = checkbox as HTMLInputElement;
+        current.checked = false;
+      });
+    }
+  }, [searchParams.get("category")]);
   const {
     data: listBrand,
     isLoading,
@@ -57,7 +70,7 @@ const FilterBrand = () => {
                   onChange={handleChangeFilterBrand}
                   type="checkbox"
                   id={brand}
-                  name="brand"
+                  name="brand[]"
                   value={brand}
                   className="size-4 rounded border-gray-300"
                 />

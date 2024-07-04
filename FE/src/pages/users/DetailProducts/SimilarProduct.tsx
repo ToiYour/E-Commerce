@@ -34,7 +34,9 @@ const SimilarProduct = (props: IPropsSimilarProduct) => {
     return (
       <div className="collection-block container max-w-7xl bg-white mt-10 pt-10 py-20">
         <div className="container">
-          <div className="heading3 text-center">Sản phẩm tương tự</div>
+          <div className="text-lg font-medium text-center uppercase">
+            Sản phẩm tương tự
+          </div>
         </div>
         <div className="flex items-center justify-center">
           <img src="/images/product-not-found.jpg" alt="" />
@@ -45,7 +47,11 @@ const SimilarProduct = (props: IPropsSimilarProduct) => {
   return (
     <div className="collection-block container max-w-7xl bg-white mt-10 pt-10 py-20">
       <div className="container">
-        <div className="heading3 text-center">Sản phẩm tương tự</div>
+        <div className="flex items-center justify-center">
+          <h2 className="w-max relative text-lg font-medium text-center uppercase ">
+            Sản phẩm tương tự
+          </h2>
+        </div>
       </div>
       <div className="list-collection relative section-swiper-navigation md:mt-10 mt-6 sm:px-5 px-4">
         <div className="swiper-button-prev lg:left-10 left-6" />
@@ -84,11 +90,7 @@ const SimilarProduct = (props: IPropsSimilarProduct) => {
                 key={product._id}
                 className="swiper-slide bg-gray-100 p-3 rounded-lg"
               >
-                <div
-                  onClick={() =>
-                    window.scrollTo({ top: 0, behavior: "smooth" })
-                  }
-                >
+                <div>
                   <ProductItem product={product} />
                 </div>
               </SwiperSlide>
