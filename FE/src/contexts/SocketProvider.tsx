@@ -40,7 +40,7 @@ const SocketProvider = ({ children }: { children: ReactNode }) => {
           avatar: authUser.avatar,
           is_connected: false,
         };
-        ToastError(err.message); // not authorized
+        //ToastError(err.message); 
       }
     });
     setLoading(false);
