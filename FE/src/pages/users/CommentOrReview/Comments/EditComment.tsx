@@ -1,3 +1,4 @@
+import ButtonLoading from "@/components/ButtonLoading";
 import { cn, ToastError } from "@/lib/utils";
 import { updateCommentById, updateCommentReplyById } from "@/services/comment";
 import { useQueryClient } from "@tanstack/react-query";
@@ -11,6 +12,7 @@ type EditComment = {
   setId: (props: { isEdit: boolean; isReply: boolean; id: string }) => void;
 };
 const EditComment = (props: EditComment) => {
+  const [loading, setLoading] = useState(false);
   const queryClient = useQueryClient();
   const contentEditableRef = useRef<HTMLDivElement>(null);
   const [isContentEmpty, setIsContentEmpty] = useState({
@@ -40,6 +42,7 @@ const EditComment = (props: EditComment) => {
   const saveComment = async () => {
     if (contentEditableRef.current) {
       try {
+        setLoading(true);
         if (props.isReply) {
           const payload = {
             commentReplyId: props.commentId,
@@ -60,6 +63,7 @@ const EditComment = (props: EditComment) => {
       } finally {
         queryClient.invalidateQueries({ queryKey: ["COMMENTS_BY_PRODUCT_ID"] });
         contentEditableRef.current.textContent = "";
+        setLoading(false);
         props.setId({
           id: "",
           isEdit: false,
@@ -108,10 +112,10 @@ const EditComment = (props: EditComment) => {
         </button>
         <button
           onMouseDown={saveComment}
-          disabled={isContentEmpty.isEmpty}
+          disabled={isContentEmpty.isEmpty || loading}
           className="text-white bg-[#ee4d2d]"
         >
-          Lưu
+          {loading ? <ButtonLoading /> : "Lưu"}
         </button>
       </div>
     </div>

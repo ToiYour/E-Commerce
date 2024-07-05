@@ -1,3 +1,4 @@
+import LoadingFixed from "@/components/LoadingFixed";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -10,6 +11,7 @@ import { cn, SwalWarningConfirm, ToastSuccess } from "@/lib/utils";
 import { deleteCommentById, deleteCommentReplyById } from "@/services/comment";
 import { useQueryClient } from "@tanstack/react-query";
 import { EllipsisVertical, Pencil, Trash } from "lucide-react";
+import { useState } from "react";
 type ActionDropDownType = {
   setId: (val: { id: string; isEdit: boolean; isReply: boolean }) => void;
   commentId: string;
@@ -18,9 +20,11 @@ type ActionDropDownType = {
 };
 const ActionDropDown = (props: ActionDropDownType) => {
   const { authUser, isLoggedIn } = useAuth();
+  const [loading, setLoading] = useState(false);
   const queryClient = useQueryClient();
   const handleDeleteComment = async () => {
     try {
+      setLoading(true);
       let data;
       const response = await SwalWarningConfirm(
         "Xóa bình luận",
@@ -38,6 +42,7 @@ const ActionDropDown = (props: ActionDropDownType) => {
       //
     } finally {
       queryClient.invalidateQueries({ queryKey: ["COMMENTS_BY_PRODUCT_ID"] });
+      setLoading(false);
     }
   };
   if (
@@ -46,6 +51,9 @@ const ActionDropDown = (props: ActionDropDownType) => {
     (!authUser.role && authUser?._id !== props.userId)
   ) {
     return null;
+  }
+  if (loading) {
+    return <LoadingFixed />;
   }
   return (
     <DropdownMenu>

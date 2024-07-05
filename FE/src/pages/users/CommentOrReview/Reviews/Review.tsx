@@ -9,8 +9,11 @@ import {
 } from "@/services/reviews";
 import { useParams, useSearchParams } from "react-router-dom";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { cn } from "@/lib/utils";
+import { cn, ToastError } from "@/lib/utils";
 import { useAuth } from "@/hooks/auth";
+import LoadingFixed from "@/components/LoadingFixed";
+import { AxiosError } from "axios";
+import ButtonLoading from "@/components/ButtonLoading";
 type summaryRateType = {
   1?: number;
   2?: number;
@@ -21,6 +24,7 @@ type summaryRateType = {
   isReview?: number;
 };
 const Reviews = () => {
+  const [loading, setLoading] = useState(false);
   const { slug } = useParams();
   const QueryClient = useQueryClient();
   const { authUser } = useAuth();
@@ -28,7 +32,7 @@ const Reviews = () => {
   const [SeachParams] = useSearchParams();
   const field = SeachParams.get("field");
   const type = SeachParams.get("type");
-  const { data } = useQuery<{
+  const { data, isLoading } = useQuery<{
     reviews: IReviews[];
     summaryRate?: summaryRateType;
     averageRating: number;
@@ -70,11 +74,23 @@ const Reviews = () => {
     return stars;
   };
   const handleLikedOrUnliked = async (reviewId: string) => {
-    await likedOrUnLikedProductReviews(reviewId);
-    QueryClient.invalidateQueries({
-      queryKey: ["GET_PRODUCT_REVIEWS_BY_SLUG"],
-    });
+    try {
+      setLoading(true);
+      await likedOrUnLikedProductReviews(reviewId);
+      QueryClient.invalidateQueries({
+        queryKey: ["GET_PRODUCT_REVIEWS_BY_SLUG"],
+      });
+    } catch (error) {
+      if (error instanceof AxiosError) {
+        ToastError(error?.response?.data?.message);
+      }
+    } finally {
+      setLoading(false);
+    }
   };
+  if (isLoading) {
+    return <LoadingFixed />;
+  }
   return (
     <div className="space-y-5">
       <h2 className="uppercase">Đánh giá sản phẩm</h2>
@@ -153,17 +169,25 @@ const Reviews = () => {
                 ))}
               </ul>
               <span
-                className="flex items-start gap-0.5"
+                className={cn(
+                  "flex items-start gap-0.5",
+                  loading && "pointer-events-none"
+                )}
                 onClick={() => handleLikedOrUnliked(review?._id)}
               >
-                <ThumbsUp
-                  size={16}
-                  className={cn(
-                    "cursor-pointer ",
-                    review?.likes?.includes(authUser?._id as string) &&
-                      "fill-[#ee4d2d] text-[#ee4d2d]"
-                  )}
-                />
+                {loading ? (
+                  <ButtonLoading />
+                ) : (
+                  <ThumbsUp
+                    size={16}
+                    className={cn(
+                      "cursor-pointer ",
+                      review?.likes?.includes(authUser?._id as string) &&
+                        "fill-[#ee4d2d] text-[#ee4d2d]"
+                    )}
+                  />
+                )}
+
                 <span className="text-sm text-[#0000008a]">
                   {review?.likes?.length <= 0
                     ? "Hữu ích"

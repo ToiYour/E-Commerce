@@ -44,7 +44,7 @@ const Comment = () => {
     },
   });
   if (isLoading) {
-    <LoadingFixed />;
+    return <LoadingFixed />;
   }
 
   return (
