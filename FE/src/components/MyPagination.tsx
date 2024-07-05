@@ -4,6 +4,7 @@ import ReactPaginate from "react-paginate";
 import { useSearchParams } from "react-router-dom";
 const MyPagination = ({ totalPages }: { totalPages: string | number }) => {
   const [searchParams, setSearchParams] = useSearchParams();
+  const [pageCount, setPageCount] = useState(0);
   const [pageOffSet, setPageOffSet] = useState(0);
   // Handle Paginate
   const handlePageClick = (event: { selected: number }) => {
@@ -19,8 +20,11 @@ const MyPagination = ({ totalPages }: { totalPages: string | number }) => {
     });
   };
   useEffect(() => {
-    setPageOffSet(Number(searchParams.get("page")) - 1);
-  }, []);
+    if (searchParams.get("page")) {
+      setPageOffSet(Number(searchParams.get("page")) - 1);
+    }
+    setPageCount(Number(totalPages));
+  }, [totalPages]);
 
   return (
     <ReactPaginate
@@ -31,7 +35,7 @@ const MyPagination = ({ totalPages }: { totalPages: string | number }) => {
       onPageChange={handlePageClick}
       pageRangeDisplayed={3}
       marginPagesDisplayed={2}
-      pageCount={totalPages as number}
+      pageCount={pageCount}
       renderOnZeroPageCount={null}
       // class css
       containerClassName="flex flex-row items-center justify-end gap-1" // CSS class wrapper phân trang
