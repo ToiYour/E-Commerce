@@ -118,54 +118,36 @@ export const refreshToken = (req, res) => {
 };
 export const logOut = async (req, res) => {
   try {
-    const token = req.cookies.token;
-    // if (!token) {
-    //   return res.status(403).send({ message: "Bạn chưa đăng nhập" });
-    // }
-    jsonwebtoken.verify(token, process.env.REFRESH_TOKEN, async (err, user) => {
-      if (err) {
-        if (err.name == "TokenExpiredError") {
-          // Nếu refresh hết hạn kiểm tra accesstoken
-          const authHeader = req.headers["authorization"];
-          const access_token = authHeader && authHeader.split(" ")[1];
-          jsonwebtoken.verify(
-            access_token,
-            process.env.ACCESS_TOKEN,
-            async (err, user) => {
-              if (err) {
-                return res
-                  .status(403)
-                  .send({ message: "Phiên đăng nhập đã hết hạn" });
-              }
-              await RefreshTokenModel.findByIdAndDelete(user.id);
-              res.cookie("token", undefined, {
-                maxAge: 0,
-              });
-              return res.status(200).send({ message: "Đăng xuất thành công" });
-            }
-          );
-        }
-        // if (err.name == "JsonWebTokenError") {
-        //   return res
-        //     .status(403)
-        //     .send({ message: "Token không hợp lệ, bạn không thể đăng xuất." });
-        // }
-      }
-      const isRefreshToken = await RefreshTokenModel.findOne({
-        userId: user.id,
-        token: token,
+    const refreshToken = req.cookies.token;
+    if (!refreshToken) {
+      return res.status(403).send({
+        message: "Bạn chưa đăng nhập ",
       });
-      if (!isRefreshToken) {
-        return res.status(403).send({
-          message: "Phiên đăng nhập đã hết hạn vui lòng đăng nhập lại",
+    }
+    jsonwebtoken.verify(
+      refreshToken,
+      process.env.REFRESH_TOKEN,
+      async (err, user) => {
+        if (err) {
+          res.cookie("token", "", {
+            maxAge: 0,
+          });
+          return res.status(200).send({
+            message: "Đăng xuất thành công",
+          });
+        }
+        await RefreshTokenModel.findOneAndDelete({
+          userId: user.id,
+        });
+        res.cookie("token", "", {
+          maxAge: 0,
+        });
+
+        return res.status(200).send({
+          message: "Đăng xuất thành công",
         });
       }
-      await RefreshTokenModel.findByIdAndDelete(isRefreshToken._id);
-      res.cookie("token", undefined, {
-        maxAge: 0,
-      });
-      return res.status(200).send({ message: "Đăng xuất thành công" });
-    });
+    );
   } catch (error) {
     console.log(error);
     return res.status(500).send({ messages: "Lỗi server" });
