@@ -17,14 +17,16 @@ const Purchase = () => {
       try {
         const query = type ? `?status=${type}` : "";
         const { data } = await getMyOrder(query);
-        return data?.data;
+        return data?.data || []; // Trả về mảng rỗng nếu không có dữ liệu
       } catch (error) {
         if (error instanceof AxiosError) {
           ToastError(error.response?.data.message);
         }
+        throw error; // Ném lỗi để React Query xử lý
       }
     },
   });
+
   const handleCancelOrder = async (orderId: string) => {
     try {
       await updateOrderStatus(orderId, "cancelled");
@@ -35,32 +37,33 @@ const Purchase = () => {
       }
     } finally {
       QueryClient.invalidateQueries({
-        queryKey: ["GET_ALL_MY_ORDERS"],
+        queryKey: ["GET_ALL_MY_ORDERS", type], // Thêm type vào queryKey để xác định lại query
       });
     }
   };
+
   if (isLoading) {
     return <LoadingFixed />;
   }
+
   return (
     <div>
       <ul className="tabs-purchase flex items-center justify-evenly flex-shrink-0 text-center py-4 px-5 w-full overflow-x-auto whitespace-nowrap bg-white">
         {Object.entries(StatusOrder).map(([key, value]) => (
           <li
             key={key}
-            className={cn("px-4", type == key ? "active" : "")}
+            className={cn("px-4", type === key ? "active" : "")}
             onClick={() => {
-              const query = key ? { type: key } : "";
-              setSearchParams(query);
+              setSearchParams({ type: key }); // Sử dụng setSearchParams với đối tượng truyền vào
             }}
           >
             {value}
           </li>
         ))}
       </ul>
-      <div className="tab-content  mt-3 ">
+      <div className="tab-content mt-3">
         <div className="space-y-5">
-          {Number(orders?.length) <= 0 ? (
+          {orders.length === 0 ? (
             <div className="no-order flex flex-col items-center justify-center p-28 bg-white">
               <img
                 src="/images/no-order.png"
@@ -70,7 +73,7 @@ const Purchase = () => {
               <p>Chưa có đơn hàng</p>
             </div>
           ) : (
-            orders?.map((order) => (
+            orders.map((order) => (
               <section className="bg-white p-6" key={order._id}>
                 <div className="flex items-center justify-end border-b border-gray-300 border-dashed pb-3">
                   <span className="text-red-500">
@@ -78,28 +81,31 @@ const Purchase = () => {
                   </span>
                 </div>
                 <Link to={"/account/purchase/order/" + order._id}>
-                  {order?.orderItems.map((item) => (
+                  {order.orderItems.map((item) => (
                     <div
                       key={item._id}
                       className="flex items-center gap-5 pt-5 border-t [&+&]:border-gray-50 mb-5"
                     >
                       <div className="size-20 min-w-20 min-h-20">
                         <img
-                          src={item?.productId?.images?.[0]}
+                          src={item?.productId?.images?.[0] || ""}
                           alt=""
                           className="w-full h-full object-cover"
                         />
                       </div>
-                      <div className="w-full flex items-center justify-between ">
+                      <div className="w-full flex items-center justify-between">
                         <div>
                           <p className="text-base text-[#000000de] line-clamp-2 font-medium w-11/12">
-                            {item?.productId.name}
+                            {item?.productId?.name || "Unknown"}{" "}
+                            {/* Đảm bảo kiểm tra trước khi sử dụng */}
                           </p>
                           <div className="flex flex-col text-sm">
                             <span className="text-[#0000008a] w-11/12 line-clamp-1">
                               Phân loại hàng:{" "}
-                              {item?.selectedVariant?.colorId?.name}, Size:{" "}
-                              {item?.selectedVariant?.sizeId?.name}
+                              {item?.selectedVariant?.colorId?.name ||
+                                "Unknown"}
+                              , Size:{" "}
+                              {item?.selectedVariant?.sizeId?.name || "Unknown"}
                             </span>
                             <span>x{item?.quantity}</span>
                           </div>
@@ -107,7 +113,7 @@ const Purchase = () => {
                         <span className="text-[#ee4d2d] text-base">
                           {formatMoney(
                             Number(item?.productId?.price) +
-                              Number(item?.selectedVariant.extra_price) *
+                              Number(item?.selectedVariant?.extra_price) *
                                 item?.quantity
                           )}
                         </span>
@@ -123,13 +129,13 @@ const Purchase = () => {
                           Giảm :{" "}
                           <span className="ml-2">
                             {order?.discountId?.isPercentage
-                              ? `${order.discountId.value}%`
-                              : formatMoney(order.discountId?.value || 0)}
+                              ? `${order?.discountId.value}%`
+                              : formatMoney(order?.discountId?.value || 0)}
                           </span>
                         </span>
                         <span className="flex items-center justify-between text-sm">
                           {" "}
-                          Tổng tiền sẩn phẩm :{" "}
+                          Tổng tiền sản phẩm :{" "}
                           <span className="ml-2">
                             {formatMoney(order?.totalAmount || 0)}
                           </span>
@@ -148,20 +154,20 @@ const Purchase = () => {
                   <span
                     className={cn(
                       "text-red-500 text-sm text-nowrap order-1",
-                      order.status != "cancelled" && "hidden"
+                      order?.status !== "cancelled" && "hidden"
                     )}
                   >
                     Đã huỷ bởi bạn
                   </span>
                   <div className="order-2 flex justify-end flex-wrap items-center gap-3">
-                    {!order.isEvaluating && order.status == "delivered" && (
+                    {!order?.isEvaluating && order?.status === "delivered" && (
                       <Evaluate
-                        orderItems={order?.orderItems}
-                        orderId={order._id as string}
+                        orderItems={order?.orderItems || []}
+                        orderId={order?._id as string}
                       />
                     )}
-                    {order?.status == "pending" ||
-                      (order?.status == "confirmed" && (
+                    {order?.status === "pending" ||
+                      (order?.status === "confirmed" && (
                         <button
                           onClick={() =>
                             handleCancelOrder(order?._id as string)

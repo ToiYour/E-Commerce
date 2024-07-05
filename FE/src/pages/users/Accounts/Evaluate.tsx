@@ -99,7 +99,7 @@ const Evaluate = ({
         </DialogHeader>
         <div className="space-y-5">
           <section>
-            {orderItems?.map((item) => (
+            {orderItems?.map?.((item) => (
               <div key={item._id} className="flex items-center gap-3">
                 <div className="size-14 min-w-14 min-h-14">
                   <img

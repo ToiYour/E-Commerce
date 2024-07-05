@@ -1,4 +1,3 @@
-import ButtonLoading from "@/components/ButtonLoading";
 import { useAuth } from "@/hooks/auth";
 import { useCurrentRouteAndNavigation } from "@/hooks/router";
 import { cn, ToastError } from "@/lib/utils";
@@ -92,20 +91,19 @@ const LikeDislikeAndReplyButtons = (props: LikeDislikeAndReplyButtonsType) => {
               : "like";
             handleLikeComment(action);
           }}
-          className="hover:bg-gray-100 rounded-xl p-1"
-        >
-          {loading.loadingUp ? (
-            <ButtonLoading />
-          ) : (
-            <ThumbsUp
-              size={16}
-              strokeWidth={1.5}
-              className={cn(
-                props.likes?.includes(authUser?._id as string) &&
-                  "fill-[#ee4d2d] text-[#ee4d2d]"
-              )}
-            />
+          className={cn(
+            "hover:bg-gray-100 rounded-xl p-1",
+            loading.loadingUp && "animate-pulse"
           )}
+        >
+          <ThumbsUp
+            size={16}
+            strokeWidth={1.5}
+            className={cn(
+              props.likes?.includes(authUser?._id as string) &&
+                "fill-[#ee4d2d] text-[#ee4d2d]"
+            )}
+          />
         </button>
         <span className="text-xs text-[#aaa] ml-0.5">
           {props.likes?.length || ""}
@@ -120,20 +118,19 @@ const LikeDislikeAndReplyButtons = (props: LikeDislikeAndReplyButtonsType) => {
               : "like";
             handleDislikeComment(action);
           }}
-          className="hover:bg-gray-100 rounded-xl p-1"
-        >
-          {loading?.loadingDown ? (
-            <ButtonLoading />
-          ) : (
-            <ThumbsDown
-              size={16}
-              strokeWidth={1.5}
-              className={cn(
-                props.dislikes?.includes(authUser?._id as string) &&
-                  "fill-[#ee4d2d] text-[#ee4d2d]"
-              )}
-            />
+          className={cn(
+            "hover:bg-gray-100 rounded-xl p-1",
+            loading.loadingDown && "animate-pulse"
           )}
+        >
+          <ThumbsDown
+            size={16}
+            strokeWidth={1.5}
+            className={cn(
+              props.dislikes?.includes(authUser?._id as string) &&
+                "fill-[#ee4d2d] text-[#ee4d2d]"
+            )}
+          />
         </button>
         <span className="text-xs text-[#aaa] ml-0.5">
           {props.dislikes?.length || ""}

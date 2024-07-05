@@ -16,6 +16,7 @@ import { Link, useParams } from "react-router-dom";
 import Evaluate from "./Evaluate";
 import LoadingFixed from "@/components/LoadingFixed";
 import ButtonLoading from "@/components/ButtonLoading";
+import { useQueryClient } from "@tanstack/react-query";
 type StatusHistoryItem = {
   status?: string;
   date?: string;
@@ -31,6 +32,7 @@ const PurchaseOrder = () => {
     loadingData: true,
     loadingCancel: false,
   });
+  const QueryClient = useQueryClient();
   const [order, setOrder] = useState<IOrderPayment>();
   const [statusOrder, setStatusOrder] = useState<StatusHistoryObject>({});
   const [process, setProcess] = useState({
@@ -89,6 +91,9 @@ const PurchaseOrder = () => {
         loadingData: false,
       });
       await updateOrderStatus(orderId, "cancelled");
+      QueryClient.invalidateQueries({
+        queryKey: ["GET_ALL_MY_ORDERS"],
+      });
       ToastSuccess("Đã huỷ đơn hàng");
     } catch (error) {
       if (error instanceof AxiosError) {
