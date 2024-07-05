@@ -71,13 +71,15 @@ const ChatContainer = ({
       >
         <div className="bg-white shadow-md rounded-lg rounded-br-none  w-full h-full relative ">
           <div className="p-4 border-b bg-blue-500 text-white rounded-t-lg flex justify-between items-center">
-            <Conversation
-              imgUrl={isAdminConnected?.avatar || "/images/isfeature.png"}
-              name={isAdminConnected?.name || "Admin"}
-              status={isAdminConnected?.is_connected}
-              role={isAdminConnected?.is_admin}
-              cancelConnectAt={isAdminConnected?.cancel_connect_at}
-            />
+            {isAdminConnected?.avatar && (
+              <Conversation
+                imgUrl={isAdminConnected?.avatar || "/images/isfeature.png"}
+                name={isAdminConnected?.name || "Admin"}
+                status={isAdminConnected?.is_connected}
+                role={isAdminConnected?.is_admin}
+                cancelConnectAt={isAdminConnected?.cancel_connect_at}
+              />
+            )}
             <button
               onClick={() => onChatMessageOpen(false)}
               id="close-chat"
