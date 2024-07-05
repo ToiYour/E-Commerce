@@ -27,32 +27,30 @@ ConnectionMongoDB();
 // Khởi tạo ứng dụng Express
 const app = express();
 // Add headers before the routes are defined
-app.use(function (req, res, next) {
-  // Website you wish to allow to connect
+// Middleware
+const corsOptions = {
+  origin: process.env.CORS_ORIGIN,
+  credentials: true,
+  methods: "GET, POST, OPTIONS, PUT, PATCH, DELETE",
+  allowedHeaders: ["X-Requested-With", "Content-Type", "Authorization"],
+};
+
+app.use(cors(corsOptions));
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
+// Middleware CORS để thêm tiêu đề vào mọi phản hồi
+app.use((req, res, next) => {
   res.setHeader("Access-Control-Allow-Origin", process.env.CORS_ORIGIN);
-
-  // Request methods you wish to allow
-  res.setHeader(
-    "Access-Control-Allow-Methods",
-    "GET, POST, OPTIONS, PUT, PATCH, DELETE"
-  );
-
-  // Request headers you wish to allow
+  res.setHeader("Access-Control-Allow-Methods", corsOptions.methods);
   res.setHeader(
     "Access-Control-Allow-Headers",
-    "X-Requested-With,content-type"
+    corsOptions.allowedHeaders.join(", ")
   );
-
-  // Set to true if you need the website to include cookies in the requests sent
-  // to the API (e.g. in case you use sessions)
   res.setHeader("Access-Control-Allow-Credentials", true);
-
-  // Pass to next layer of middleware
   next();
 });
-// Middleware
 app.use(cookieParser());
-app.use(cors({ credentials: true, origin: process.env.CORS_ORIGIN }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 // Các routes
