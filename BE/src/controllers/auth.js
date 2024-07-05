@@ -119,9 +119,9 @@ export const refreshToken = (req, res) => {
 export const logOut = async (req, res) => {
   try {
     const token = req.cookies.token;
-    if (!token) {
-      return res.status(403).send({ message: "Bạn chưa đăng nhập" });
-    }
+    // if (!token) {
+    //   return res.status(403).send({ message: "Bạn chưa đăng nhập" });
+    // }
     jsonwebtoken.verify(token, process.env.REFRESH_TOKEN, async (err, user) => {
       if (err) {
         if (err.name == "TokenExpiredError") {
