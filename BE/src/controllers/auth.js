@@ -145,11 +145,11 @@ export const logOut = async (req, res) => {
             }
           );
         }
-        if (err.name == "JsonWebTokenError") {
-          return res
-            .status(403)
-            .send({ message: "Token không hợp lệ, bạn không thể đăng xuất." });
-        }
+        // if (err.name == "JsonWebTokenError") {
+        //   return res
+        //     .status(403)
+        //     .send({ message: "Token không hợp lệ, bạn không thể đăng xuất." });
+        // }
       }
       const isRefreshToken = await RefreshTokenModel.findOne({
         userId: user.id,
