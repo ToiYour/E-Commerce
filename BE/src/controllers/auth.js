@@ -54,6 +54,7 @@ export const loginAccount = async (req, res) => {
       maxAge: 60 * 24 * 60 * 60 * 1000,
       path: "/",
       httpOnly: true,
+      sameSite: "None",
     });
     return res.send({
       message: "Đăng nhập thành công",
@@ -106,6 +107,7 @@ export const refreshToken = (req, res) => {
         maxAge: 60 * 24 * 60 * 60 * 1000,
         path: "/",
         httpOnly: true,
+        sameSite: "None",
       });
       return res.send({
         message: "Làm mới token thành công",
@@ -131,6 +133,7 @@ export const logOut = async (req, res) => {
         if (err) {
           res.cookie("token", "", {
             maxAge: 0,
+            sameSite: "None",
           });
           return res.status(200).send({
             message: "Đăng xuất thành công",
@@ -141,6 +144,7 @@ export const logOut = async (req, res) => {
         });
         res.cookie("token", "", {
           maxAge: 0,
+          sameSite: "None",
         });
 
         return res.status(200).send({
@@ -200,6 +204,7 @@ export const signInWithGoogleAndFacebook = async (req, res) => {
         maxAge: 60 * 24 * 60 * 60 * 1000,
         path: "/",
         httpOnly: true,
+        sameSite: "None",
       });
       return res.send({
         message: "Đăng nhập thành công",
@@ -230,6 +235,7 @@ export const signInWithGoogleAndFacebook = async (req, res) => {
         maxAge: 60 * 24 * 60 * 60 * 1000,
         path: "/",
         httpOnly: true,
+        sameSite: "None",
       });
       return res.send({
         message: "Đăng nhập thành công",
