@@ -5,12 +5,13 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { AxiosError } from "axios";
 import { Link, useSearchParams } from "react-router-dom";
 import Evaluate from "./Evaluate";
+import LoadingFixed from "@/components/LoadingFixed";
 
 const Purchase = () => {
   const [SearchParams, setSearchParams] = useSearchParams();
   const type = SearchParams.get("type") || "";
   const QueryClient = useQueryClient();
-  const { data: orders } = useQuery<IOrderPayment[]>({
+  const { data: orders, isLoading } = useQuery<IOrderPayment[]>({
     queryKey: ["GET_ALL_MY_ORDERS", type],
     queryFn: async () => {
       try {
@@ -38,6 +39,9 @@ const Purchase = () => {
       });
     }
   };
+  if (isLoading) {
+    return <LoadingFixed />;
+  }
   return (
     <div>
       <ul className="tabs-purchase flex items-center justify-evenly flex-shrink-0 text-center py-4 px-5 w-full overflow-x-auto whitespace-nowrap bg-white">

@@ -14,6 +14,7 @@ import { useCart } from "@/hooks/cart";
 import { ICart } from "@/interfaces/cart";
 import { ToastError, ToastSuccess } from "@/lib/utils";
 import { AxiosError } from "axios";
+import ButtonLoading from "@/components/ButtonLoading";
 type GoodsClassificationType = {
   id: string;
   productId: string;
@@ -26,6 +27,7 @@ const GoodsClassification = ({
   varians,
   selectedVariants,
 }: GoodsClassificationType) => {
+  const [loading, setLoading] = useState(false);
   const { setCartState } = useCart();
   const [chooseColorId, setChooseColorId] = useState(""); // Id màu biến thể sản phẩm
   const [chooseSizeId, setChooseSizeId] = useState(""); //Id size biến thể sản phẩm
@@ -79,6 +81,7 @@ const GoodsClassification = ({
   };
   const changeVariant = async (defaultSize: string, defaultColor: string) => {
     try {
+      setLoading(true);
       const { data } = await updateVariantItemCart({
         colorId: chooseColorId || defaultColor,
         itemId: id,
@@ -92,6 +95,7 @@ const GoodsClassification = ({
         ToastError(error?.response?.data?.message);
       }
     } finally {
+      setLoading(false);
       setOpen(false);
     }
   };
@@ -134,6 +138,7 @@ const GoodsClassification = ({
           </button>
 
           <button
+            disabled={loading}
             className="bg-[#ee4d2d] text-white "
             onClick={() =>
               changeVariant(
@@ -142,7 +147,7 @@ const GoodsClassification = ({
               )
             }
           >
-            Xác nhận
+            {loading ? <ButtonLoading /> : "Xác nhận"}
           </button>
         </DropdownMenuItem>
       </DropdownMenuContent>

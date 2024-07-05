@@ -84,8 +84,6 @@ const InfoDetailProduct = ({ product }: IPropsDetailProduct) => {
   };
 
   const handlePriceAndQuantity = (variants: IVariantsDetail[]) => {
-    console.log(chooseColorId, chooseSizeId);
-
     if (chooseColorId !== "" && chooseSizeId !== "") {
       const quantityBlock = document.querySelector(
         ".choose-quantity .quantity-block"

@@ -11,8 +11,10 @@ import { AxiosError } from "axios";
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import Invoice from "./Invoice";
+import LoadingFixed from "@/components/LoadingFixed";
 
 const VerifyPayment = () => {
+  const [loading, setLoading] = useState(true);
   const { setCartState } = useCart();
   const navigate = useNavigate();
   const [order, setOrder] = useState<IOrderPayment>();
@@ -36,6 +38,8 @@ const VerifyPayment = () => {
               ToastError(error.response?.data.message);
             }
           }
+        } finally {
+          setLoading(false);
         }
       })();
     }
@@ -49,10 +53,15 @@ const VerifyPayment = () => {
           if (error instanceof AxiosError) {
             ToastError(error.response?.data.message);
           }
+        } finally {
+          setLoading(false);
         }
       })();
     }
   }, []);
+  if (loading) {
+    return <LoadingFixed />;
+  }
   return (
     <div className="h-screen flex items-center justify-center bg-gray-100">
       <div className="w-[90%] max-w-2xl relative bg-white  flex flex-col items-center shadow-[0_0_25px_#ccc] rounded-lg  p-10 pt-3 after:content[''] after:absolute after:inset-x-0 after:top-0 after:rounded-se-md after:rounded-ss-md after:h-1 after:bg-[#ee4d2d]">

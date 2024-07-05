@@ -14,6 +14,8 @@ import {
 import { useEffect, useMemo, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import Evaluate from "./Evaluate";
+import LoadingFixed from "@/components/LoadingFixed";
+import ButtonLoading from "@/components/ButtonLoading";
 type StatusHistoryItem = {
   status?: string;
   date?: string;
@@ -25,6 +27,10 @@ type StatusHistoryObject = {
 };
 const PurchaseOrder = () => {
   const { id } = useParams();
+  const [loading, setLoading] = useState({
+    loadingData: true,
+    loadingCancel: false,
+  });
   const [order, setOrder] = useState<IOrderPayment>();
   const [statusOrder, setStatusOrder] = useState<StatusHistoryObject>({});
   const [process, setProcess] = useState({
@@ -38,6 +44,11 @@ const PurchaseOrder = () => {
         setOrder(data.data);
       } catch (error) {
         //
+      } finally {
+        setLoading({
+          loadingCancel: false,
+          loadingData: false,
+        });
       }
     })();
   }, []);
@@ -73,6 +84,10 @@ const PurchaseOrder = () => {
   }, [order, id]);
   const handleCancelOrder = async (orderId: string) => {
     try {
+      setLoading({
+        loadingCancel: true,
+        loadingData: false,
+      });
       await updateOrderStatus(orderId, "cancelled");
       ToastSuccess("Đã huỷ đơn hàng");
     } catch (error) {
@@ -82,14 +97,26 @@ const PurchaseOrder = () => {
     } finally {
       (async () => {
         try {
+          setLoading({
+            loadingCancel: false,
+            loadingData: true,
+          });
           const { data } = await getOrderById(id as string);
           setOrder(data.data);
         } catch (error) {
           //
+        } finally {
+          setLoading({
+            loadingCancel: false,
+            loadingData: false,
+          });
         }
       })();
     }
   };
+  if (loading?.loadingData) {
+    return <LoadingFixed />;
+  }
   return (
     <div>
       <div className="">
@@ -180,17 +207,25 @@ const PurchaseOrder = () => {
             </div>
           ) : (
             <>
-              <Evaluate
-                orderItems={order?.orderItems as ICartItem[]}
-                orderId={id as string}
-              />
+              {order?.status == "pending" ||
+                (order?.status == "confirmed" && (
+                  <Evaluate
+                    orderItems={order?.orderItems as ICartItem[]}
+                    orderId={id as string}
+                  />
+                ))}
               {order?.status == "pending" ||
                 (order?.status == "confirmed" && (
                   <button
+                    disabled={loading?.loadingCancel}
                     onClick={() => handleCancelOrder(order?._id as string)}
                     className="text-nowrap py-2 px-12 rounded bg-[#ee4d2d] hover:bg-[#d73211] text-white mx-2"
                   >
-                    Huỷ đơn hàng
+                    {loading?.loadingCancel ? (
+                      <ButtonLoading />
+                    ) : (
+                      "Huỷ đơn hàng"
+                    )}
                   </button>
                 ))}
             </>
