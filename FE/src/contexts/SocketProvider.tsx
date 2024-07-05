@@ -1,6 +1,5 @@
 import LoadingFixed from "@/components/LoadingFixed";
 import { useAuth } from "@/hooks/auth";
-import { ToastError } from "@/lib/utils";
 import { getItemLocal } from "@/services/localStorageService";
 import { createContext, ReactNode, useEffect, useRef, useState } from "react";
 import { io, Socket } from "socket.io-client";
@@ -31,7 +30,7 @@ const SocketProvider = ({ children }: { children: ReactNode }) => {
       is_connected: false,
     }),
       socketRef.current.connect();
-    socketRef.current.on("connect_error", (err) => {
+    socketRef.current.on("connect_error", () => {
       if (authUser && socketRef.current && getItemLocal("token")) {
         socketRef.current.auth = {
           id: authUser?._id,
@@ -40,7 +39,6 @@ const SocketProvider = ({ children }: { children: ReactNode }) => {
           avatar: authUser.avatar,
           is_connected: false,
         };
-        //ToastError(err.message); 
       }
     });
     setLoading(false);
