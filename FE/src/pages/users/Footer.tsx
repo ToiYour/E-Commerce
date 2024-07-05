@@ -17,9 +17,9 @@ const Footer = () => {
                       Mail:{" "}
                       <a
                         className="font-normal"
-                        href="mailto:toidz25102004@gmail.com?subject=Tiêu đề email&body=Nội dung email"
+                        href="mailto:toinh2004@gmail.com?subject=Tiêu đề email&body=Nội dung email"
                       >
-                        toidz25102004@gmail.com
+                        toinh2004@gmail.com
                       </a>
                     </span>
                     <span className="flex flex-wrap items-center font-bold ">
