@@ -138,13 +138,17 @@ const LikeDislikeAndReplyButtons = (props: LikeDislikeAndReplyButtonsType) => {
       </div>
       <div>
         <button
-          onClick={() =>
-            props.setReply({
-              isEdit: false,
-              isReply: true,
-              id: props.commentId,
-            })
-          }
+          onClick={() => {
+            if (!isLoggedIn) {
+              currentRouteAndNavigation();
+            } else {
+              props.setReply({
+                isEdit: false,
+                isReply: true,
+                id: props.commentId,
+              });
+            }
+          }}
           className="text-sm font-medium hover:bg-gray-100 rounded-xl py-1 px-2"
         >
           Phản hồi
