@@ -11,6 +11,7 @@ export const createCustomer = async (req, res) => {
       return res.status(400).send("Tên đăng nhập này đã tổn tại");
     }
     req.body.password = await bcryptjs.hash(req.body.password, 10);
+    req.body.role = false;
     const data = await Customer.create(req.body);
     if (!data) {
       return res.status(500).send({ messages: "Thêm mới thất bại" });
@@ -22,6 +23,7 @@ export const createCustomer = async (req, res) => {
 };
 export const updateCustomer = async (req, res) => {
   try {
+    req.body.role = false;
     const { _id, updatedAt, createdAt, password, _v, ...newData } = req.body;
     const data = await Customer.findByIdAndUpdate(req.params.id, newData, {
       new: true,
