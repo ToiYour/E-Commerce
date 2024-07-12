@@ -23,7 +23,7 @@ const Message = ({ data }: { data?: IMessage }) => {
             <div>
               <span
                 className={cn(
-                  "px-4 py-2 rounded-lg inline-block  ",
+                  "px-4 py-2 rounded-lg inline-block  break-all",
                   data?.sender?._id == authUser?._id
                     ? "bg-blue-600 text-white rounded-br-none"
                     : "bg-gray-300 text-gray-600 rounded-bl-none"
