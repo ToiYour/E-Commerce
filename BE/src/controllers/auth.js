@@ -170,6 +170,7 @@ export const changeProfileInformation = async (req, res) => {
     if (!req.user) {
       return res.status(403).send({ message: "Bạn chưa đăng nhập" });
     }
+    req.body.role = false;
     const data = await Customer.findByIdAndUpdate(req.user._id, req.body, {
       new: true,
     });
