@@ -10,9 +10,9 @@ const PrivateRoute = ({ children }: PrivateRoute) => {
   const { authUser, isLoggedIn, loading } = useAuth();
   if (loading) return <LoadingFixed />;
   if (!isLoggedIn) {
-    return <Navigate to="/" />;
+    return <Navigate to="/buyer/login" />;
   }
-  if (!authUser?.role) return <Navigate to="/buyer/login" />;
+  if (!authUser?.role) return <Navigate to="/" />;
   return children;
 };
 
