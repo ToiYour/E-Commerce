@@ -9,7 +9,10 @@ type PrivateRoute = {
 const PrivateRoute = ({ children }: PrivateRoute) => {
   const { authUser, isLoggedIn, loading } = useAuth();
   if (loading) return <LoadingFixed />;
-  if (!isLoggedIn && !authUser?.role) return <Navigate to="/buyer/login" />;
+  if (!isLoggedIn) {
+    return <Navigate to="/" />;
+  }
+  if (!authUser?.role) return <Navigate to="/buyer/login" />;
   return children;
 };
 
