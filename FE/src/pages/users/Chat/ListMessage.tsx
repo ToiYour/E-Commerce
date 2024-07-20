@@ -1,25 +1,22 @@
 import Message from "@/components/Message";
 import Typing from "@/components/Typing";
 import WelcomeChat from "@/components/WelcomeChat";
-import { useSocket } from "@/hooks/socket";
 import { IMessage } from "@/interfaces/message";
-import { useEffect, useRef, useState } from "react";
-const ListMessage = ({ messages }: { messages: IMessage[] }) => {
+import { useEffect, useRef } from "react";
+const ListMessage = ({
+  messages,
+  typing,
+}: {
+  messages: IMessage[];
+  typing: { avatar?: string; isTyping?: boolean };
+}) => {
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
-  const socket = useSocket();
-  const [typing, setTyping] = useState({ avatar: "", isTyping: false });
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "instant" });
   };
   useEffect(() => {
     scrollToBottom();
-    socket?.on("typing", (data) => {
-      setTyping(data);
-    });
-    return () => {
-      socket?.off("typing");
-    };
-  }, [messages, socket]);
+  }, [messages, typing]);
 
   return (
     <div

@@ -23,6 +23,7 @@ const ChatContainer = ({
     startFocus,
     stopFocus,
     userConnected,
+    typing,
   } = useMessageClientSocket({ conversationId });
   const isAdminConnected = userConnected.filter((user) => user.is_admin)[0];
   const autoResize = (e: FormEvent<HTMLTextAreaElement>) => {
@@ -96,7 +97,7 @@ const ChatContainer = ({
             </div>
           ) : (
             <>
-              <ListMessage messages={messages} />
+              <ListMessage messages={messages} typing={typing} />
 
               <form
                 id="myFormChat"

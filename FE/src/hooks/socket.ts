@@ -91,6 +91,7 @@ export const useMessageClientSocket = (props: useMessageSocketType) => {
     socket?.emit("typing", {
       avatar: authUser?.avatar,
       isTyping: true,
+      conversationId: props.conversationId,
     });
   };
   // Dừng focus
@@ -98,6 +99,7 @@ export const useMessageClientSocket = (props: useMessageSocketType) => {
     socket?.emit("typing", {
       avatar: authUser?.avatar,
       isTyping: false,
+      conversationId: props.conversationId,
     });
   };
   return {
@@ -188,6 +190,7 @@ export const useMessageAdminSocket = (props: useMessageSocketType) => {
     socket?.emit("typing", {
       avatar: authUser?.avatar,
       isTyping: true,
+      conversationId: props.conversationId,
     });
   };
   // Dừng focus
@@ -195,6 +198,7 @@ export const useMessageAdminSocket = (props: useMessageSocketType) => {
     socket?.emit("typing", {
       avatar: authUser?.avatar,
       isTyping: false,
+      conversationId: props.conversationId,
     });
   };
   return {

@@ -50,17 +50,19 @@ export const eventSendMessage = (io, socket, usersConnected) => {
 };
 export const eventTyping = (io, socket) => {
   socket.on("typing", (payload) => {
+    const conversation = socket.conversation || payload?.conversationId;
+    console.log(conversation);
     socket.broadcast
-      .to(socket.conversation)
+      .to(conversation)
       .emit("typing", { ...payload, conversationId: socket.conversation });
   });
 };
 export const eventLeaveConversation = (io, socket, usersConnected) => {
-    socket.on("leave_conversation", (conversationId) => {
-        socket.leave(conversationId);
-        console.log(`Vừa out ra khỏi phòng: ${conversationId}`);
-        io.emit("userConnected", usersConnected); // Emit lại hoạt động các user
-      });
+  socket.on("leave_conversation", (conversationId) => {
+    socket.leave(conversationId);
+    console.log(`Vừa out ra khỏi phòng: ${conversationId}`);
+    io.emit("userConnected", usersConnected); // Emit lại hoạt động các user
+  });
 };
 export const disconnectSocket = (io, socket, usersConnected) => {
   socket.on("disconnect", () => {
